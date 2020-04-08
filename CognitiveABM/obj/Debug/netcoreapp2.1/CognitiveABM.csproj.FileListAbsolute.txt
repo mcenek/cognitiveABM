@@ -1,0 +1,8 @@
+C:\Users\alexw\source\repos\CognitiveABM\CognitiveABM\bin\Debug\netcoreapp2.1\CognitiveABM.deps.json
+C:\Users\alexw\source\repos\CognitiveABM\CognitiveABM\bin\Debug\netcoreapp2.1\CognitiveABM.dll
+C:\Users\alexw\source\repos\CognitiveABM\CognitiveABM\bin\Debug\netcoreapp2.1\CognitiveABM.pdb
+C:\Users\alexw\source\repos\CognitiveABM\CognitiveABM\obj\Debug\netcoreapp2.1\CognitiveABM.csproj.CoreCompileInputs.cache
+C:\Users\alexw\source\repos\CognitiveABM\CognitiveABM\obj\Debug\netcoreapp2.1\CognitiveABM.AssemblyInfoInputs.cache
+C:\Users\alexw\source\repos\CognitiveABM\CognitiveABM\obj\Debug\netcoreapp2.1\CognitiveABM.AssemblyInfo.cs
+C:\Users\alexw\source\repos\CognitiveABM\CognitiveABM\obj\Debug\netcoreapp2.1\CognitiveABM.dll
+C:\Users\alexw\source\repos\CognitiveABM\CognitiveABM\obj\Debug\netcoreapp2.1\CognitiveABM.pdb

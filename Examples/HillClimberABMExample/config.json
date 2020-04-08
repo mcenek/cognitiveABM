@@ -1,0 +1,42 @@
+﻿{
+  "globals": {
+    "output": "csv",
+    "options": {
+      "delimiter": ",",
+      "format": "en-EN"
+    },
+    "steps": "10"
+  },
+  "layers": [
+    {
+      "name": "Terrain",
+      "file": "grid.csv",
+      "dimensionx": 50,
+      "dimensiony": 50
+    }
+  ],
+  "agents": [
+    {
+      "name": "Animal",
+      "count": 30,
+      "mapping": [
+        {
+          "parameter": "BioEnergy",
+          "value": 100
+        },
+        {
+          "parameter": "Animal_gain_from_elevation",
+          "value": 5
+        },
+        {
+          "parameter": "Animal_elevation",
+          "value": 5
+        },
+        {
+          "parameter": "Animal_reproduce",
+          "value": 5
+        }
+      ]
+    }
+  ]
+}
