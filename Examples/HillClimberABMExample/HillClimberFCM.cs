@@ -14,19 +14,49 @@ using System.Linq;
 using System.Threading.Tasks;
 using System.Collections.Concurrent;
 using CognitiveABM.FCM;
+using System.IO;
 
 namespace hillClimber
 {
 	class HillClimberFCM : FCM
 	{
-		public HillClimberFCM(int population, int numberOfValues, int iterations) : base(population, numberOfValues, iterations) { }
+
+		// get from config.json maybe
+		private int steps;
+		private string fitnessFileName;
+		private string fitnessColumnName;
+
+		public HillClimberFCM(int population, int numberOfValues, int steps, string fitnessFileName, string fitnessColumnName) : base(population, numberOfValues, 1) 
+		{
+			this.fitnessFileName = fitnessFileName;
+			this.fitnessColumnName = fitnessColumnName;
+			this.steps = steps;
+		}
 
 		public override List<double> Fitness(List<List<double>> agents)
 		{
-			List<double> agentFitnessValues = new List<double>();
-			foreach (List<double> agent in agents)
-				agentFitnessValues.Add(agent.Average());
-			return agentFitnessValues;
+			var fitnessValues = new List<double>();
+
+			using (var reader = new StreamReader(fitnessFileName))
+			{
+				List<string> listA = new List<string>();
+				List<string> listB = new List<string>();
+				var header = reader.ReadLine();
+				List<string> headerValues = new List<string>(header.Split(','));
+				int indexOfFitnessValues = headerValues.FindIndex((str) => str == fitnessColumnName);
+				while (!reader.EndOfStream)
+				{
+					var line = reader.ReadLine();
+					var values = line.Split(',');
+
+					if (Convert.ToInt32(values[0]) == steps)
+					{
+						fitnessValues.Add(Convert.ToDouble(values[indexOfFitnessValues]));
+					}
+				}
+			}
+
+			return fitnessValues;
 		}
 
 		public override List<List<double>> GenerateOffspring(List<double> agentFitnessValues)

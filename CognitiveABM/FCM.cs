@@ -14,7 +14,7 @@ namespace CognitiveABM.FCM
 
 		protected int Iterations { get; }
 
-		private double FitnessTarget = 0.98;
+		private double FitnessTarget = 1000;
 
 		List<List<double>> Agents { get => _agents; set { _agents = value; } }
 
@@ -38,7 +38,6 @@ namespace CognitiveABM.FCM
 		{
 			for (int epoch = 0; epoch < Iterations; epoch++)
 			{
-
 				List<double> agentFitness = Fitness(Agents);
 				Console.WriteLine("Epoch: {0}\n Avg: {1,1:F4}, Max: {2,1:F4}", epoch, AverageFitness(), MaxFitness());
 				if (AverageFitness() >= FitnessTarget) {

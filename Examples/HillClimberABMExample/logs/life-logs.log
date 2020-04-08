@@ -1,0 +1,20 @@
+[ERROR] 2020-04-08 14:30:00,091 | Mars.Core.Utilities.RoslynCompilerUtils - Source code compilation failed! 
+[ERROR] 2020-04-08 14:30:00,106 | Mars.Core.Utilities.RoslynCompilerUtils - CS0102: The type 'ResultLogger_Animal' already contains a definition for 'AgentId' 
+[ERROR] 2020-04-08 14:30:00,107 | Mars.Core.Utilities.RoslynCompilerUtils - CS0229: Ambiguity between 'ResultLogger_Animal.AgentId' and 'ResultLogger_Animal.AgentId' 
+[ERROR] 2020-04-08 14:30:00,107 | Mars.Core.ResultAdapter.Implementation.LoggerCompiler - The type 'ResultLogger_Animal' already contains a definition for 'AgentId' 
+[ERROR] 2020-04-08 14:30:00,107 | Mars.Core.ResultAdapter.Implementation.LoggerCompiler - Ambiguity between 'ResultLogger_Animal.AgentId' and 'ResultLogger_Animal.AgentId' 
+[ERROR] 2020-04-08 14:31:08,897 | Mars.Core.Utilities.RoslynCompilerUtils - Source code compilation failed! 
+[ERROR] 2020-04-08 14:31:08,912 | Mars.Core.Utilities.RoslynCompilerUtils - CS0102: The type 'ResultLogger_Animal' already contains a definition for 'AgentId' 
+[ERROR] 2020-04-08 14:31:08,912 | Mars.Core.Utilities.RoslynCompilerUtils - CS0229: Ambiguity between 'ResultLogger_Animal.AgentId' and 'ResultLogger_Animal.AgentId' 
+[ERROR] 2020-04-08 14:31:08,912 | Mars.Core.ResultAdapter.Implementation.LoggerCompiler - The type 'ResultLogger_Animal' already contains a definition for 'AgentId' 
+[ERROR] 2020-04-08 14:31:08,912 | Mars.Core.ResultAdapter.Implementation.LoggerCompiler - Ambiguity between 'ResultLogger_Animal.AgentId' and 'ResultLogger_Animal.AgentId' 
+[ERROR] 2020-04-08 14:33:04,140 | Mars.Core.Utilities.RoslynCompilerUtils - Source code compilation failed! 
+[ERROR] 2020-04-08 14:33:04,155 | Mars.Core.Utilities.RoslynCompilerUtils - CS0102: The type 'ResultLogger_Animal' already contains a definition for 'AgentId' 
+[ERROR] 2020-04-08 14:33:04,155 | Mars.Core.Utilities.RoslynCompilerUtils - CS0229: Ambiguity between 'ResultLogger_Animal.AgentId' and 'ResultLogger_Animal.AgentId' 
+[ERROR] 2020-04-08 14:33:04,155 | Mars.Core.ResultAdapter.Implementation.LoggerCompiler - The type 'ResultLogger_Animal' already contains a definition for 'AgentId' 
+[ERROR] 2020-04-08 14:33:04,155 | Mars.Core.ResultAdapter.Implementation.LoggerCompiler - Ambiguity between 'ResultLogger_Animal.AgentId' and 'ResultLogger_Animal.AgentId' 
+[ERROR] 2020-04-08 14:34:30,437 | Mars.Core.Utilities.RoslynCompilerUtils - Source code compilation failed! 
+[ERROR] 2020-04-08 14:34:30,452 | Mars.Core.Utilities.RoslynCompilerUtils - CS0102: The type 'ResultLogger_Animal' already contains a definition for 'AgentId' 
+[ERROR] 2020-04-08 14:34:30,452 | Mars.Core.Utilities.RoslynCompilerUtils - CS0229: Ambiguity between 'ResultLogger_Animal.AgentId' and 'ResultLogger_Animal.AgentId' 
+[ERROR] 2020-04-08 14:34:30,452 | Mars.Core.ResultAdapter.Implementation.LoggerCompiler - The type 'ResultLogger_Animal' already contains a definition for 'AgentId' 
+[ERROR] 2020-04-08 14:34:30,452 | Mars.Core.ResultAdapter.Implementation.LoggerCompiler - Ambiguity between 'ResultLogger_Animal.AgentId' and 'ResultLogger_Animal.AgentId' 

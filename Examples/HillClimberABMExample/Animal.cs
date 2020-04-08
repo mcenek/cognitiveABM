@@ -37,6 +37,17 @@ namespace hillClimber
             }
         }
 
+        private int animalId = default(int);
+
+        public int AnimalId
+        {
+            get => animalId;
+            set
+            {
+                if (animalId != value) animalId = value;
+            }
+        }
+
         private int bioEnergy = default(int);
 
         public int BioEnergy
@@ -106,7 +117,7 @@ namespace hillClimber
                     return Terrain._SpawnAnimal(_target65_1275.Item1, _target65_1275.Item2);
                 }).Invoke();
 
-                newAnimal.SecondInitialize(BioEnergy, Animal_gain_from_elevation, Animal_reproduce, terrain.GetIntegerValue(this.Position.X, this.Position.Y));
+                newAnimal.SecondInitialize(BioEnergy, Animal_gain_from_elevation, Animal_reproduce, terrain.GetIntegerValue(this.Position.X, this.Position.Y), AnimalId);
                 BioEnergy = BioEnergy / 2;
             }
         }
@@ -164,12 +175,13 @@ namespace hillClimber
         }
 
         [System.Runtime.CompilerServices.MethodImpl(System.Runtime.CompilerServices.MethodImplOptions.AggressiveInlining)]
-        public void SecondInitialize(int animalEnergy, int animailGain, int animalReproduce, int animalElevation)
+        public void SecondInitialize(int animalEnergy, int animailGain, int animalReproduce, int animalElevation, int agentId)
         {
             BioEnergy = animalEnergy;
             Animal_gain_from_elevation = animailGain;
             Animal_reproduce = animalReproduce;
             Animal_elevation = animalElevation;
+            AnimalId = agentId;
         }
 
         internal bool isAlive;
@@ -188,6 +200,7 @@ namespace hillClimber
             SpatialHashEnvironment<Animal> _AnimalEnvironment,
             int Animal_gain_from_elevation,
             int Animal_reproduce,
+            int AnimalId,
             double xcor = 0,
             double ycor = 0,
             int freq = 1)
@@ -198,6 +211,7 @@ namespace hillClimber
             random = new System.Random(ID.GetHashCode());
             this.Animal_gain_from_elevation = Animal_gain_from_elevation;
             this.Animal_reproduce = Animal_reproduce;
+            this.AnimalId = AnimalId;
             Terrain._AnimalEnvironment.Insert(this);
             _register(_layer, this, freq);
             isAlive = true;
@@ -223,7 +237,7 @@ namespace hillClimber
 
             bioEnergy--;
 
-            Spawn(Animal_reproduce);
+            //Spawn(Animal_reproduce);
 
             RandomMove();
 
@@ -254,7 +268,7 @@ namespace hillClimber
 
                 if (currentAnimal != null)
                 {
-                    Terrain.KillAnimal(currentAnimal, currentAnimal.executionFrequency);
+                 //   Terrain.KillAnimal(currentAnimal, currentAnimal.executionFrequency);
                 }
             }
         }
