@@ -12,4 +12,5 @@
 	<ItemGroup>
 	  <ProjectReference Include="..\..\CognitiveABM\CognitiveABM.csproj" />
 	</ItemGroup>
+	<ProjectExtensions><VisualStudio><UserProperties /></VisualStudio></ProjectExtensions>
 </Project>

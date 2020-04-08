@@ -18,25 +18,8 @@
   "agents": [
     {
       "name": "Animal",
-      "count": 30,
-      "mapping": [
-        {
-          "parameter": "BioEnergy",
-          "value": 100
-        },
-        {
-          "parameter": "Animal_gain_from_elevation",
-          "value": 5
-        },
-        {
-          "parameter": "Animal_elevation",
-          "value": 5
-        },
-        {
-          "parameter": "Animal_reproduce",
-          "value": 5
-        }
-      ]
+        "count": 30,
+        "file": "animal_init.csv"
     }
   ]
 }
