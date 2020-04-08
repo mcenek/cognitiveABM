@@ -1,4 +1,0 @@
-C:\Users\alexw\source\repos\HillClimberABMExample\obj\Debug\netcoreapp3.1\HillClimberABMExample.csprojAssemblyReference.cache
-C:\Users\alexw\source\repos\HillClimberABMExample\obj\Debug\netcoreapp3.1\HillClimberABMExample.csproj.CoreCompileInputs.cache
-C:\Users\alexw\source\repos\HillClimberABMExample\obj\Debug\netcoreapp3.1\HillClimberABMExample.AssemblyInfoInputs.cache
-C:\Users\alexw\source\repos\HillClimberABMExample\obj\Debug\netcoreapp3.1\HillClimberABMExample.AssemblyInfo.cs
