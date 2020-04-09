@@ -22,6 +22,10 @@ namespace CognitiveABM.Perceptron
 
         private int _weightIndex = 0;
 
+        public double[] memory;
+
+        private int numberOfMatrixMultiplcationRuns;
+
         public PerceptronFactory(int numberOfInputs, int numberOfOutputs, int numberOfHiddenLayers, int neuronsPerHiddenLayer)
         {
             NumberOfInputs = numberOfInputs;
@@ -29,6 +33,7 @@ namespace CognitiveABM.Perceptron
             NumberOfHiddenLayers = numberOfHiddenLayers;
             NeuronsPerHiddenLayer = neuronsPerHiddenLayer;
             _totalLayers = 2 + numberOfHiddenLayers;
+            memory = new double[numberOfInputs];
         }
 
         public double[] CalculatePerceptronFromId(int agentId, double[] inputs)
@@ -80,6 +85,9 @@ namespace CognitiveABM.Perceptron
 
                 // calculate the values of the neurons of the current layer
                 values = MatrixMultiply(values, weights);
+
+                // save values into memory for the agents
+                memory = values;
 
                 for (int i = 0; i < values.Length; i++)
                 {

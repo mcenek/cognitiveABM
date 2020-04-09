@@ -15,7 +15,7 @@ public static class Program {
 		int epochs = 1000;
 
 
-		HillClimberFCM fcm = new HillClimberFCM(48, 500, STEPS, OUTPUT_FILENAME, FITNESS_COLUMNNAME);
+		HillClimberFCM fcm = new HillClimberFCM(48, 486, STEPS, OUTPUT_FILENAME, FITNESS_COLUMNNAME);
 
 		// loop that runs through the MARS simulations
 		for (int i = 0; i < epochs; i++)
@@ -35,8 +35,9 @@ public static class Program {
 			description.AddLayer<Terrain>();
 			description.AddAgent<Animal, Terrain>();
 
-			var task = Mars.Core.SimulationStarter.SimulationStarter.Start(description, args);
 
+			// run a single MARS sim
+			var task = Mars.Core.SimulationStarter.SimulationStarter.Start(description, args);
 			
 			var loopResults = task.Run();
 

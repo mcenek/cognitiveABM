@@ -29,6 +29,8 @@ namespace hillClimber
 
         private string rule = "";
 
+        private double[] agentMemory;
+
         public string Rule
         {
             get => rule;
@@ -252,6 +254,11 @@ namespace hillClimber
 
             PerceptronFactory perceptron = new PerceptronFactory(9, 9, 1, 9);
             double[] outputs = perceptron.CalculatePerceptronFromId(AnimalId, getTerrainElevations());
+            // store outputs for the agent to have a memory
+            agentMemory = new double[outputs.Length * 2];
+            // concat values in outputs to itselft and store in the agentMemory so it can be used in the perceptron again
+            outputs.CopyTo(agentMemory, 0);
+            outputs.CopyTo(agentMemory, outputs.Length);
             List<int[]> locations = getTerrainLocations();
             int[] newLocation = new int[2];
             double highestOutput = outputs[0];
@@ -259,7 +266,7 @@ namespace hillClimber
             {
                 if (outputs[i] > highestOutput)
                 {
-                    highestOutput = outputs[1];
+                    highestOutput = outputs[i];
                 }
             }
 
