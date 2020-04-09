@@ -1,0 +1,25 @@
+﻿{
+  "globals": {
+    "output": "csv",
+    "options": {
+      "delimiter": ",",
+      "format": "en-EN"
+    },
+    "steps": "20"
+  },
+  "layers": [
+    {
+      "name": "Terrain",
+      "file": "grid.csv",
+      "dimensionx": 50,
+      "dimensiony": 50
+    }
+  ],
+  "agents": [
+    {
+      "name": "Animal",
+        "count": 48,
+        "file": "animal_init.csv"
+    }
+  ]
+}
