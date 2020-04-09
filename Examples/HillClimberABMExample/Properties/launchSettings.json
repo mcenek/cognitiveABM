@@ -1,9 +1,0 @@
-{
-  "profiles": {
-    "HillClimberABMExample": {
-      "commandName": "Project",
-      "commandLineArgs": "-sm config.json",
-      "workingDirectory": "C:\\Users\\alexw\\source\\repos\\CognitiveABM\\Examples\\HillClimberABMExample"
-    }
-  }
-}
