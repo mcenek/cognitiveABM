@@ -11,3 +11,5 @@ bld/
 [Bb]in/
 [Oo]bj/
 [Oo]ut/
+/.vs/CognitiveABM/DesignTimeBuild
+/.vs/CognitiveABM/v16/Server/sqlite3
