@@ -76,14 +76,16 @@ namespace hillClimber
 				child.AddRange(parent1Genomes);
 				child.AddRange(parent2Genomes);
 
-				var randomIndex = random.Next(child.Count);
-				child[randomIndex] += random.NextDouble() - 0.5;
+				for (int i = 0; i < 3; i++)
+				{
+					var randomIndex = random.Next(child.Count);
+					child[randomIndex] += random.NextDouble() - 0.5;
+					if (child[randomIndex] > 1)
+						child[randomIndex] = 1;
 
-				if (child[randomIndex] > 1)
-					child[randomIndex] = 1;
-
-				if (child[randomIndex] < 0)
-					child[randomIndex] = 0;
+					if (child[randomIndex] < 0)
+						child[randomIndex] = 0;
+				}
 
 				bag.Add(child);
 			});

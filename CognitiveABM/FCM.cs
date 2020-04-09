@@ -48,10 +48,10 @@ namespace CognitiveABM.FCM
 				var newAgents = GenerateOffspring(agentReproductionPercentages);
 				Agents = newAgents;
 
-				for (int i = 0; i < 12; i++)
-				{
-					Console.Write("{0:N2}\t", Agents[i][20]);
-				}
+				//for (int i = 0; i < 12; i++)
+				//{
+				//	Console.Write("{0:N2}\t", Agents[i][20]);
+				//}
 			}
 		}
 
@@ -100,6 +100,9 @@ namespace CognitiveABM.FCM
 				double multiplier = 1;
 				if (fitnessValue > averageFitness) {
 					multiplier = 1.25;
+				} else
+				{
+					multiplier = 0.5;
 				}
 				double agentReproductionPercent = (fitnessValue*multiplier) / sumOfFitnessValues;
 				reproductionPercent.Add(agentReproductionPercent);

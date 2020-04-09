@@ -9,7 +9,7 @@ public static class Program {
 	// todo get these from somewhere else automatically
 	public static string OUTPUT_FILENAME = "Animal.csv";
 	public static string FITNESS_COLUMNNAME = "BioEnergy";
-	public static int STEPS = 10;
+	public static int STEPS = 20;
 	public static void Main(string[] args) {
 
 		int epochs = 1000;
