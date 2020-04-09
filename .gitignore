@@ -14,3 +14,5 @@ bld/
 .vs/
 .vs/**
 *.suo
+/.vs/CognitiveABM/DesignTimeBuild
+/.vs/CognitiveABM/v16/Server/sqlite3
