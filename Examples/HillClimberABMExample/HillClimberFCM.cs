@@ -61,7 +61,6 @@ namespace hillClimber
 
 		public override List<List<double>> GenerateOffspring(List<double> agentFitnessValues)
 		{
-			List<List<double>> offspring = new List<List<double>>();
 			ConcurrentBag<List<double>> bag = new ConcurrentBag<List<double>>();
 			Random random = new Random();
 
@@ -69,7 +68,13 @@ namespace hillClimber
 				Tuple<List<double>, List<double>> parents = PickParents(agentFitnessValues.ToList());
 				int splitIndex = random.Next(0, NumberOfValues);
 
-				List<double> child = parents.Item1.GetRange(0, splitIndex).Concat(parents.Item2.GetRange(splitIndex, parents.Item2.Count - splitIndex)).ToList();
+				List<double> child = new List<double>();
+
+				List<double> parent1Genomes = new List<double>(parents.Item1.GetRange(0, splitIndex));
+				List<double> parent2Genomes = new List<double>(parents.Item2.GetRange(splitIndex, parents.Item2.Count - splitIndex));
+
+				child.AddRange(parent1Genomes);
+				child.AddRange(parent2Genomes);
 
 				var randomIndex = random.Next(child.Count);
 				child[randomIndex] += random.NextDouble() - 0.5;

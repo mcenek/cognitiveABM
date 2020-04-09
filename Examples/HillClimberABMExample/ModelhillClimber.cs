@@ -1,3 +1,6 @@
+using System;
+using System.Collections.Generic;
+using CognitiveABM;
 using hillClimber;
 
 // todo make this part of our library also?
@@ -9,13 +12,15 @@ public static class Program {
 	public static int STEPS = 10;
 	public static void Main(string[] args) {
 
-		int epochs = 10;
+		int epochs = 1000;
 
-		HillClimberFCM fcm = new HillClimberFCM(6, 120, STEPS, OUTPUT_FILENAME, FITNESS_COLUMNNAME);
+
+		HillClimberFCM fcm = new HillClimberFCM(48, 500, STEPS, OUTPUT_FILENAME, FITNESS_COLUMNNAME);
 
 		// loop that runs through the MARS simulations
 		for (int i = 0; i < epochs; i++)
 		{
+			Console.WriteLine("\n\nEpoch {0}\n", i);
 
 			// before the MARS sim we need to initialize the agent init values
 			// for MARS to load them we have to put them into an agent init file names animal_init.csv
@@ -39,6 +44,8 @@ public static class Program {
 
 			// run the FCM which updates the genome values
 			fcm.Run();
+
+
 		}
 	}
 }

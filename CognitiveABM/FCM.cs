@@ -6,7 +6,6 @@ namespace CognitiveABM.FCM
 {
 	public abstract class FCM
 	{
-		protected const int SEED = 22222222;
 		private List<List<double>> _agents;
 
 		protected int NumberOfValues { get; }
@@ -16,17 +15,17 @@ namespace CognitiveABM.FCM
 
 		private double FitnessTarget = 1000;
 
-		List<List<double>> Agents { get => _agents; set { _agents = value; } }
+		public static List<List<double>> Agents;
 
 		public FCM(int population, int numberOfValues, int iterations)
 		{
 			Population = population;
 			NumberOfValues = numberOfValues;
 			Iterations = iterations;
-			_agents = new List<List<double>>(population);
+			Agents = new List<List<double>>(population);
 			for (int i = 0; i < population; i++)
 			{
-				_agents.Add(CreateRandomArray(numberOfValues));
+				Agents.Add(CreateRandomArray(numberOfValues));
 			}
 		}
 
@@ -39,13 +38,20 @@ namespace CognitiveABM.FCM
 			for (int epoch = 0; epoch < Iterations; epoch++)
 			{
 				List<double> agentFitness = Fitness(Agents);
-				Console.WriteLine("Epoch: {0}\n Avg: {1,1:F4}, Max: {2,1:F4}", epoch, AverageFitness(), MaxFitness());
+				Console.WriteLine("Epoch: {0} Avg: {1,1:F4}, Max: {2,1:F4}", epoch, AverageFitness(), MaxFitness());
 				if (AverageFitness() >= FitnessTarget) {
 					Console.WriteLine("FitnessTarget met.");
 					break;
 				}
 				List<double> agentReproductionPercentages = CalculateReproductionPercent(agentFitness.ToList());
-				Agents = GenerateOffspring(agentReproductionPercentages);
+				
+				var newAgents = GenerateOffspring(agentReproductionPercentages);
+				Agents = newAgents;
+
+				for (int i = 0; i < 12; i++)
+				{
+					Console.Write("{0:N2}\t", Agents[i][20]);
+				}
 			}
 		}
 
@@ -79,7 +85,7 @@ namespace CognitiveABM.FCM
 
 		private List<double> CreateRandomArray(int length)
 		{
-			Random random = new Random(SEED);
+			Random random = new Random();
 			return Enumerable.Repeat(0, length).Select(i => random.NextDouble()).ToList();
 		}
 
