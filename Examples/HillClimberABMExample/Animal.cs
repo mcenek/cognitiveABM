@@ -5,6 +5,7 @@ namespace hillClimber
     using Mars.Components.Environments;
     using Mars.Common.Logging;
     using System.Collections.Generic;
+    using CognitiveABM.Perceptron;
 
     // Pragma and ReSharper disable all warnings for generated code
 #pragma warning disable 162
@@ -34,6 +35,17 @@ namespace hillClimber
             set
             {
                 if (rule != value) rule = value;
+            }
+        }
+
+        private int animalId = default(int);
+
+        public int AnimalId
+        {
+            get => animalId;
+            set
+            {
+                if (animalId != value) animalId = value;
             }
         }
 
@@ -84,14 +96,18 @@ namespace hillClimber
         [System.Runtime.CompilerServices.MethodImpl(System.Runtime.CompilerServices.MethodImplOptions.AggressiveInlining)]
         public virtual void ChangeElevationUp()
         {
-            BioEnergy = BioEnergy + Animal_gain_from_elevation;
+           // BioEnergy = BioEnergy + Animal_gain_from_elevation;
         }
 
         [System.Runtime.CompilerServices.MethodImpl(System.Runtime.CompilerServices.MethodImplOptions.AggressiveInlining)]
         public virtual void ChangeElevationDown()
         {
 
-            BioEnergy = BioEnergy - Animal_gain_from_elevation;
+            //BioEnergy = BioEnergy - Animal_gain_from_elevation;
+            //if (BioEnergy < 0)
+            //{
+            //    BioEnergy = 0;
+            //}
 
         }
 
@@ -106,7 +122,7 @@ namespace hillClimber
                     return Terrain._SpawnAnimal(_target65_1275.Item1, _target65_1275.Item2);
                 }).Invoke();
 
-                newAnimal.SecondInitialize(BioEnergy, Animal_gain_from_elevation, Animal_reproduce, terrain.GetIntegerValue(this.Position.X, this.Position.Y));
+                newAnimal.SecondInitialize(BioEnergy, Animal_gain_from_elevation, Animal_reproduce, terrain.GetIntegerValue(this.Position.X, this.Position.Y), AnimalId);
                 BioEnergy = BioEnergy / 2;
             }
         }
@@ -164,12 +180,13 @@ namespace hillClimber
         }
 
         [System.Runtime.CompilerServices.MethodImpl(System.Runtime.CompilerServices.MethodImplOptions.AggressiveInlining)]
-        public void SecondInitialize(int animalEnergy, int animailGain, int animalReproduce, int animalElevation)
+        public void SecondInitialize(int animalEnergy, int animailGain, int animalReproduce, int animalElevation, int agentId)
         {
             BioEnergy = animalEnergy;
             Animal_gain_from_elevation = animailGain;
             Animal_reproduce = animalReproduce;
             Animal_elevation = animalElevation;
+            AnimalId = agentId;
         }
 
         internal bool isAlive;
@@ -188,6 +205,7 @@ namespace hillClimber
             SpatialHashEnvironment<Animal> _AnimalEnvironment,
             int Animal_gain_from_elevation,
             int Animal_reproduce,
+            int AnimalId,
             double xcor = 0,
             double ycor = 0,
             int freq = 1)
@@ -198,6 +216,7 @@ namespace hillClimber
             random = new System.Random(ID.GetHashCode());
             this.Animal_gain_from_elevation = Animal_gain_from_elevation;
             this.Animal_reproduce = Animal_reproduce;
+            this.AnimalId = AnimalId;
             Terrain._AnimalEnvironment.Insert(this);
             _register(_layer, this, freq);
             isAlive = true;
@@ -223,40 +242,111 @@ namespace hillClimber
 
             bioEnergy--;
 
-            Spawn(Animal_reproduce);
+            //Spawn(Animal_reproduce);
 
-            RandomMove();
+            /*
+             *   Start of own (non-generated) code
+             */
+
+            //RandomMove();
+
+            PerceptronFactory perceptron = new PerceptronFactory(9, 9, 1, 9);
+            double[] outputs = perceptron.CalculatePerceptronFromId(AnimalId, getTerrainElevations());
+            List<int[]> locations = getTerrainLocations();
+            int[] newLocation = new int[2];
+            double highestOutput = outputs[0];
+            for (int i = 1; i < 9; i++)
+            {
+                if (outputs[i] > highestOutput)
+                {
+                    highestOutput = outputs[1];
+                }
+            }
+
+            newLocation = locations[Array.IndexOf(outputs, highestOutput)];
+
+            Animal currentAgent = this;
+            Func<double[], bool> predicate = null;
+            Terrain._AnimalEnvironment.MoveTo(currentAgent, newLocation[0], newLocation[1], 1, predicate);
+
+
+
+            /*
+             *  End of own code
+             */
+
+
+            var oldElevation = Animal_elevation;
 
             Animal_elevation = terrain.GetIntegerValue(this.Position.X, this.Position.Y);
+            BioEnergy = Animal_elevation;
 
-            if (random.Next(100) < 50)
-            {
-                Rule = "R1 - Move up in elevation";
-                ChangeElevationUp();
-            }
-            else
-            {
-                if (random.Next(100) < 50)
-                {
-                    Rule = "R3 - Move down in elevation";
-                    ChangeElevationDown();
-                }
-                else
-                {
-                    Rule = "R2 - Stay at same elevation";
-                }
-            }
-            if (BioEnergy <= 0)
-            {
-                Rule = "R4 - Death by BioEnergy loss";
+            Rule = "Moved from elevation: " + oldElevation + " to elevation: " + Animal_elevation;
 
-                var currentAnimal = this;
+            //if (random.Next(100) < 50)
+            //{
+            //    Rule = "R1 - Move up in elevation";
+            //    ChangeElevationUp();
+            //}
+            //else
+            //{
+            //    if (random.Next(100) < 50)
+            //    {
+            //        Rule = "R3 - Move down in elevation";
+            //        ChangeElevationDown();
+            //    }
+            //    else
+            //    {
+            //        Rule = "R2 - Stay at same elevation";
+            //    }
+            //}
+            //if (BioEnergy <= 0)
+            //{
+            //    Rule = "R4 - Death by BioEnergy loss";
 
-                if (currentAnimal != null)
+            //    var currentAnimal = this;
+
+            //    if (currentAnimal != null)
+            //    {
+            //     //   Terrain.KillAnimal(currentAnimal, currentAnimal.executionFrequency);
+            //    }
+            //}
+        }
+
+        /* Own Metods */
+        public double[] getTerrainElevations()
+        {
+            List<double> elevations = new List<double>();
+            int x = (int)Position.X;
+            int y = (int)Position.Y;
+
+            for (int dx = -1; dx <= 1; ++dx)
+            {
+                for (int dy = -1; dy <= 1; ++dy)
                 {
-                    Terrain.KillAnimal(currentAnimal, currentAnimal.executionFrequency);
+                    elevations.Add(Terrain.GetRealValue(dx + x, dy + y));
                 }
             }
+
+            return elevations.ToArray();
+        }
+
+        public List<int[]> getTerrainLocations()
+        {
+            List<int[]> locations = new List<int[]>();
+            int x = (int)Position.X;
+            int y = (int)Position.Y;
+
+            for (int dx = -1; dx <= 1; ++dx)
+            {
+                for (int dy = -1; dy <= 1; ++dy)
+                {
+                    int[] location = new int[] { dx + x, dy + y };
+                    locations.Add(location);
+                }
+            }
+
+            return locations;
         }
 
         public System.Guid ID { get; }

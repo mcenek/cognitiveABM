@@ -14,6 +14,8 @@ namespace CognitiveABM.Perceptron
 
         protected int NeuronsPerHiddenLayer { get; }
 
+        public double[][] AllGenomes { get; set; }
+
         public double[] Genomes { get; set; }
 
         private int _totalLayers;
@@ -27,6 +29,11 @@ namespace CognitiveABM.Perceptron
             NumberOfHiddenLayers = numberOfHiddenLayers;
             NeuronsPerHiddenLayer = neuronsPerHiddenLayer;
             _totalLayers = 2 + numberOfHiddenLayers;
+        }
+
+        public double[] CalculatePerceptronFromId(int agentId, double[] inputs)
+        {
+            return CalculatePerceptron(FCM.FCM.Agents[agentId].ToArray(), inputs);
         }
 
         public double[] CalculatePerceptron(double[] genomes, double[] inputs)
@@ -52,9 +59,9 @@ namespace CognitiveABM.Perceptron
 
             for (int i = 0; i < values.Length; i++)
             {
-                Console.Write(values[i] + " ");
+                // Console.Write(values[i] + " ");
             }
-            Console.WriteLine();
+            // Console.WriteLine();
 
             for (int layerNumber = 0; layerNumber < _totalLayers - 1; layerNumber++)
             {
@@ -76,9 +83,9 @@ namespace CognitiveABM.Perceptron
 
                 for (int i = 0; i < values.Length; i++)
                 {
-                    Console.Write(values[i] + " ");
+                    // Console.Write(values[i] + " ");
                 }
-                Console.WriteLine();
+                // Console.WriteLine();
 
                 // keep track of the hieght of the previous later
                 previousLayerHeight = currentLayerHeight;
@@ -115,6 +122,7 @@ namespace CognitiveABM.Perceptron
                     _weightIndex++;
                 }
             }
+            //Console.WriteLine(_weightIndex);
             return weights;
         }
 
