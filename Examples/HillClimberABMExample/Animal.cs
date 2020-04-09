@@ -98,7 +98,7 @@ namespace hillClimber
         [System.Runtime.CompilerServices.MethodImpl(System.Runtime.CompilerServices.MethodImplOptions.AggressiveInlining)]
         public virtual void ChangeElevationUp()
         {
-           // BioEnergy = BioEnergy + Animal_gain_from_elevation;
+            // BioEnergy = BioEnergy + Animal_gain_from_elevation;
         }
 
         [System.Runtime.CompilerServices.MethodImpl(System.Runtime.CompilerServices.MethodImplOptions.AggressiveInlining)]
@@ -224,7 +224,7 @@ namespace hillClimber
             isAlive = true;
             executionFrequency = freq;
 
-            new System.Func<System.Tuple<double, double>>(() =>
+            var pos = new System.Func<System.Tuple<double, double>>(() =>
             {
                 var _taget19_331 = new System.Tuple<int, int>(random.Next(terrain.DimensionX()), random.Next(terrain.DimensionY()));
                 var _object19_331 = this;
@@ -234,15 +234,17 @@ namespace hillClimber
 
             }).Invoke();
 
+            Position = Mars.Interfaces.Environment.Position.CreatePosition(pos.Item1, pos.Item2);
+
             Animal_elevation = terrain.GetIntegerValue(this.Position.X, this.Position.Y);
-            BioEnergy = random.Next(2 * Animal_gain_from_elevation);
+            //BioEnergy = random.Next(2 * Animal_gain_from_elevation);
         }
 
         public void Tick()
         {
             if (!isAlive) return;
 
-            bioEnergy--;
+            // bioEnergy--;
 
             //Spawn(Animal_reproduce);
 
@@ -253,7 +255,19 @@ namespace hillClimber
             //RandomMove();
 
             PerceptronFactory perceptron = new PerceptronFactory(9, 9, 1, 9);
-            double[] outputs = perceptron.CalculatePerceptronFromId(AnimalId, getTerrainElevations());
+
+            var inputs = getTerrainElevations();
+
+            int highestInput = 0;
+            for (int i = 0; i < 9; i++)
+            {
+                if (inputs[i] > inputs[highestInput])
+                {
+                    highestInput = i;
+                }
+            }
+
+            double[] outputs = perceptron.CalculatePerceptronFromId(AnimalId, inputs);
             // store outputs for the agent to have a memory
             agentMemory = new double[outputs.Length * 2];
             // concat values in outputs to itselft and store in the agentMemory so it can be used in the perceptron again
@@ -261,16 +275,26 @@ namespace hillClimber
             outputs.CopyTo(agentMemory, outputs.Length);
             List<int[]> locations = getTerrainLocations();
             int[] newLocation = new int[2];
-            double highestOutput = outputs[0];
-            for (int i = 1; i < 9; i++)
+
+
+
+            int highestOutput = 0;
+            for (int i = 0; i < 9; i++)
             {
-                if (outputs[i] > highestOutput)
+                if (outputs[i] > outputs[highestOutput])
                 {
-                    highestOutput = outputs[i];
+                    highestOutput = i;
                 }
             }
 
-            newLocation = locations[Array.IndexOf(outputs, highestOutput)];
+            //if (AnimalId < 3)
+            //{
+            //    Console.WriteLine("Highest Input: {0}, Highest Output: {1}", highestInput, highestOutput);
+            //}
+
+
+            //newLocation = locations[Array.IndexOf(outputs, highestOutput)];
+            newLocation = locations[highestOutput];
 
             Animal currentAgent = this;
             Func<double[], bool> predicate = null;
@@ -286,7 +310,9 @@ namespace hillClimber
             var oldElevation = Animal_elevation;
 
             Animal_elevation = terrain.GetIntegerValue(this.Position.X, this.Position.Y);
-            BioEnergy = Animal_elevation;
+            //BioEnergy = Animal_elevation;
+
+            BioEnergy += Animal_elevation - oldElevation;
 
             Rule = "Moved from elevation: " + oldElevation + " to elevation: " + Animal_elevation;
 
