@@ -10,7 +10,7 @@ namespace TerrainGenerator
         int maximumElevation;
         int smoothingLevel;
 
-        public ElevationLandscape(int width, int height, int numberOfPeaks, int maximumEleveation, int smothingLevel) : base(width, height)
+        public ElevationLandscape(int width, int height, int numberOfPeaks, int maximumElevation, int smothingLevel) : base(width, height)
         {
             this.numberOfPeaks = numberOfPeaks;
             this.maximumElevation = maximumElevation;

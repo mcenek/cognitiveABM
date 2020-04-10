@@ -1,5 +1,6 @@
 ﻿using System;
 using System.IO;
+using System.Text;
 
 namespace TerrainGenerator
 {
@@ -7,11 +8,11 @@ namespace TerrainGenerator
     {
         static void Main(string[] args)
         {
-            ElevationLandscape landscape = new ElevationLandscape(100, 100, 30, 1000, 3);
+            ElevationLandscape landscape = new ElevationLandscape(100, 100, 30, 1000, 9);
             landscape.Initialize();
             landscape.printMap();
 
-            StreamWriter writer = new StreamWriter("landscape.txt");
+            StreamWriter writer = new StreamWriter("..\\..\\..\\landscape.txt");
             writer.WriteLine(landscape.Width);
             writer.WriteLine(landscape.Height);
 
@@ -20,8 +21,7 @@ namespace TerrainGenerator
                 for (int j = 0; j < landscape.map.GetLength(1); j++)
                     writer.Write(landscape.map[i,j] + " ");
             }
-
-            writer.Flush();
+            Console.WriteLine("Wrote to file.");
             writer.Close();
         }
     }
