@@ -80,12 +80,13 @@ namespace HillClimberExample
             AnimalId = animalId;
             executionFrequency = freq;
 
-            _register(_layer, this, freq);
-            Terrain._AnimalEnvironment.Insert(this);
-
             Position = Mars.Interfaces.Environment.Position.CreatePosition(xcor, ycor);
             var pos = InitialPosition();
             Position = Mars.Interfaces.Environment.Position.CreatePosition(pos.Item1, pos.Item2);
+
+            Terrain._AnimalEnvironment.Insert(this);
+            _register(_layer, this, freq);
+
 
             Elevation = Terrain.GetIntegerValue(Position.X, Position.Y);
             startingElevation = Elevation;
