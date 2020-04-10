@@ -9,7 +9,7 @@ namespace TerrainGenerator
         protected int width = 100;
         protected int height = 100;
 
-        protected int[,] map;
+        public int[,] map;
 
         public Landscape(int width, int height)
         {
