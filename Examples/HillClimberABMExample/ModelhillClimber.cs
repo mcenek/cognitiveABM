@@ -12,7 +12,7 @@ public static class Program {
 	public static int STEPS = 20;
 	public static void Main(string[] args) {
 
-		int epochs = 1000;
+		int epochs = 10;
 
 
 		HillClimberFCM fcm = new HillClimberFCM(48, 486, STEPS, OUTPUT_FILENAME, FITNESS_COLUMNNAME);
