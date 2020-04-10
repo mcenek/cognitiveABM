@@ -30,6 +30,8 @@ namespace hillClimber
         private string rule = "";
 
         private double[] agentMemory;
+        private int totalCorrect = 0;
+
         public string Rule
         {
             get => rule;
@@ -311,6 +313,13 @@ namespace hillClimber
             //BioEnergy = Animal_elevation;
 
             BioEnergy += Animal_elevation - oldElevation;
+
+            if (highestInput == highestOutput)
+            {
+                totalCorrect++;
+            }
+
+            BioEnergy = totalCorrect;
 
             Rule = "Moved from elevation: " + oldElevation + " to elevation: " + Animal_elevation;
 

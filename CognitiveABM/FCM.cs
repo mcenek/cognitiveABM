@@ -43,6 +43,19 @@ namespace CognitiveABM.FCM
 					Console.WriteLine("FitnessTarget met.");
 					break;
 				}
+
+				for (int i = 0; i < agentFitness.Count; i++)
+				{
+					var avg = agentFitness.Average();
+					if (agentFitness[i] > avg)
+					{
+						agentFitness[i] *= 2;
+					} else
+					{
+						agentFitness[i] *= 0.5;
+					}
+				}
+
 				List<double> agentReproductionPercentages = CalculateReproductionPercent(agentFitness.ToList());
 				
 				var newAgents = GenerateOffspring(agentReproductionPercentages);
@@ -98,12 +111,14 @@ namespace CognitiveABM.FCM
 			foreach (double fitnessValue in agentFitness)
 			{
 				double multiplier = 1;
-				if (fitnessValue > averageFitness) {
-					multiplier = 1.25;
-				} else
-				{
-					multiplier = 0.5;
-				}
+				//if (fitnessValue > averageFitness)
+				//{
+				//	multiplier = 1.25;
+				//}
+				//else
+				//{
+				//	multiplier = 0.5;
+				//}
 				double agentReproductionPercent = (fitnessValue*multiplier) / sumOfFitnessValues;
 				reproductionPercent.Add(agentReproductionPercent);
 			}
