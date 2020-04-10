@@ -39,9 +39,6 @@ namespace CognitiveABM.Perceptron
 
         public double[] CalculatePerceptron(double[] genomes, double[] inputs, double[] agentMemory)
         {
-
-            
-
             Genomes = genomes;
             // double[] outputs = new double[NumberOfOutputs];
 
@@ -58,7 +55,7 @@ namespace CognitiveABM.Perceptron
                 {
                     values[i] = agentMemory[memoryIndex];
                     memoryIndex++;
-                    if(memoryIndex == agentMemory.Length)
+                    if (memoryIndex == agentMemory.Length)
                         memoryIndex = 0;
                 }
             }
@@ -67,9 +64,9 @@ namespace CognitiveABM.Perceptron
 
             for (int i = 0; i < values.Length; i++)
             {
-               // Console.Write(values[i] + " ");
+                // Console.Write(values[i] + " ");
             }
-           // Console.WriteLine();
+            // Console.WriteLine();
 
             // should only run twice
             for (int layerNumber = 0; layerNumber < _totalLayers - 1; layerNumber++)
@@ -94,22 +91,24 @@ namespace CognitiveABM.Perceptron
 
                 for (int i = 0; i < values.Length; i++)
                 {
-                   // Console.Write("{0:N2} ", values[i]);
-
-                // save values into memory for the agents
-                memory = values;
-
-                for (int i = 0; i < values.Length; i++)
-                {
                     // Console.Write("{0:N2} ", values[i]);
+
+                    // save values into memory for the agents
+                    memory = values;
+
+                    for (int j = 0; j < values.Length; j++)
+                    {
+                        // Console.Write("{0:N2} ", values[i]);
+                    }
+                    //Console.WriteLine();
+
+                    // keep track of the hieght of the previous later
+                    previousLayerHeight = currentLayerHeight;
                 }
-                //Console.WriteLine();
 
-                // keep track of the hieght of the previous later
-                previousLayerHeight = currentLayerHeight;
             }
-
-            return values;
+                return values;
+            
         }
 
         private int CalculateLayerHeight(int layer)
