@@ -1,4 +1,4 @@
-namespace hillClimber
+namespace HillClimberExample
 {
 	// Pragma and ReSharper disable all warnings for generated code
 	#pragma warning disable 162
@@ -118,8 +118,6 @@ namespace hillClimber
         public SpatialHashEnvironment<Animal> _AnimalEnvironment { get; set; }
         public IDictionary<System.Guid, Animal> _AnimalAgents { get; set; }
 
-        public Terrain _Terrain => this;
-        public Terrain terrain => this;
         public Terrain(double dimensionX = 100, double dimensionY = 100, int cellSize = 1)
         {
             _dimensionX = Convert.ToInt32(dimensionX); _dimensionY = Convert.ToInt32(dimensionY);
@@ -133,11 +131,11 @@ namespace hillClimber
             UnregisterAgent unregHandle)
         {
             base.InitLayer(initData, regHandle, unregHandle);
-            this._Register = regHandle;
-            this._Unregister = unregHandle;
+            _Register = regHandle;
+            _Unregister = unregHandle;
 
             _InitGrid(initData);
-            this._AnimalEnvironment = new SpatialHashEnvironment<Animal>(_dimensionX, _dimensionY, true);
+            _AnimalEnvironment = new SpatialHashEnvironment<Animal>(_dimensionX, _dimensionY, true);
 
             _AnimalAgents = Mars.Components.Services.AgentManager.SpawnAgents<Animal>(
             initData.AgentInitConfigs.First(config => config.Type == typeof(Animal)),
@@ -148,18 +146,16 @@ namespace hillClimber
         }
 
         [System.Runtime.CompilerServices.MethodImpl(System.Runtime.CompilerServices.MethodImplOptions.AggressiveInlining)]
-        public hillClimber.Animal _SpawnAnimal(double xcor = 0, double ycor = 0, int freq = 1)
+        public Animal _SpawnAnimal(double xcor = 0, double ycor = 0, int freq = 1)
         {
-            var id = System.Guid.NewGuid();
-            var agent = new hillClimber.Animal(
+            var id = Guid.NewGuid();
+            var agent = new Animal(
 				id, 
 				this, 
 				_Register,
 				_Unregister,
             	_AnimalEnvironment,
-            	default(int),
-            	default(int),
-                default(int),
+            	default,
 				xcor, 
 				ycor, 
 				freq);
@@ -169,9 +165,8 @@ namespace hillClimber
         }
 
         [System.Runtime.CompilerServices.MethodImpl(System.Runtime.CompilerServices.MethodImplOptions.AggressiveInlining)]
-        public void KillAnimal(hillClimber.Animal target, int executionFrequency = 1)
+        public void KillAnimal(Animal target)
         {
-            target.isAlive = false;
             _AnimalEnvironment.Remove(target);
             _Unregister(this, target, target.executionFrequency);
             _AnimalAgents.Remove(target.ID);

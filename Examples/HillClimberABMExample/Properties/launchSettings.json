@@ -2,8 +2,8 @@
   "profiles": {
     "HillClimberABMExample": {
       "commandName": "Project",
-        "commandLineArgs": "-sm config.json .",
-        "workingDirectory": "."
+      "commandLineArgs": "-sm config.json",
+      "workingDirectory": "."
     }
   }
 }
