@@ -15,7 +15,8 @@ public static class Program {
 		int epochs = 1000;
 
 
-		HillClimberFCM fcm = new HillClimberFCM(48, 500, STEPS, OUTPUT_FILENAME, FITNESS_COLUMNNAME);
+		HillClimberFCM fcm = new HillClimberFCM(48, 486, STEPS, OUTPUT_FILENAME, FITNESS_COLUMNNAME);
+		
 
 		// loop that runs through the MARS simulations
 		for (int i = 0; i < epochs; i++)
@@ -27,24 +28,30 @@ public static class Program {
 
 			if (args != null && System.Linq.Enumerable.Any(args, s => s.Equals("-l")))
 			{
-				Mars.Common.Logging.LoggerFactory.SetLogLevel(Mars.Common.Logging.Enums.LogLevel.Info);
-				Mars.Common.Logging.LoggerFactory.ActivateConsoleLogging();
+				Mars.Common.Logging.LoggerFactory.SetLogLevel(Mars.Common.Logging.Enums.LogLevel.Off);
+				Mars.Common.Logging.LoggerFactory.DeactivateConsoleLogging();
 			}
 
 			var description = new Mars.Core.ModelContainer.Entities.ModelDescription();
 			description.AddLayer<Terrain>();
 			description.AddAgent<Animal, Terrain>();
 
+			// run a single MARS sim
 			var task = Mars.Core.SimulationStarter.SimulationStarter.Start(description, args);
 
 			
-			var loopResults = task.Run();
+
+			Mars.Core.SimulationManager.Entities.SimulationWorkflowState loopResults = task.Run();
+
+
+			
 
 			System.Console.WriteLine($"Simulation execution finished after {loopResults.Iterations} steps");
 
 			// run the FCM which updates the genome values
 			fcm.Run();
 
+			GC.Collect();
 
 		}
 	}

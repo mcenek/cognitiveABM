@@ -20,6 +20,8 @@ namespace CognitiveABM.Perceptron
 
         private int _weightIndex = 0;
 
+        public double[] memory;
+
         public PerceptronFactory(int numberOfInputs, int numberOfOutputs, int numberOfHiddenLayers, int neuronsPerHiddenLayer)
         {
             NumberOfInputs = numberOfInputs;
@@ -27,20 +29,22 @@ namespace CognitiveABM.Perceptron
             NumberOfHiddenLayers = numberOfHiddenLayers;
             NeuronsPerHiddenLayer = neuronsPerHiddenLayer;
             _totalLayers = 2 + numberOfHiddenLayers;
+            memory = new double[numberOfInputs];
         }
 
-        public double[] CalculatePerceptronFromId(int agentId, double[] inputs)
+        public double[] CalculatePerceptronFromId(int agentId, double[] inputs, double[] agentMemory)
         {
-            return CalculatePerceptron(FCM.FCM.Agents[agentId].ToArray(), inputs);
+            return CalculatePerceptron(FCM.FCM.Agents[agentId].ToArray(), inputs, agentMemory);
         }
 
-        public double[] CalculatePerceptron(double[] genomes, double[] inputs)
+        public double[] CalculatePerceptron(double[] genomes, double[] inputs, double[] agentMemory)
         {
             Genomes = genomes;
             // double[] outputs = new double[NumberOfOutputs];
 
             // initialize and set currentValues to the inputs, then all zeros (for the backward and self faceing edges)
             double[] values = new double[NumberOfInputs * 3];
+            int memoryIndex = 0;
             for (int i = 0; i < (inputs.Length * 3) - 1; i++)
             {
                 if (i < inputs.Length)
@@ -49,7 +53,10 @@ namespace CognitiveABM.Perceptron
                 }
                 else
                 {
-                    values[i] = 0;
+                    values[i] = agentMemory[memoryIndex];
+                    memoryIndex++;
+                    if (memoryIndex == agentMemory.Length)
+                        memoryIndex = 0;
                 }
             }
 
@@ -57,9 +64,9 @@ namespace CognitiveABM.Perceptron
 
             for (int i = 0; i < values.Length; i++)
             {
-               // Console.Write(values[i] + " ");
+                // Console.Write(values[i] + " ");
             }
-           // Console.WriteLine();
+            // Console.WriteLine();
 
             // should only run twice
             for (int layerNumber = 0; layerNumber < _totalLayers - 1; layerNumber++)
@@ -84,15 +91,24 @@ namespace CognitiveABM.Perceptron
 
                 for (int i = 0; i < values.Length; i++)
                 {
-                   // Console.Write("{0:N2} ", values[i]);
+                    // Console.Write("{0:N2} ", values[i]);
+
+                    // save values into memory for the agents
+                    memory = values;
+
+                    for (int j = 0; j < values.Length; j++)
+                    {
+                        // Console.Write("{0:N2} ", values[i]);
+                    }
+                    //Console.WriteLine();
+
+                    // keep track of the hieght of the previous later
+                    previousLayerHeight = currentLayerHeight;
                 }
-                //Console.WriteLine();
 
-                // keep track of the hieght of the previous later
-                previousLayerHeight = currentLayerHeight;
             }
-
-            return values;
+                return values;
+            
         }
 
         private int CalculateLayerHeight(int layer)
@@ -149,7 +165,7 @@ namespace CognitiveABM.Perceptron
                 result[weightRow] = sum;
             });
 
-           // Console.WriteLine("Matrix Muliplication Result");
+            // Console.WriteLine("Matrix Muliplication Result");
             return result;
         }
     }

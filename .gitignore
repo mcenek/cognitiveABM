@@ -16,3 +16,5 @@ bld/
 *.suo
 /.vs/CognitiveABM/DesignTimeBuild
 /.vs/CognitiveABM/v16/Server/sqlite3
+Examples/HillClimberABMExample/Properties/launchSettings.json
+/Examples/HillClimberABMExample/HillClimberABMExample.csproj.user

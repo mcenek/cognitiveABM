@@ -29,8 +29,7 @@ namespace hillClimber
 
         private string rule = "";
 
-
-
+        private double[] agentMemory;
         public string Rule
         {
             get => rule;
@@ -98,7 +97,7 @@ namespace hillClimber
         [System.Runtime.CompilerServices.MethodImpl(System.Runtime.CompilerServices.MethodImplOptions.AggressiveInlining)]
         public virtual void ChangeElevationUp()
         {
-           // BioEnergy = BioEnergy + Animal_gain_from_elevation;
+            // BioEnergy = BioEnergy + Animal_gain_from_elevation;
         }
 
         [System.Runtime.CompilerServices.MethodImpl(System.Runtime.CompilerServices.MethodImplOptions.AggressiveInlining)]
@@ -212,6 +211,7 @@ namespace hillClimber
             double ycor = 0,
             int freq = 1)
         {
+            agentMemory = new double[] { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 };
             Terrain = _layer;
             ID = _id;
             Position = Mars.Interfaces.Environment.Position.CreatePosition(xcor, ycor);
@@ -244,7 +244,7 @@ namespace hillClimber
         {
             if (!isAlive) return;
 
-           // bioEnergy--;
+            // bioEnergy--;
 
             //Spawn(Animal_reproduce);
 
@@ -267,7 +267,11 @@ namespace hillClimber
                 }
             }
 
-            double[] outputs = perceptron.CalculatePerceptronFromId(AnimalId, inputs);
+            double[] outputs = perceptron.CalculatePerceptronFromId(AnimalId, inputs, agentMemory);
+            // store outputs for the agent to have a memory
+            // concat values in outputs to itselft and store in the agentMemory so it can be used in the perceptron again
+            outputs.CopyTo(agentMemory, 0);
+            outputs.CopyTo(agentMemory, outputs.Length);
             List<int[]> locations = getTerrainLocations();
             int[] newLocation = new int[2];
 
@@ -287,7 +291,6 @@ namespace hillClimber
             //    Console.WriteLine("Highest Input: {0}, Highest Output: {1}", highestInput, highestOutput);
             //}
 
-            
             //newLocation = locations[Array.IndexOf(outputs, highestOutput)];
             newLocation = locations[highestOutput];
 

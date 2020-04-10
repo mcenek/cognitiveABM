@@ -18,3 +18,8 @@
 [ERROR] 2020-04-08 14:34:30,452 | Mars.Core.Utilities.RoslynCompilerUtils - CS0229: Ambiguity between 'ResultLogger_Animal.AgentId' and 'ResultLogger_Animal.AgentId' 
 [ERROR] 2020-04-08 14:34:30,452 | Mars.Core.ResultAdapter.Implementation.LoggerCompiler - The type 'ResultLogger_Animal' already contains a definition for 'AgentId' 
 [ERROR] 2020-04-08 14:34:30,452 | Mars.Core.ResultAdapter.Implementation.LoggerCompiler - Ambiguity between 'ResultLogger_Animal.AgentId' and 'ResultLogger_Animal.AgentId' 
+[ERROR] 2020-04-09 18:16:39,516 | Mars.Core.SimulationStarter.SimulationStarter - MARS simulation execution crashed by InvalidOperationException 
+[ERROR] 2020-04-09 18:16:39,568 | Mars.Core.SimulationStarter.SimulationStarter - Exception message: 
+[ERROR] 2020-04-09 18:16:39,568 | Mars.Core.SimulationStarter.SimulationStarter - ######################################################## 
+[ERROR] 2020-04-09 18:16:39,568 | Mars.Core.SimulationStarter.SimulationStarter - Start may not be called on a task that has completed. 
+[ERROR] 2020-04-09 18:16:39,568 | Mars.Core.SimulationStarter.SimulationStarter - ######################################################## 
