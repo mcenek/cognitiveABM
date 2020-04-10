@@ -2,8 +2,8 @@
   "profiles": {
     "HillClimberABMExample": {
       "commandName": "Project",
-      "commandLineArgs": "-sm config.json",
-      "workingDirectory": "D:\\Daniel\\Desktop\\Computer Science\\Junior\\ML Research\\MarsCognitiveABM\\Examples\\HillClimberABMExample"
+        "commandLineArgs": "-sm config.json .",
+        "workingDirectory": "."
     }
   }
 }
