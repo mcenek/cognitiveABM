@@ -22,6 +22,8 @@ namespace CognitiveABM.Perceptron
 
         public double[] memory;
 
+        Boolean useMemory = false;
+
         public PerceptronFactory(int numberOfInputs, int numberOfOutputs, int numberOfHiddenLayers, int neuronsPerHiddenLayer)
         {
             NumberOfInputs = numberOfInputs;
@@ -53,10 +55,17 @@ namespace CognitiveABM.Perceptron
                 }
                 else
                 {
-                    values[i] = agentMemory[memoryIndex];
-                    memoryIndex++;
-                    if (memoryIndex == agentMemory.Length)
-                        memoryIndex = 0;
+                    if (useMemory)
+                    {
+                        values[i] = agentMemory[memoryIndex];
+                        memoryIndex++;
+                        if (memoryIndex == agentMemory.Length)
+                            memoryIndex = 0;
+                    }
+                    else
+                    {
+                        values[i] = 0;
+                    }
                 }
             }
 

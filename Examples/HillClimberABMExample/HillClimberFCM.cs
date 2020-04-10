@@ -9,22 +9,22 @@
  */
 
 using System;
+using System.Collections.Concurrent;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
-using System.Collections.Concurrent;
 using CognitiveABM.FCM;
-using System.IO;
 
-namespace hillClimber
+namespace HillClimberExample
 {
 	class HillClimberFCM : FCM
 	{
 
 		// get from config.json maybe
-		private int steps;
-		private string fitnessFileName;
-		private string fitnessColumnName;
+		private readonly int steps;
+		private readonly string fitnessFileName;
+		private readonly string fitnessColumnName;
 
 		public HillClimberFCM(int population, int numberOfValues, int steps, string fitnessFileName, string fitnessColumnName) : base(population, numberOfValues, 1) 
 		{
@@ -76,7 +76,7 @@ namespace hillClimber
 				child.AddRange(parent1Genomes);
 				child.AddRange(parent2Genomes);
 
-				for (int i = 0; i < 10; i++)
+				for (int i = 0; i < 5; i++)
 				{
 					var randomIndex = random.Next(child.Count);
 					child[randomIndex] += random.NextDouble() - 0.5;

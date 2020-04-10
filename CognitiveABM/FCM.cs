@@ -13,7 +13,7 @@ namespace CognitiveABM.FCM
 
 		protected int Iterations { get; }
 
-		private double FitnessTarget = 1000;
+		private double FitnessTarget = 135;
 
 		public static List<List<double>> Agents;
 
@@ -33,26 +33,47 @@ namespace CognitiveABM.FCM
 
 		public abstract List<List<double>> GenerateOffspring(List<double> agentFitness);
 
-		public void Run()
+		public List<double> Run()
 		{
+			List<double> agentFitness = new List<double>();
 			for (int epoch = 0; epoch < Iterations; epoch++)
 			{
-				List<double> agentFitness = Fitness(Agents);
+				agentFitness = Fitness(Agents);
 				Console.WriteLine("Epoch: {0} Avg: {1,1:F4}, Max: {2,1:F4}", epoch, AverageFitness(), MaxFitness());
 				if (AverageFitness() >= FitnessTarget) {
 					Console.WriteLine("FitnessTarget met.");
-					break;
+
+					Environment.Exit(0);
 				}
 
+				var avg = agentFitness.Average();
+				var sum = agentFitness.Sum();
 				for (int i = 0; i < agentFitness.Count; i++)
 				{
-					var avg = agentFitness.Average();
-					if (agentFitness[i] > avg)
+					
+					if (avg == 0)
 					{
-						agentFitness[i] *= 2;
-					} else
+						agentFitness[i] = 1;
+					}
+					else
 					{
-						agentFitness[i] *= 0.5;
+
+						//if (agentFitness[i] > avg)
+						//{
+						//	agentFitness[i] *= 1.5;
+						//}
+						//else
+						//{
+						//	agentFitness[i] *= 0.5;
+						//}
+					}
+				}
+
+				if (sum == 0)
+				{
+					for (int i = 0; i < agentFitness.Count; i++)
+					{
+						agentFitness[i] = 1;
 					}
 				}
 
@@ -66,6 +87,7 @@ namespace CognitiveABM.FCM
 				//	Console.Write("{0:N2}\t", Agents[i][20]);
 				//}
 			}
+			return agentFitness;
 		}
 
 		protected Tuple<List<double>, List<double>> PickParents(List<double> agentReproductionProbabilites)
@@ -73,11 +95,11 @@ namespace CognitiveABM.FCM
 			int firstParentIndex = SelectRandomWeightedIndex(agentReproductionProbabilites);
 			double temp = agentReproductionProbabilites[firstParentIndex];
 
-			agentReproductionProbabilites[firstParentIndex] = 0; // first parent cannot be picked twice
+			//agentReproductionProbabilites[firstParentIndex] = 0; // first parent cannot be picked twice
 
 			int secondParentIndex = SelectRandomWeightedIndex(agentReproductionProbabilites);
 
-			agentReproductionProbabilites[firstParentIndex] = temp;
+			//agentReproductionProbabilites[firstParentIndex] = temp;
 
 			return Tuple.Create(Agents[firstParentIndex], Agents[secondParentIndex]);
 		}
@@ -100,6 +122,7 @@ namespace CognitiveABM.FCM
 		{
 			Random random = new Random();
 			return Enumerable.Repeat(0, length).Select(i => random.NextDouble()).ToList();
+			//return Enumerable.Repeat(0, length).Select(i => 1.0).ToList();
 		}
 
 		private List<double> CalculateReproductionPercent(List<double> agentFitness)
@@ -111,14 +134,14 @@ namespace CognitiveABM.FCM
 			foreach (double fitnessValue in agentFitness)
 			{
 				double multiplier = 1;
-				//if (fitnessValue > averageFitness)
-				//{
-				//	multiplier = 1.25;
-				//}
-				//else
-				//{
-				//	multiplier = 0.5;
-				//}
+				if (fitnessValue > averageFitness)
+				{
+					multiplier = 1.25;
+				}
+				else
+				{
+					multiplier = 1;
+				}
 				double agentReproductionPercent = (fitnessValue*multiplier) / sumOfFitnessValues;
 				reproductionPercent.Add(agentReproductionPercent);
 			}
@@ -137,12 +160,12 @@ namespace CognitiveABM.FCM
 			return output;
 		}
 
-		private double AverageFitness()
+		public double AverageFitness()
 		{
 			return Fitness(Agents).Sum() / Agents.Count;
 		}
 
-		private double MaxFitness()
+		public double MaxFitness()
 		{
 			return Fitness(Agents).Max();
 		}

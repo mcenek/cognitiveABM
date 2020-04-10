@@ -8,6 +8,8 @@
   </PropertyGroup>
 	<ItemGroup>
 		<PackageReference Include="Mars.Life.Simulations" Version="4.1.*" />
+		<PackageReference Include="Nito.AsyncEx" Version="5.0.0" />
+		<PackageReference Include="ScottPlot" Version="4.0.28" />
 	</ItemGroup>
 	<ItemGroup>
 	  <ProjectReference Include="..\..\CognitiveABM\CognitiveABM.csproj" />
