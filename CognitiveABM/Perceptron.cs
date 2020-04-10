@@ -32,18 +32,22 @@ namespace CognitiveABM.Perceptron
             memory = new double[numberOfInputs];
         }
 
-        public double[] CalculatePerceptronFromId(int agentId, double[] inputs)
+        public double[] CalculatePerceptronFromId(int agentId, double[] inputs, double[] agentMemory)
         {
-            return CalculatePerceptron(FCM.FCM.Agents[agentId].ToArray(), inputs);
+            return CalculatePerceptron(FCM.FCM.Agents[agentId].ToArray(), inputs, agentMemory);
         }
 
-        public double[] CalculatePerceptron(double[] genomes, double[] inputs)
+        public double[] CalculatePerceptron(double[] genomes, double[] inputs, double[] agentMemory)
         {
+
+            
+
             Genomes = genomes;
             // double[] outputs = new double[NumberOfOutputs];
 
             // initialize and set currentValues to the inputs, then all zeros (for the backward and self faceing edges)
             double[] values = new double[NumberOfInputs * 3];
+            int memoryIndex = 0;
             for (int i = 0; i < (inputs.Length * 3) - 1; i++)
             {
                 if (i < inputs.Length)
@@ -52,7 +56,10 @@ namespace CognitiveABM.Perceptron
                 }
                 else
                 {
-                    values[i] = 0;
+                    values[i] = agentMemory[memoryIndex];
+                    memoryIndex++;
+                    if(memoryIndex == agentMemory.Length)
+                        memoryIndex = 0;
                 }
             }
 

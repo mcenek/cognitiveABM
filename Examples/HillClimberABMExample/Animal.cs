@@ -30,7 +30,6 @@ namespace hillClimber
         private string rule = "";
 
         private double[] agentMemory;
-
         public string Rule
         {
             get => rule;
@@ -212,6 +211,7 @@ namespace hillClimber
             double ycor = 0,
             int freq = 1)
         {
+            agentMemory = new double[] { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 };
             Terrain = _layer;
             ID = _id;
             Position = Mars.Interfaces.Environment.Position.CreatePosition(xcor, ycor);
@@ -267,9 +267,8 @@ namespace hillClimber
                 }
             }
 
-            double[] outputs = perceptron.CalculatePerceptronFromId(AnimalId, inputs);
+            double[] outputs = perceptron.CalculatePerceptronFromId(AnimalId, inputs, agentMemory);
             // store outputs for the agent to have a memory
-            agentMemory = new double[outputs.Length * 2];
             // concat values in outputs to itselft and store in the agentMemory so it can be used in the perceptron again
             outputs.CopyTo(agentMemory, 0);
             outputs.CopyTo(agentMemory, outputs.Length);
