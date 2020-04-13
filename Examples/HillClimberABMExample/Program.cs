@@ -1,76 +1,81 @@
 using System;
+using System.Diagnostics;
 using System.IO;
 using HillClimberExample;
 using Mars.Common.Logging;
+using Mars.Common.Logging.Enums;
+using Mars.Core.ModelContainer.Entities;
+using Mars.Core.SimulationManager.Entities;
+using Mars.Core.SimulationStarter;
 
-// todo make this part of our library also?
-public static class Program {
+public static class Program
+{
 
-	// todo get these from somewhere else automatically
-	public static string OUTPUT_FILENAME = "Animal.csv";
-	public static string FITNESS_COLUMNNAME = "BioEnergy";
-	public static int STEPS = 2500;
-
-
-	public static void Main(string[] args) {
-
-
-		int epochs = 100;
-
-
-		HillClimberFCM fcm = new HillClimberFCM(96, 486, STEPS, OUTPUT_FILENAME, FITNESS_COLUMNNAME);
-
-		// loop that runs through the MARS simulations
-		for (int i = 0; i < epochs; i++)
-		{
-			Console.WriteLine("\n\nEpoch {0}\n", i);
-
-			// before the MARS sim we need to initialize the agent init values
-			// for MARS to load them we have to put them into an agent init file names animal_init.csv
-
-			if (args != null && System.Linq.Enumerable.Any(args, s => s.Equals("-l")))
-			{
-				LoggerFactory.SetLogLevel(Mars.Common.Logging.Enums.LogLevel.Off);
-				LoggerFactory.DeactivateConsoleLogging();
-			}
-
-			LoggerFactory.SetLogLevel(Mars.Common.Logging.Enums.LogLevel.Warning);
-			LoggerFactory.DeactivateConsoleLogging();
-
-			var logger = LoggerFactory.GetLogger(typeof(Animal));
-
-			var description = new Mars.Core.ModelContainer.Entities.ModelDescription();
-			description.AddLayer<Terrain>();
-			description.AddAgent<Animal, Terrain>();
-			
-
-			// run a single MARS sim
-			var task = Mars.Core.SimulationStarter.SimulationStarter.Start(description, args);
-
-			Mars.Core.SimulationManager.Entities.SimulationWorkflowState loopResults = task.Run();
-
-			if (loopResults.IsFinished)
-			{
+    public static string OUTPUT_FILENAME = "Animal.csv";
+    public static string FITNESS_COLUMNNAME = "BioEnergy";
+    public static int STEPS = 2500;
+    private static int maxGenerations = 100;
+    private static DateTime startTime;
 
 
-				System.Console.WriteLine($"Simulation execution finished after {loopResults.Iterations} steps");
+    public static void Main(string[] args)
+    {
 
-				// run the FCM which updates the genome values
+        startTime = DateTime.Now;
 
-				var agentFitnessValues = fcm.Run();
+        HillClimberFCM fcm = new HillClimberFCM(population: 96, numberOfValues: 486, STEPS, OUTPUT_FILENAME, FITNESS_COLUMNNAME);
 
-				using (var writer = new StreamWriter(path: "fitness.csv", append: true))
-				{
-					foreach (double value in agentFitnessValues)
-					{
-						writer.Write(value + ",");
-					}
-					writer.WriteLine();
-				}
+        string filename = CreateTimestampedFilename(filename: "FitnessValues", time: startTime, ext: ".csv");
+        string path = ".\\output\\" + filename;
+        var writer = new StreamWriter(path: path, append: true);
 
-				GC.Collect();
-			}
 
-		}
-	}
+
+        for (int generation = 0; generation < maxGenerations; generation++)
+        {
+
+            Console.WriteLine("\nGeneration: {0} of {1}", generation, maxGenerations);
+
+            LoggerFactory.SetLogLevel(LogLevel.Warning);
+            LoggerFactory.DeactivateConsoleLogging();
+
+            ModelDescription description = new ModelDescription();
+            description.AddLayer<Terrain>();
+            description.AddAgent<Animal, Terrain>();
+
+            SimulationStarter task = SimulationStarter.Start(description, args);
+
+            Stopwatch stopWatch = new Stopwatch();
+            stopWatch.Start();
+
+            SimulationWorkflowState loopResults = task.Run();
+
+            if (loopResults.IsFinished)
+            {
+
+                stopWatch.Stop();
+                Console.WriteLine($"Simulation execution finished in {stopWatch.ElapsedMilliseconds / 1000:N2} seconds");
+
+                stopWatch.Restart();
+                var agentFitnessValues = fcm.Run();
+                stopWatch.Stop();
+
+                Console.WriteLine($"FCM finished in {stopWatch.ElapsedMilliseconds / 100:N2} seconds");
+
+
+                foreach (double value in agentFitnessValues)
+                {
+                    writer.Write(value + ",");
+                }
+                writer.WriteLine();
+
+                GC.Collect();
+            }
+        }
+        writer.Close();
+    }
+    private static string CreateTimestampedFilename(string filename, DateTime time, string ext = ".txt")
+    {
+        return filename + time.ToString().Replace('/', '-').Replace(' ', '_').Replace(':', ';') + ext;
+    }
 }

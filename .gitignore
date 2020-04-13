@@ -19,3 +19,7 @@ bld/
 Examples/HillClimberABMExample/Properties/launchSettings.json
 /Examples/HillClimberABMExample/HillClimberABMExample.csproj.user
 /TerrainGenerator/landscape.txt
+Examples/HillClimberABMExample/logs/
+*.log
+[Ll]ogs/
+[Oo]utput/

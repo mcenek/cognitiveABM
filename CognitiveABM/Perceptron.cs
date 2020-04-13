@@ -41,41 +41,22 @@ namespace CognitiveABM.Perceptron
 
         public double[] CalculatePerceptron(double[] genomes, double[] inputs, double[] agentMemory)
         {
+
+
             Genomes = genomes;
             // double[] outputs = new double[NumberOfOutputs];
 
             // initialize and set currentValues to the inputs, then all zeros (for the backward and self faceing edges)
-            double[] values = new double[NumberOfInputs * 3];
-            int memoryIndex = 0;
-            for (int i = 0; i < (inputs.Length * 3) - 1; i++)
-            {
-                if (i < inputs.Length)
-                {
-                    values[i] = inputs[i];
-                }
-                else
-                {
-                    if (useMemory)
-                    {
-                        values[i] = agentMemory[memoryIndex];
-                        memoryIndex++;
-                        if (memoryIndex == agentMemory.Length)
-                            memoryIndex = 0;
-                    }
-                    else
-                    {
-                        values[i] = 0;
-                    }
-                }
-            }
+            double[] values;
+
+            List<double> temp = new List<double>(inputs);
+
+            temp.AddRange(agentMemory);
+            temp.AddRange(agentMemory);
+
+            values = temp.ToArray();
 
             int previousLayerHeight = NumberOfInputs;
-
-            for (int i = 0; i < values.Length; i++)
-            {
-                // Console.Write(values[i] + " ");
-            }
-            // Console.WriteLine();
 
             // should only run twice
             for (int layerNumber = 0; layerNumber < _totalLayers - 1; layerNumber++)
@@ -98,26 +79,12 @@ namespace CognitiveABM.Perceptron
                 // calculate the values of the neurons of the current layer
                 values = MatrixMultiply(values, weights); // this
 
-                for (int i = 0; i < values.Length; i++)
-                {
-                    // Console.Write("{0:N2} ", values[i]);
-
-                    // save values into memory for the agents
-                    memory = values;
-
-                    for (int j = 0; j < values.Length; j++)
-                    {
-                        // Console.Write("{0:N2} ", values[i]);
-                    }
-                    //Console.WriteLine();
-
-                    // keep track of the hieght of the previous later
-                    previousLayerHeight = currentLayerHeight;
-                }
+                // keep track of the hieght of the previous later
+                previousLayerHeight = currentLayerHeight;
 
             }
-                return values;
-            
+            return values;
+
         }
 
         private int CalculateLayerHeight(int layer)
@@ -148,7 +115,6 @@ namespace CognitiveABM.Perceptron
                     _weightIndex++;
                 }
             }
-            //Console.WriteLine(_weightIndex);
             return weights;
         }
 

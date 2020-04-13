@@ -97,7 +97,6 @@ namespace HillClimberExample
         public void Tick()
         {
 
-            PerceptronFactory perceptron = new PerceptronFactory(9, 9, 1, 9);
 
             var inputs = GetAdjacentTerrainElevations();
 
@@ -112,6 +111,7 @@ namespace HillClimberExample
 
             Boolean atPeak = highestInput == 4;
 
+            PerceptronFactory perceptron = new PerceptronFactory(9, 9, 1, 9);
             double[] outputs = perceptron.CalculatePerceptronFromId(AnimalId, inputs, AgentMemory);
             outputs.CopyTo(AgentMemory, 0);
             outputs.CopyTo(AgentMemory, outputs.Length);
