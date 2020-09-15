@@ -23,4 +23,4 @@ Examples/HillClimberABMExample/logs/
 *.log
 [Ll]ogs/
 [Oo]utput/
-logs
+logs/
