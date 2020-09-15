@@ -5,12 +5,12 @@
       "delimiter": ",",
       "format": "en-EN"
     },
-    "steps": "2500"
+    "steps": "150"
   },
   "layers": [
     {
       "name": "Terrain",
-      "file": "gradient.csv",
+      "file": "./layers/gradient.csv",
       "dimensionx": 50,
       "dimensiony": 50
     }
@@ -18,8 +18,8 @@
   "agents": [
     {
       "name": "Animal",
-        "count": 96,
-        "file": "animal_init.csv"
+      "count": 96,
+      "file": "animal_init.csv"
     }
   ]
 }
