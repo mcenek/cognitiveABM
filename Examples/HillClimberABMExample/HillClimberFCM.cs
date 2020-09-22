@@ -18,24 +18,23 @@ using CognitiveABM.FCM;
 
 namespace HillClimberExample
 {
-    class HillClimberFCM : FCM
+    public class HillClimberFCM : FCM
     {
 
-        // get from config.json maybe
         private readonly int steps;
         private readonly string fitnessFileName;
         private readonly string fitnessColumnName;
 
-        public HillClimberFCM(int population, int numberOfValues, int steps, string fitnessFileName, string fitnessColumnName) : base(population, numberOfValues, 1)
+        public HillClimberFCM(int population, int numberOfValues, int steps, string fitnessFileName, string fitnessColumnName, List<List<float>> genomes = null) : base(population, numberOfValues, genomes)
         {
             this.fitnessFileName = fitnessFileName;
             this.fitnessColumnName = fitnessColumnName;
             this.steps = steps;
         }
 
-        public override List<double> Fitness(List<List<double>> agents)
+        public override List<float> Fitness(List<List<float>> agents)
         {
-            var fitnessValues = new List<double>();
+            var fitnessValues = new List<float>();
 
             using (var reader = new StreamReader(fitnessFileName))
             {
@@ -51,7 +50,7 @@ namespace HillClimberExample
 
                     if (Convert.ToInt32(values[0]) == steps)
                     {
-                        fitnessValues.Add(Convert.ToDouble(values[indexOfFitnessValues]));
+                        fitnessValues.Add(float.Parse(values[indexOfFitnessValues]));
                     }
                 }
             }
@@ -59,20 +58,20 @@ namespace HillClimberExample
             return fitnessValues;
         }
 
-        public override List<List<double>> GenerateOffspring(List<double> agentFitnessValues)
+        public override List<List<float>> GenerateOffspring(List<float> agentFitnessValues)
         {
-            ConcurrentBag<List<double>> bag = new ConcurrentBag<List<double>>();
+            ConcurrentBag<List<float>> bag = new ConcurrentBag<List<float>>();
             Random random = new Random();
 
             Parallel.For(0, Population, index =>
             {
-                Tuple<List<double>, List<double>> parents = PickParents(agentFitnessValues.ToList());
+                Tuple<List<float>, List<float>> parents = PickParents(agentFitnessValues.ToList());
                 int splitIndex = random.Next(0, NumberOfValues);
 
-                List<double> child = new List<double>();
+                List<float> child = new List<float>();
 
-                List<double> parent1Genomes = new List<double>(parents.Item1.GetRange(0, splitIndex));
-                List<double> parent2Genomes = new List<double>(parents.Item2.GetRange(splitIndex, parents.Item2.Count - splitIndex));
+                List<float> parent1Genomes = new List<float>(parents.Item1.GetRange(0, splitIndex));
+                List<float> parent2Genomes = new List<float>(parents.Item2.GetRange(splitIndex, parents.Item2.Count - splitIndex));
 
                 child.AddRange(parent1Genomes);
                 child.AddRange(parent2Genomes);
@@ -80,7 +79,7 @@ namespace HillClimberExample
                 for (int i = 0; i < 5; i++)
                 {
                     var randomIndex = random.Next(child.Count);
-                    child[randomIndex] += random.NextDouble() - 0.5;
+                    child[randomIndex] += (float)random.NextDouble() - 0.5f;
                     if (child[randomIndex] > 1)
                         child[randomIndex] = 1;
 

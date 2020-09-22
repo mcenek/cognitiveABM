@@ -1,78 +1,77 @@
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
+using System.Text;
 
 namespace CognitiveABM.FCM
 {
     public abstract class FCM
     {
-        private List<List<double>> _agents;
+        private List<List<float>> _agents;
 
         protected int NumberOfValues { get; }
         protected int Population { get; }
 
-        protected int Iterations { get; }
+        public static List<List<float>> Agents;
 
-        private double FitnessTarget = 135;
-
-        public static List<List<double>> Agents;
-
-        public FCM(int population, int numberOfValues, int iterations)
+        public FCM(int population, int numberOfValues, List<List<float>> genomes = null)
         {
             Population = population;
             NumberOfValues = numberOfValues;
-            Iterations = iterations;
-            Agents = new List<List<double>>(population);
-            for (int i = 0; i < population; i++)
+            if (genomes == null)
             {
-                Agents.Add(CreateRandomArray(numberOfValues));
+                Agents = new List<List<float>>(population);
+                for (int i = 0; i < population; i++)
+                {
+                    Agents.Add(CreateRandomArray(numberOfValues));
+                }
+            }
+            else
+            {
+                Agents = genomes;
             }
         }
 
-        public abstract List<double> Fitness(List<List<double>> agents);
+        public abstract List<float> Fitness(List<List<float>> agents);
 
-        public abstract List<List<double>> GenerateOffspring(List<double> agentFitness);
+        public abstract List<List<float>> GenerateOffspring(List<float> agentFitness);
 
-        public List<double> Run()
+        public List<float> Run(Boolean train, float fitnessTarget = 100, Boolean writeGenomes = false)
         {
-            List<double> agentFitness = new List<double>();
+            List<float> agentFitness = Fitness(Agents);
 
-            for (int epoch = 0; epoch < Iterations; epoch++)
+            var avg = agentFitness.Average();
+            var sum = agentFitness.Sum();
+            var max = agentFitness.Max();
+
+            Console.WriteLine("Average fitness: {0:F2}, Max fitness: {1:F2}", avg, max);
+
+            if (train)
             {
-                agentFitness = Fitness(Agents);
-                
-                var avg = agentFitness.Average();
-                var sum = agentFitness.Sum();
-                var max = agentFitness.Max();
-
-                if (Iterations > 1)
-                {
-                    Console.WriteLine("Epoch: {0} Avg: {1,1:F4}, Max: {2,1:F4}", epoch, avg, max);
-                }
-                else
-                {
-                    Console.WriteLine("Average fitness: {0:F2}, Max fitness: {1:F2}", avg, max);
-                }
-
-                if (avg >= FitnessTarget)
+                if (avg >= fitnessTarget)
                 {
                     Console.WriteLine("FitnessTarget met.");
+                    if (writeGenomes)
+                    {
+                        WriteGenomes("genomes");
+                    }
                     Environment.Exit(0);
                 }
 
-                //for (int i = 0; i < agentFitness.Count; i++)
-                //{
+                for (int i = 0; i < agentFitness.Count; i++)
+                {
 
-                //    if (agentFitness[i] > avg)
-                //    {
-                //    	agentFitness[i] *= 1.5;
-                //    }
-                //    else
-                //    {
-                //    	agentFitness[i] *= 0.5;
-                //    }
+                    if (agentFitness[i] > avg)
+                    {
+                        agentFitness[i] *= 1.2f;
+                    }
+                    else
+                    {
+                        agentFitness[i] *= 0.7f;
+                    }
 
-                //}
+                }
 
                 if (sum == 0)
                 {
@@ -82,17 +81,24 @@ namespace CognitiveABM.FCM
                     }
                 }
 
-                List<double> agentReproductionPercentages = CalculateReproductionPercent(agentFitness.ToList());
+                List<float> agentReproductionPercentages = CalculateReproductionPercent(agentFitness.ToList());
+                var index = agentFitness.IndexOf(agentFitness.Max());
+                var bestAgent = Agents[index];
                 Agents = GenerateOffspring(agentReproductionPercentages);
+
+                for (int i = 0; i < 1; i++)
+                {
+                    Agents[i] = bestAgent;
+                }
             }
 
             return agentFitness;
         }
 
-        protected Tuple<List<double>, List<double>> PickParents(List<double> agentReproductionProbabilites)
+        protected Tuple<List<float>, List<float>> PickParents(List<float> agentReproductionProbabilites)
         {
             int firstParentIndex = SelectRandomWeightedIndex(agentReproductionProbabilites);
-            double temp = agentReproductionProbabilites[firstParentIndex];
+            float temp = agentReproductionProbabilites[firstParentIndex];
 
             agentReproductionProbabilites[firstParentIndex] = 0; // first parent cannot be picked twice
 
@@ -103,11 +109,11 @@ namespace CognitiveABM.FCM
             return Tuple.Create(Agents[firstParentIndex], Agents[secondParentIndex]);
         }
 
-        private int SelectRandomWeightedIndex(List<double> weights)
+        private int SelectRandomWeightedIndex(List<float> weights)
         {
             Random random = new Random();
-            double value = random.NextDouble() * weights.Sum();
-            double sum = 0;
+            float value = (float)random.NextDouble() * weights.Sum();
+            float sum = 0;
             for (int i = 0; i < weights.Count; i++)
             {
                 sum += weights.ElementAt(i);
@@ -117,55 +123,65 @@ namespace CognitiveABM.FCM
             throw new Exception("SelectRandomWeightedIndex did not find index.");
         }
 
-        private List<double> CreateRandomArray(int length)
+        private List<float> CreateRandomArray(int length)
         {
             Random random = new Random();
-            return Enumerable.Repeat(0, length).Select(i => random.NextDouble()).ToList();
-            //return Enumerable.Repeat(0, length).Select(i => 1.0).ToList();
+            return Enumerable.Repeat(0, length).Select(i => (float)random.NextDouble()).ToList();
+            // return Enumerable.Repeat(0, length).Select(i => 1.0).ToList();
         }
 
-        private List<double> CalculateReproductionPercent(List<double> agentFitness)
+        private List<float> CalculateReproductionPercent(List<float> agentFitness)
         {
-            List<double> reproductionPercent = new List<double>();
-            double sumOfFitnessValues = agentFitness.Sum();
-            double averageFitness = AverageFitness();
+            List<float> reproductionPercent = new List<float>();
+            float sumOfFitnessValues = agentFitness.Sum();
+            float averageFitness = AverageFitness();
 
-            foreach (double fitnessValue in agentFitness)
+            foreach (float fitnessValue in agentFitness)
             {
-                double multiplier = 1;
+                float multiplier = 1;
                 if (fitnessValue > averageFitness)
                 {
-                    multiplier = 1.25;
+                    multiplier = 1.25f;
                 }
                 else
                 {
                     multiplier = 1;
                 }
 
-                double agentReproductionPercent = (fitnessValue * multiplier) / sumOfFitnessValues;
+                float agentReproductionPercent = (fitnessValue * multiplier) / sumOfFitnessValues;
                 reproductionPercent.Add(agentReproductionPercent);
             }
 
             return reproductionPercent;
         }
 
-        public override String ToString()
+        public StringBuilder GetGenomes()
         {
-            var fitness = Fitness(Agents);
-            String output = "\n";
+            StringBuilder output = new StringBuilder();
             for (int i = 0; i < Population; i++)
             {
-                output += ("Agent[" + i + "] Fitness: " + fitness[i] + "\nValues: " + string.Join(",", Agents[i]) + "\n");
+                output.Append(string.Join(",", Agents[i]) + "\n");
             }
             return output;
         }
 
-        public double AverageFitness()
+        public void WriteGenomes(string filename)
+        {
+            string path = ".\\output\\" + filename;
+            var writer = new StreamWriter(path: path, append: true);
+            for (int i = 0; i < Population; i++)
+            {
+                writer.Write(string.Join(",", Agents[i]) + "\n");
+            }
+            writer.Close();
+        }
+
+        public float AverageFitness()
         {
             return Fitness(Agents).Sum() / Agents.Count;
         }
 
-        public double MaxFitness()
+        public float MaxFitness()
         {
             return Fitness(Agents).Max();
         }
