@@ -1,5 +1,4 @@
 using System;
-using System.Collections.Generic;
 using System.Diagnostics;
 using CognitiveABM.FCM;
 using Mars.Common.Logging;
@@ -84,7 +83,8 @@ public class ABM
             }
         }
 
-        string filename = FileUtils.CreateTimestampedFilename("Genomes", new DateTime(), ".csv");
+        string filename = FileUtils.CreateTimestampedFilename("Genomes", DateTime.Now, ".csv");
         fcm.WriteGenomes(filename);
+        fcm.WriteGenomes("genomes.csv");
     }
 }
