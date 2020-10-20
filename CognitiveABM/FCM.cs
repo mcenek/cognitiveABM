@@ -37,7 +37,7 @@ namespace CognitiveABM.FCM
 
         public abstract List<List<float>> GenerateOffspring(List<float> agentFitness);
 
-        public List<float> Run(Boolean train, float fitnessTarget = 100, Boolean writeGenomes = false)
+        public List<float> Run(Boolean train, float fitnessTarget = 200, Boolean writeGenomes = false)
         {
             List<float> agentFitness = Fitness(Agents);
 
@@ -59,19 +59,19 @@ namespace CognitiveABM.FCM
                     Environment.Exit(0);
                 }
 
-                for (int i = 0; i < agentFitness.Count; i++)
-                {
+                // for (int i = 0; i < agentFitness.Count; i++)
+                // {
 
-                    if (agentFitness[i] > avg)
-                    {
-                        agentFitness[i] *= 1.2f;
-                    }
-                    else
-                    {
-                        agentFitness[i] *= 0.7f;
-                    }
+                //     if (agentFitness[i] > avg)
+                //     {
+                //         agentFitness[i] *= 1.2f;
+                //     }
+                //     else
+                //     {
+                //         agentFitness[i] *= 0.7f;
+                //     }
 
-                }
+                // }
 
                 if (sum == 0)
                 {
@@ -141,7 +141,7 @@ namespace CognitiveABM.FCM
                 float multiplier = 1;
                 if (fitnessValue > averageFitness)
                 {
-                    multiplier = 1.25f;
+                    multiplier = 1.5f;
                 }
                 else
                 {

@@ -10,7 +10,7 @@ public static class Program
     public static void Main(string[] args)
     {
         var testGenmoes = FileUtils.ReadGenomesFromFile(".\\output\\genomes.csv");
-        HillClimberFCM fcm = new HillClimberFCM(population: 96, numberOfValues: 486, STEPS, OUTPUT_FILENAME, FITNESS_COLUMNNAME, testGenmoes);
+        HillClimberFCM fcm = new HillClimberFCM(population: 96, numberOfValues: 486, STEPS, OUTPUT_FILENAME, FITNESS_COLUMNNAME);
 
         ModelDescription description = new ModelDescription();
         description.AddLayer<Terrain>();
@@ -19,7 +19,7 @@ public static class Program
 
         ABM abm = new ABM(modelDescription: description);
 
-        abm.Train(fcm, 30, 45, true, args);
+        abm.Train(fcm, 30, 200, true, args);
 
         testGenmoes = FileUtils.ReadGenomesFromFile(".\\output\\genomes.csv");
         fcm = new HillClimberFCM(population: 96, numberOfValues: 486, STEPS, OUTPUT_FILENAME, FITNESS_COLUMNNAME, testGenmoes);
