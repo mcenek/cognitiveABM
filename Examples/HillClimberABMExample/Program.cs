@@ -16,8 +16,13 @@ public static class Program
         description.AddLayer<Terrain>();
         description.AddAgent<Animal, Terrain>();
 
-
         ABM abm = new ABM(modelDescription: description);
+
+        abm.Train(fcm, 30, 200, true, args);
+
+        abm.Train(fcm, 30, 200, true, args);
+
+        abm.Train(fcm, 30, 200, true, args);
 
         abm.Train(fcm, 30, 200, true, args);
 
