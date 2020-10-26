@@ -20,12 +20,6 @@ public static class Program
 
         abm.Train(fcm, 30, 200, true, args);
 
-        abm.Train(fcm, 30, 200, true, args);
-
-        abm.Train(fcm, 30, 200, true, args);
-
-        abm.Train(fcm, 30, 200, true, args);
-
         testGenmoes = FileUtils.ReadGenomesFromFile(".\\output\\genomes.csv");
         fcm = new HillClimberFCM(population: 96, numberOfValues: 486, STEPS, OUTPUT_FILENAME, FITNESS_COLUMNNAME, testGenmoes);
         abm.Test(fcm, 2, args);
