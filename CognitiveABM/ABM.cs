@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using System.Diagnostics;
 using CognitiveABM.FCM;
 using Mars.Common.Logging;
@@ -17,7 +18,12 @@ public class ABM
         this.modelDescription = modelDescription;
     }
 
-    public void Test(FCM fcm, int generations, string[] args)
+    public void RunSimulation(string terrainFileName, string[] args)
+    {
+        FileUtils.ChangeTerrainFilePath(terrainFileName);
+    }
+
+    public List<float> Test(FCM fcm, int generations, string[] args)
     {
         var startTime = DateTime.Now;
 
@@ -42,13 +48,16 @@ public class ABM
                 // Console.WriteLine($"Simulation execution finished in {stopWatch.ElapsedMilliseconds / 1000:N2} seconds");
 
                 stopWatch.Restart();
-                fcm.Run(false);
+                var values = fcm.Run(false, 200, true);
                 stopWatch.Stop();
                 // Console.WriteLine($"FCM finished in {stopWatch.ElapsedMilliseconds / 100:N2} seconds");
 
                 GC.Collect();
+
+                return values;
             }
         }
+        return null;
     }
 
     public void Train(FCM fcm, int generations, float targetFitness, Boolean saveGenomes, string[] args)
