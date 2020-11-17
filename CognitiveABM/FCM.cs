@@ -59,20 +59,6 @@ namespace CognitiveABM.FCM
                     Environment.Exit(0);
                 }
 
-                // for (int i = 0; i < agentFitness.Count; i++)
-                // {
-
-                //     if (agentFitness[i] > avg)
-                //     {
-                //         agentFitness[i] *= 1.2f;
-                //     }
-                //     else
-                //     {
-                //         agentFitness[i] *= 0.7f;
-                //     }
-
-                // }
-
                 if (sum == 0)
                 {
                     for (int i = 0; i < agentFitness.Count; i++)
