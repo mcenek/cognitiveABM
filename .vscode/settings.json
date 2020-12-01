@@ -1,0 +1,13 @@
+{
+    "files.exclude": {
+        "**/.git": true,
+        "**/.svn": true,
+        "**/.hg": true,
+        "**/CVS": true,
+        "**/.DS_Store": true,
+        "**/bin": true,
+        "**/obj": true
+    },
+    "explorerExclude.backup": null,
+    "python.pythonPath": "C:\\Users\\alexw\\AppData\\Local\\Microsoft\\WindowsApps\\python.exe"
+}

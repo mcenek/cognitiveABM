@@ -12,7 +12,7 @@ namespace HillClimberExample
         private static readonly ILogger _Logger = LoggerFactory.GetLogger(typeof(Animal));
 
 
-        private readonly double[] AgentMemory;
+        private readonly float[] AgentMemory;
 
         private readonly int startingElevation;
 
@@ -73,11 +73,11 @@ namespace HillClimberExample
         public Terrain Terrain { get; set; }
 
         [Mars.Interfaces.LIFECapabilities.PublishForMappingInMars]
-        public Animal(Guid _id, Terrain _layer, RegisterAgent _register, UnregisterAgent _unregister, SpatialHashEnvironment<Animal> _AnimalEnvironment, int animalId, double xcor = 0, double ycor = 0, int freq = 1)
+        public Animal(Guid _id, Terrain _layer, RegisterAgent _register, UnregisterAgent _unregister, SpatialHashEnvironment<Animal> _AnimalEnvironment, int AnimalId, double xcor = 0, double ycor = 0, int freq = 1)
         {
             ID = _id;
             Terrain = _layer;
-            AnimalId = animalId;
+            this.AnimalId = AnimalId;
             executionFrequency = freq;
 
             Position = Mars.Interfaces.Environment.Position.CreatePosition(xcor, ycor);
@@ -91,13 +91,11 @@ namespace HillClimberExample
             Elevation = Terrain.GetIntegerValue(Position.X, Position.Y);
             startingElevation = Elevation;
 
-            AgentMemory = new double[] { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 };
+            AgentMemory = new float[] { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 };
         }
 
         public void Tick()
         {
-
-
             var inputs = GetAdjacentTerrainElevations();
 
             int highestInput = 0;
@@ -112,7 +110,7 @@ namespace HillClimberExample
             Boolean atPeak = highestInput == 4;
 
             PerceptronFactory perceptron = new PerceptronFactory(9, 9, 1, 9);
-            double[] outputs = perceptron.CalculatePerceptronFromId(AnimalId, inputs, AgentMemory);
+            float[] outputs = perceptron.CalculatePerceptronFromId(AnimalId, inputs, AgentMemory);
             outputs.CopyTo(AgentMemory, 0);
             outputs.CopyTo(AgentMemory, outputs.Length);
 
@@ -130,20 +128,9 @@ namespace HillClimberExample
             int[] newLocation = locations[highestOutput];
 
             Terrain._AnimalEnvironment.MoveTo(this, newLocation[0], newLocation[1], 1, predicate: null);
-
             Elevation = Terrain.GetIntegerValue(this.Position.X, this.Position.Y);
 
-            BioEnergy = Elevation - startingElevation;
-
-            if (BioEnergy < 0)
-            {
-                BioEnergy = 0;
-            }
-
-            if (atPeak && highestOutput == highestInput)
-            {
-                BioEnergy = 150;
-            }
+            BioEnergy = (Elevation < 0) ? 0 : Elevation;
         }
 
         private Tuple<int, int> InitialPosition()
@@ -152,9 +139,9 @@ namespace HillClimberExample
             return new Tuple<int, int>(random.Next(Terrain.DimensionX()), random.Next(Terrain.DimensionY()));
         }
 
-        private double[] GetAdjacentTerrainElevations()
+        private float[] GetAdjacentTerrainElevations()
         {
-            List<double> elevations = new List<double>();
+            List<float> elevations = new List<float>();
             int x = (int)Position.X;
             int y = (int)Position.Y;
 
@@ -162,7 +149,7 @@ namespace HillClimberExample
             {
                 for (int dy = -1; dy <= 1; ++dy)
                 {
-                    elevations.Add(Terrain.GetRealValue(dx + x, dy + y));
+                    elevations.Add((float)Terrain.GetRealValue(dx + x, dy + y));
                 }
             }
 

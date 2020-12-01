@@ -14,13 +14,13 @@ namespace CognitiveABM.Perceptron
 
         protected int NeuronsPerHiddenLayer { get; }
 
-        public double[] Genomes { get; set; }
+        public float[] Genomes { get; set; }
 
         private int _totalLayers;
 
         private int _weightIndex = 0;
 
-        public double[] memory;
+        public float[] memory;
 
         Boolean useMemory = false;
 
@@ -31,28 +31,29 @@ namespace CognitiveABM.Perceptron
             NumberOfHiddenLayers = numberOfHiddenLayers;
             NeuronsPerHiddenLayer = neuronsPerHiddenLayer;
             _totalLayers = 2 + numberOfHiddenLayers;
-            memory = new double[numberOfInputs];
+            memory = new float[numberOfInputs];
         }
 
-        public double[] CalculatePerceptronFromId(int agentId, double[] inputs, double[] agentMemory)
+        public float[] CalculatePerceptronFromId(int agentId, float[] inputs, float[] agentMemory)
         {
             return CalculatePerceptron(FCM.FCM.Agents[agentId].ToArray(), inputs, agentMemory);
         }
 
-        public double[] CalculatePerceptron(double[] genomes, double[] inputs, double[] agentMemory)
+        public float[] CalculatePerceptron(float[] genomes, float[] inputs, float[] agentMemory)
         {
 
 
             Genomes = genomes;
-            // double[] outputs = new double[NumberOfOutputs];
+            // float[] outputs = new float[NumberOfOutputs];
 
             // initialize and set currentValues to the inputs, then all zeros (for the backward and self faceing edges)
-            double[] values;
+            float[] values;
 
-            List<double> temp = new List<double>(inputs);
+            List<float> temp = new List<float>(inputs);
 
-            temp.AddRange(agentMemory);
-            temp.AddRange(agentMemory);
+            // temp.AddRange(agentMemory);
+            // temp.AddRange(agentMemory);
+            temp.AddRange(new float[] { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 });
 
             values = temp.ToArray();
 
@@ -74,7 +75,7 @@ namespace CognitiveABM.Perceptron
                 // should need 243 weights (genomes) per matrix (per layer)
 
                 // get a matrix of weights
-                double[,] weights = CreateWeightMatrix(weightMatrixWidth, weightMatrixHeight);
+                float[,] weights = CreateWeightMatrix(weightMatrixWidth, weightMatrixHeight);
 
                 // calculate the values of the neurons of the current layer
                 values = MatrixMultiply(values, weights); // this
@@ -103,9 +104,9 @@ namespace CognitiveABM.Perceptron
             }
         }
 
-        private double[,] CreateWeightMatrix(int width, int height)
+        private float[,] CreateWeightMatrix(int width, int height)
         {
-            double[,] weights = new double[height, width];
+            float[,] weights = new float[height, width];
 
             for (int i = 0; i < weights.GetLength(0); i++)
             {
@@ -120,17 +121,17 @@ namespace CognitiveABM.Perceptron
 
         // inputs are the values
         // weights are the weights associated with the edges going to the nodes we are calculating the values for
-        private double[] MatrixMultiply(double[] inputs, double[,] weights)
+        private float[] MatrixMultiply(float[] inputs, float[,] weights)
         {
             // the resulting array will be the same length as the number of weight columns in the weight matrix
 
             // ouput vector length
             int outputLength = weights.GetLength(0); // should be 9
-            double[] result = new double[outputLength];
+            float[] result = new float[outputLength];
 
             Parallel.For(0, weights.GetLength(0) - 1, weightRow =>
             {
-                double sum = 0;
+                float sum = 0;
 
                 // iterate over the input values and the weights at the same time
                 for (int i = 0; i < weights.GetLength(1); i++)
