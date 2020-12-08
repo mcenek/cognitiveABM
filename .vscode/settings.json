@@ -9,5 +9,5 @@
         "**/obj": true
     },
     "explorerExclude.backup": null,
-    "python.pythonPath": "C:\\Users\\alexw\\AppData\\Local\\Microsoft\\WindowsApps\\python.exe"
+    "python.pythonPath": "C:\\Python38\\python.exe"
 }

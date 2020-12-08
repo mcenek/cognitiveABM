@@ -5,12 +5,12 @@
       "delimiter": ",",
       "format": "en-EN"
     },
-    "steps": "150"
+    "steps": "250"
   },
   "layers": [
     {
       "name": "Terrain",
-      "file": "./layers/gradient.csv",
+      "file": "./layers/landscape.csv",
       "dimensionx": 50,
       "dimensiony": 50
     }

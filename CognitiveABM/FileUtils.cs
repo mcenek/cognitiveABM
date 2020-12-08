@@ -35,9 +35,21 @@ public static class FileUtils
         using (JsonTextReader reader = new JsonTextReader(file))
         {
             config = (JObject)JToken.ReadFrom(reader);
-            Console.WriteLine(config["layers"][0]["file"]);
             config["layers"][0]["file"] = path;
+        }
 
+        File.WriteAllText(@"./config.json", config.ToString());
+        Console.WriteLine("Changed terrain layer to: " + path);
+    }
+
+    public static void ChangeConfigProp(string prop, string value) {
+        JObject config;
+        // read JSON directly from a file
+        using (StreamReader file = File.OpenText(@"./config.json"))
+        using (JsonTextReader reader = new JsonTextReader(file))
+        {
+            config = (JObject)JToken.ReadFrom(reader);
+            config[prop] = value;
         }
 
         File.WriteAllText(@"./config.json", config.ToString());

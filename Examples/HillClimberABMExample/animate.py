@@ -6,7 +6,7 @@ from celluloid import Camera
 
 NUM_STEPS = 150
 AgentData = './Animal.csv'
-LayerFile = './layers/grid.csv'
+LayerFile = './layers/landscape.csv'
 
 x = []
 y = []
