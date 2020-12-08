@@ -49,8 +49,8 @@ namespace CognitiveABM.QLearning
           }
         }
 
-        if (logging)
-          Console.WriteLine("ComparedSum: " + comparedSum);
+        // if (logging)
+        //   Console.WriteLine("ComparedSum: " + comparedSum);
         //if there is a prior landscape within +/- 5% of the current landscape return its index
         if (comparedSum >= -.05 && comparedSum <= 0.5)
         {
@@ -86,8 +86,14 @@ namespace CognitiveABM.QLearning
     {
       similarLandscapeExperience = findSimlarLanscapeIndex(landscapeArray, minVal, maxVal);
       direction = PickDirection(state, similarLandscapeExperience);
-      if (logging)
-        Console.WriteLine("Direction: " + direction);
+      // if (logging)
+      //   Console.WriteLine("Direction: " + direction);
+    }
+
+    public int getDirection()
+    {
+      Console.WriteLine("Direction: " + direction);
+      return direction;
     }
 
     public int PickDirection(int state, int similarLandscapeExperience) // state chosen will be coming FCM (flee, eat, do nothing, etc)
@@ -96,8 +102,6 @@ namespace CognitiveABM.QLearning
 
       if (rand.NextDouble() < (1 / priorLandscapes.Count)) // rand.NextDouble() < (1 / priorLandscapes.Count) //use prior experience
       {
-        if (logging)
-          Console.WriteLine("Using prior experience");
         float[] experienceArray = Enumerable.Range(0, priorLandscapeResults[similarLandscapeExperience].GetLength(0)).Select(x => priorLandscapeResults[similarLandscapeExperience][x, state]).ToArray();
         float totalArrayValue = experienceArray.Sum();
         List<float> biasAnswerList = new List<float>();
@@ -111,16 +115,6 @@ namespace CognitiveABM.QLearning
           }
         }
 
-        // if (logging)
-        //   for (int i = 0; i < priorLandscapeResults[similarLandscapeExperience].GetLength(0); i++)
-        //   {
-        //     for (int j = 0; j < priorLandscapeResults[similarLandscapeExperience].GetLength(1); j++)
-        //     {
-        //       Console.Write(priorLandscapeResults[similarLandscapeExperience][i, j] + "\t");
-        //     }
-        //     Console.WriteLine();
-        //   }
-
         float value = biasAnswerList[rand.Next(0, biasAnswerList.Count)];
 
         for (int x = 0; x < priorLandscapeResults[similarLandscapeExperience].GetLength(0); ++x)
@@ -129,14 +123,10 @@ namespace CognitiveABM.QLearning
           {
             if (priorLandscapeResults[similarLandscapeExperience][x, y].Equals(value))
             {
-              if (logging)
-                Console.WriteLine("Returning: " + y);
               return y;
             }
           }
         }
-        if (logging)
-          Console.WriteLine("Returning Default 0");
         return 0;
       }
       else //explore
@@ -145,37 +135,10 @@ namespace CognitiveABM.QLearning
           Console.WriteLine("Exploring");
         float[] experienceArray = Enumerable.Range(0, priorLandscapeResults[similarLandscapeExperience].GetLength(0)).Select(x => priorLandscapeResults[similarLandscapeExperience][x, state]).ToArray();
         float totalArrayValue = experienceArray.Sum();
-        List<float> biasAnswerList = new List<float>();
+        List<int> biasAnswerList = new List<int>();
 
-        for (int i = 0; i < experienceArray.Length; i++)
-        {
-          if (experienceArray[i] == 0)
-            biasAnswerList.Add(experienceArray[i]); //if there value is 0, add at least one 
-          else
-            for (int j = 0; j < (1 / (experienceArray[i] + 1) / (totalArrayValue + 1) * 100); j++)
-            {
-              biasAnswerList.Add(experienceArray[i]);
-            }
-        }
-
-        float value = biasAnswerList[rand.Next(0, biasAnswerList.Count)];
-
-        for (int x = 0; x < priorLandscapeResults[similarLandscapeExperience].GetLength(0); ++x)
-        {
-          for (int y = 0; y < priorLandscapeResults[similarLandscapeExperience].GetLength(1); ++y)
-          {
-            if (priorLandscapeResults[similarLandscapeExperience][x, y].Equals(value))
-            {
-              if (logging)
-                Console.WriteLine("Returning: " + y);
-              return y;
-            }
-          }
-        }
-
-        if (logging)
-          Console.WriteLine("Returning Default 0");
-        return 0;
+        int answer = rand.Next(0, experienceArray.Length - 1) + rand.Next(0, experienceArray.Length - 1);
+        return answer;
       }
     }
 
