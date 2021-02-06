@@ -81,6 +81,7 @@ namespace CognitiveABM.FCM
             return agentFitness;
         }
 
+        // method to pick two random parents via a weighted system based on parent fitness
         protected Tuple<List<float>, List<float>> PickParents(List<float> agentReproductionProbabilites)
         {
             int firstParentIndex = SelectRandomWeightedIndex(agentReproductionProbabilites);

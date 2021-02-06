@@ -19,18 +19,18 @@ public static class Program
         {  
             FileUtils.ChangeTerrainFilePath(terrainFilePath);
 
-            // List<List<float>> genomes = null;
-            // if (terrainFilePath != terrainFilePaths[0]) {
-            //     genomes = FileUtils.ReadGenomesFromFile(".\\output\\genomes.csv");
-            // }
-            // HillClimberFCM fcm = new HillClimberFCM(population: 96, numberOfValues: 486, STEPS, OUTPUT_FILENAME, FITNESS_COLUMNNAME, genomes);
+            List<List<float>> trainGenomes = null;
+            if (terrainFilePath != terrainFilePaths[0]) {
+                trainGenomes = FileUtils.ReadGenomesFromFile(".\\output\\genomes.csv");
+            }
+            HillClimberFCM fcm = new HillClimberFCM(population: 96, numberOfValues: 486, STEPS, OUTPUT_FILENAME, FITNESS_COLUMNNAME, trainGenomes);
 
             ABM abm = new ABM(modelDescription: GetModelDescription());
 
-            // abm.Train(fcm, 10, 200, true, args);
+            abm.Train(fcm, 10, 200, true, args);
 
-            var genomes = FileUtils.ReadGenomesFromFile(".\\output\\good.csv");
-            var fcm = new HillClimberFCM(population: 96, numberOfValues: 486, STEPS, OUTPUT_FILENAME, FITNESS_COLUMNNAME, genomes);
+            // var genomes = FileUtils.ReadGenomesFromFile(".\\output\\good.csv");
+            fcm = new HillClimberFCM(population: 96, numberOfValues: 486, STEPS, OUTPUT_FILENAME, FITNESS_COLUMNNAME, trainGenomes);
             fitnessVals.Add(abm.Test(fcm, 1, args));
         }
     }
