@@ -104,13 +104,13 @@ from celluloid import Camera
 
 A finished basically perfect ABM run, all agents have gone to the same spot (red dot) on the terrain.
 
-![Example execution](images\animationResult.png)
+![Example execution](images/animationResult.png)
 
 Here is when the animation has just started, you can see all the agents (top plot) are spread out.
 
-![Example execution](images\animationBegin.png)
+![Example execution](images/animationBegin.png)
 
 In progress ABM run where the agents are not all perfect, but most are doing well.
 
-![Example execution](images\animationProgress.png)
+![Example execution](images/animationProgress.png)
 
