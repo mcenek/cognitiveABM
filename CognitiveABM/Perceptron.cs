@@ -24,6 +24,9 @@ namespace CognitiveABM.Perceptron
 
         Boolean useMemory = false;
 
+        /**
+         * Constructor
+         */
         public PerceptronFactory(int numberOfInputs, int numberOfOutputs, int numberOfHiddenLayers, int neuronsPerHiddenLayer)
         {
             NumberOfInputs = numberOfInputs;
@@ -34,11 +37,22 @@ namespace CognitiveABM.Perceptron
             memory = new float[numberOfInputs];
         }
 
+        /**
+         * [Genomes description]
+         * @type {[type]}
+         */
         public float[] CalculatePerceptronFromId(int agentId, float[] inputs, float[] agentMemory)
         {
             return CalculatePerceptron(FCM.FCM.Agents[agentId].ToArray(), inputs, agentMemory);
         }
 
+        /**
+         * @param genomes: list of all genomes
+         * @param inputs:
+         * @param agentMemory:
+         * @description:
+         * @return:
+         */
         public float[] CalculatePerceptron(float[] genomes, float[] inputs, float[] agentMemory)
         {
 
@@ -53,8 +67,10 @@ namespace CognitiveABM.Perceptron
 
             // temp.AddRange(agentMemory);
             // temp.AddRange(agentMemory);
+            // add 18 0's to temp
             temp.AddRange(new float[] { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 });
 
+            //set valuess to an array copy of temp
             values = temp.ToArray();
 
             int previousLayerHeight = NumberOfInputs;
@@ -88,6 +104,11 @@ namespace CognitiveABM.Perceptron
 
         }
 
+        /**
+         * @param layer: layer to find height
+         * @description: finds the height of a given layer
+         * @returns: layer height
+         */
         private int CalculateLayerHeight(int layer)
         {
             if (layer == 0) // input layer
@@ -104,6 +125,12 @@ namespace CognitiveABM.Perceptron
             }
         }
 
+        /**
+         * @param width: width of weighted matrix
+         * @param height: height of weighted matrix
+         * @description: creates a matrix of weights
+         * @return: weighted matrix named weights
+         */
         private float[,] CreateWeightMatrix(int width, int height)
         {
             float[,] weights = new float[height, width];
@@ -119,8 +146,12 @@ namespace CognitiveABM.Perceptron
             return weights;
         }
 
-        // inputs are the values
-        // weights are the weights associated with the edges going to the nodes we are calculating the values for
+        /**
+         * @param inputs: values of matrix
+         * @param weights: weights associated with the edges going to the nodes
+         * @description: Multiples Matrix
+         * @returns: the resulting matrix from multiplication
+         */
         private float[] MatrixMultiply(float[] inputs, float[,] weights)
         {
             // the resulting array will be the same length as the number of weight columns in the weight matrix
@@ -134,6 +165,7 @@ namespace CognitiveABM.Perceptron
                 float sum = 0;
 
                 // iterate over the input values and the weights at the same time
+                // usuage of strassen's algorithm, or one based off of it, would improve run time
                 for (int i = 0; i < weights.GetLength(1); i++)
                 {
                     sum += weights[weightRow, i] * inputs[weightRow];

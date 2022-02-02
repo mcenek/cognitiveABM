@@ -15,6 +15,12 @@ namespace CognitiveABM.FCM
 
         public static List<List<float>> Agents;
 
+        /**
+         * @param population: population number
+         * @param numberOfValues: number of values to have in the agents
+         * @param genomes: 2d list of float values representing the genomes of agents
+         * @description: creates the agents
+         */
         public FCM(int population, int numberOfValues, List<List<float>> genomes = null)
         {
             Population = population;
@@ -37,6 +43,13 @@ namespace CognitiveABM.FCM
 
         public abstract List<List<float>> GenerateOffspring(List<float> agentFitness);
 
+        /**
+         * @param train: says if to train the agents
+         * @param fitnessTarget: Target fitness for agents to meet
+         * @param writeGenomes: says if the genomes should be written to a file
+         * @description: This will train the agents. If already at target fitness it may print genomes
+         * @return: agentFitness
+         */
         public List<float> Run(Boolean train, float fitnessTarget = 200, Boolean writeGenomes = false)
         {
             List<float> agentFitness = Fitness(Agents);
@@ -72,16 +85,25 @@ namespace CognitiveABM.FCM
                 var bestAgent = Agents[index];
                 Agents = GenerateOffspring(agentReproductionPercentages);
 
+                //i < 1?
+                //could just agents[0] work?
                 for (int i = 0; i < 1; i++)
                 {
                     Agents[i] = bestAgent;
                 }
+
+                //Agents[0] = bestAgent;
+
             }
 
             return agentFitness;
         }
 
-        // method to pick two random parents via a weighted system based on parent fitness
+        /**
+         * @param agentReproductionProbability: list of the probabilities of an agent reproducing
+         * @description: Picks two random parents via a weight system based on parent fitness
+         * @return: A tuple of the parents
+         */
         protected Tuple<List<float>, List<float>> PickParents(List<float> agentReproductionProbabilites)
         {
             int firstParentIndex = SelectRandomWeightedIndex(agentReproductionProbabilites);
@@ -96,6 +118,11 @@ namespace CognitiveABM.FCM
             return Tuple.Create(Agents[firstParentIndex], Agents[secondParentIndex]);
         }
 
+        /**
+         * @param weights: list of weight values
+         * @description: Makes a random value and compares it to the summation of weights
+         * @return: If the value < weight, it returns the position of the last weight
+         */
         private int SelectRandomWeightedIndex(List<float> weights)
         {
             Random random = new Random();
@@ -110,6 +137,10 @@ namespace CognitiveABM.FCM
             throw new Exception("SelectRandomWeightedIndex did not find index.");
         }
 
+        /**
+         * @param length: length of array to be made
+         * @returns a random array
+         */
         private List<float> CreateRandomArray(int length)
         {
             Random random = new Random();
@@ -117,6 +148,12 @@ namespace CognitiveABM.FCM
             // return Enumerable.Repeat(0, length).Select(i => 1.0).ToList();
         }
 
+        /**
+         * @param agentFitness: list of fitness values for the agents
+         * @description: calculates the reproduction percent using a multiplier
+         * @description: multipler is 1.5 if fitness value > average fitness, 1 otherwise
+         * @return: reproduction percent
+         */
         private List<float> CalculateReproductionPercent(List<float> agentFitness)
         {
             List<float> reproductionPercent = new List<float>();
@@ -142,6 +179,10 @@ namespace CognitiveABM.FCM
             return reproductionPercent;
         }
 
+        /**
+         * @description: gets the genomes and combines them into a string
+         * @return: a string of the genomes
+         */
         public StringBuilder GetGenomes()
         {
             StringBuilder output = new StringBuilder();
@@ -152,6 +193,10 @@ namespace CognitiveABM.FCM
             return output;
         }
 
+        /**
+         * @param filename: name of file to be outputed
+         * @description: Writes the genomes to an output file
+         */
         public void WriteGenomes(string filename)
         {
             string path = ".\\output\\" + filename;
@@ -163,11 +208,17 @@ namespace CognitiveABM.FCM
             writer.Close();
         }
 
+        /**
+         * @return: the max fitness of the agents
+         */
         public float AverageFitness()
         {
             return Fitness(Agents).Sum() / Agents.Count;
         }
 
+        /**
+         * @return: the max fitness of the agents
+         */
         public float MaxFitness()
         {
             return Fitness(Agents).Max();
