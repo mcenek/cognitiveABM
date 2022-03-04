@@ -16,6 +16,7 @@ namespace HillClimberExample
     using Mars.Common.Logging;
     using System.Collections.Generic;
     using CognitiveABM.Perceptron;
+    using CognitiveABM.QLearning;
 
     public class Animal : Mars.Interfaces.Agent.IMarsDslAgent
     {
@@ -101,46 +102,92 @@ namespace HillClimberExample
             Elevation = Terrain.GetIntegerValue(Position.X, Position.Y);
             startingElevation = Elevation;
 
+            //AgentMemory is functionally useless right now
+            //it goes into perceptron, but it's useage is commented out
             AgentMemory = new float[] { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 };
         }
 
         // Tick function is called on each step of the simulation
         public void Tick()
         {
-            var inputs = GetAdjacentTerrainElevations();
 
-            int highestInput = 0;
-            for (int i = 0; i < 9; i++)
+            //this code section seems useless, leaving in just in case
+            // var inputs = GetAdjacentTerrainElevations();
+            //
+            // int highestInput = 0;
+            // for (int i = 0; i < 9; i++)
+            // {
+            //     if (inputs[i] > inputs[highestInput])
+            //     {
+            //         highestInput = i;
+            //     }
+            // }
+            //
+            // Boolean atPeak = highestInput == 4;
+
+            /**FCM*/
+            //-----FCM----//
+            // PerceptronFactory perceptron = new PerceptronFactory(9, 9, 1, 9);
+            // float[] outputs = perceptron.CalculatePerceptronFromId(AnimalId, inputs, AgentMemory);
+            // outputs.CopyTo(AgentMemory, 0);
+            // outputs.CopyTo(AgentMemory, outputs.Length);
+            // //more want outputs, aka a list of floats
+            //List<int[]> locations = GetAdjacentTerrainPositions();//leave alone
+            //
+            // int highestOutput = 0;
+            // for (int i = 0; i < 9; i++)
+            // {
+            //     if (outputs[i] > outputs[highestOutput])
+            //     {
+            //         highestOutput = i;
+            //     }
+            // }
+            //int[] newLocation = locations[highestOutput];
+
+            /**QLearn*/
+            //YOU WANT SOME OTHER OBJECT HERE THAT WILL CALL ON QLearning
+            //IT WILL OUTPUT THE SAME SHIT, BUT THIS TIME QLEARNING IS PRESERVED
+            //ABM SHOULD HOUSE THE MAIN QLEARN OBJECT
+            //THEN MAYBE GET FITNESS VALUES TO SAVE WITH A SETTER METHOD WHICH SECONDARY OBJECT USES?
+            QLearning qLearn = new QLearning();
+            List<int[]> adjacentTerrainLocations = GetAdjacentTerrainPositions();
+            float[] adjacentTerrainElevations = GetAdjacentTerrainElevations();
+            //change terrainElevations into a matrix
+            //adjacentTerrainElevations contains 9 elements, so we need 3x3 matrix
+            int index = 0;
+            float[,] landscapePatch = new float[3, 3];
+            float min = adjacentTerrainElevations[index];
+            float max = adjacentTerrainElevations[index];
+            for (int x = 0; x < 3; x++)
             {
-                if (inputs[i] > inputs[highestInput])
+                for (int y = 0; y < 3; y++)
                 {
-                    highestInput = i;
+                    if(adjacentTerrainElevations[index] < min){
+                      min = adjacentTerrainElevations[index];
+                    }
+                    if(adjacentTerrainElevations[index] > max){
+                      max = adjacentTerrainElevations[index];
+                    }
+                    landscapePatch[x, y] = adjacentTerrainElevations[index];
+                    index++;
                 }
             }
 
-            Boolean atPeak = highestInput == 4;
+            int direction = qLearn.getDirection(landscapePatch, min, max);
+            int[] newLocation = adjacentTerrainLocations[direction];
 
-            PerceptronFactory perceptron = new PerceptronFactory(9, 9, 1, 9);
-            float[] outputs = perceptron.CalculatePerceptronFromId(AnimalId, inputs, AgentMemory);
-            outputs.CopyTo(AgentMemory, 0);
-            outputs.CopyTo(AgentMemory, outputs.Length);
+            //Does not work. Question is, how do we get the total fitness and use it with ABM?
+            //int localFit = Math.Abs(Terrain.GetIntegerValue(newLocation[0], newLocation[1]) - Elevation);
+            // Console.WriteLine(Terrain.GetIntegerValue(newLocation[0], newLocation[1]));
+            // Console.WriteLine(Elevation);
+            // Console.WriteLine(localFit);
+            //
+            // Environment.Exit(0);
 
-            List<int[]> locations = GetAdjacentTerrainPositions();
-
-            int highestOutput = 0;
-            for (int i = 0; i < 9; i++)
-            {
-                if (outputs[i] > outputs[highestOutput])
-                {
-                    highestOutput = i;
-                }
-            }
-
-            int[] newLocation = locations[highestOutput];
+            //ABM.QlearningTotalFittness += localFit;
 
             Terrain._AnimalEnvironment.MoveTo(this, newLocation[0], newLocation[1], 1, predicate: null);
             Elevation = Terrain.GetIntegerValue(this.Position.X, this.Position.Y);
-
             BioEnergy = (Elevation < 0) ? 0 : Elevation;
         }
 
@@ -148,7 +195,8 @@ namespace HillClimberExample
 
         private Tuple<int, int> InitialPosition()
         {
-            var random = new Random(ID.GetHashCode());
+            //var random = new Random(ID.GetHashCode());
+            var random = new Random(ID.GetHashCode()); //using hard coded value for testing
             return new Tuple<int, int>(random.Next(Terrain.DimensionX()), random.Next(Terrain.DimensionY()));
         }
 
