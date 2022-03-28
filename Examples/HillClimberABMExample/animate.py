@@ -4,9 +4,9 @@ import matplotlib.pyplot as plt
 import csv
 from celluloid import Camera
 
-NUM_STEPS = 150
+NUM_STEPS = 250
 AgentData = './Animal.csv'
-LayerFile = './layers/landscape.csv'
+LayerFile = './layers/grid.csv'
 
 x = []
 y = []

@@ -2,6 +2,8 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.IO;
+using System.Collections.Concurrent;
+
 //using CognitiveABM.ABM;
 
 
@@ -21,6 +23,11 @@ namespace CognitiveABM.QLearning
         //for simple version, only using these inst vars
         private float[,] qMap = new float[4,4];//Houses qMap used in MSE
         private List<float[,]> prototypes = new List<float[,]>(); //prototype list used for MSE
+        public static List<float> fitness;
+        public static List<int> animalIDHolder;
+        public static Dictionary<int, List<float[]>> patchDict;
+        public static Dictionary<int, List<float>> fitDict;
+
         //--------------------------------//
         /**
          * For now, all qMap will be of four different angles:
@@ -205,6 +212,13 @@ namespace CognitiveABM.QLearning
         public QLearning(){
           setQlearnMap();
           setPrototype();
+          fitness = new List<float>();
+          animalIDHolder = new List<int>();
+          patchDict = new Dictionary<int, List<float[]>>();
+          patchDict.Add(-1, new List<float[]>());
+          fitDict = new Dictionary<int, List<float>>();
+          fitDict.Add(-1, new List<float>());
+
         }
 
         //---SETTERS---//
@@ -261,10 +275,11 @@ namespace CognitiveABM.QLearning
           for(int i = 0; i < this.prototypes.Count; i++){
             MSE[i] = meanSquareError(normallisedLandscapePatch, prototypes.ElementAt(i));
           }
-
           //returns index of smallest value (Grabbed from: https://stackoverflow.com/questions/4204169/how-would-you-get-the-index-of-the-lowest-value-in-an-int-array)
           int minIndex = Enumerable.Range(0, MSE.Length).Aggregate((a, b) => (MSE[a] < MSE[b]) ? a : b);
+
           int direction = biasedRouletteWheel(minIndex);
+
           //direction gives 0-3. The list of locations in animal.cs contains 0-8.
           //so, we need to change direction to work on a list
           //Direction will change via 0=>1, 1=>5, 2=>7, 3=>3
@@ -289,6 +304,7 @@ namespace CognitiveABM.QLearning
                   }
               }
 
+              //System.Environment.Exit(0);
               return normallizedLandscape;
         }//end normalliseLandscapePatch
 
@@ -327,6 +343,79 @@ namespace CognitiveABM.QLearning
           }//end row
           return sum/size;
         }//end MSE
+
+        /**
+         * @param newEle: integer value of the new elevation
+         * @param oldEle: integer value of the old elevation
+         * @description: Gets the absolute of the difference of elevations and adds it to fitness
+         * Writes value to file (should end up with single total fitness value)
+         */
+        public void getNewFit(int newEle, int oldEle, int animalId, int tickNum, float[,] landScapePatch, bool export){
+          float fitDiff =  Math.Abs(newEle-oldEle);
+
+          fitness.Add(fitDiff);
+          List<float> tempList =  new List<float>();
+          if(fitDict.ContainsKey(animalId) == null || !fitDict.ContainsKey(animalId)){
+            tempList.Add(fitDiff);
+            fitDict.Add(animalId, tempList);
+          }
+          else{
+            tempList = fitDict[animalId];
+            tempList.Add(fitDiff);
+            fitDict[animalId] = tempList;
+          }
+
+          if(export){
+            setExportValues(landScapePatch, animalId, tickNum, newEle, oldEle, fitDiff);
+          }
+
+        }
+
+        /**
+         * @param landScapePatch: array of current landScape
+         * @param animalId: id of current animal
+         * @param tickNum: tick number
+         * @description: Puts the following parameters into a public list of arrays
+         */
+        public void setExportValues(float[,] landScapePatch, int animalId, int tickNum, int newEle, int oldEle, float fitVal){
+          //spots 0,1,11,12,13 are reserved for these values
+          float[] temp = new float[16];
+          temp[0] = (float)animalId;
+          temp[1] = (float)tickNum;
+          temp[11] = (float)oldEle;
+          temp[12] = (float)newEle;
+          temp[13] = temp[14] = temp[15]= fitVal;
+
+          int counter = 2;
+          for(int row = 0; row < landScapePatch.GetLength(0); row++){
+            for(int col = 0; col < landScapePatch.GetLength(1); col++){
+              temp[counter] = landScapePatch[row,col];
+              counter++;
+            }
+          }
+
+          //look at previous fit val for all of it, take average and mwhatnot
+          if(!animalIDHolder.Contains(animalId)){
+            animalIDHolder.Add(animalId);
+          }
+
+          List<float[]> tempList = new List<float[]>();
+          if(patchDict.ContainsKey(animalId) == null || !patchDict.ContainsKey(animalId)){
+            tempList.Add(temp);
+            patchDict.Add(animalId, tempList);
+          }
+          else{
+            tempList = patchDict[animalId];
+            int numberOfFitVals = 1;
+            foreach(float[] array in tempList){
+              temp[15] += array[13];
+              numberOfFitVals++;
+            }
+            temp[14] = temp[15]/numberOfFitVals;
+            tempList.Add(temp);
+            patchDict[animalId] = tempList;
+          }
+        }//end exportValues
 
 
     }

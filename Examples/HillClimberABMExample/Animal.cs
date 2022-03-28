@@ -17,6 +17,8 @@ namespace HillClimberExample
     using System.Collections.Generic;
     using CognitiveABM.Perceptron;
     using CognitiveABM.QLearning;
+    using System.IO;
+
 
     public class Animal : Mars.Interfaces.Agent.IMarsDslAgent
     {
@@ -34,6 +36,10 @@ namespace HillClimberExample
         public bool Equals(Animal other) => Equals(ID, other.ID);
 
         public override int GetHashCode() => ID.GetHashCode();
+
+        public QLearning qLearn = new QLearning();
+
+        public int tickNum = 0;
 
         private string rule = default;
 
@@ -111,20 +117,6 @@ namespace HillClimberExample
         public void Tick()
         {
 
-            //this code section seems useless, leaving in just in case
-            // var inputs = GetAdjacentTerrainElevations();
-            //
-            // int highestInput = 0;
-            // for (int i = 0; i < 9; i++)
-            // {
-            //     if (inputs[i] > inputs[highestInput])
-            //     {
-            //         highestInput = i;
-            //     }
-            // }
-            //
-            // Boolean atPeak = highestInput == 4;
-
             /**FCM*/
             //-----FCM----//
             // PerceptronFactory perceptron = new PerceptronFactory(9, 9, 1, 9);
@@ -145,11 +137,6 @@ namespace HillClimberExample
             //int[] newLocation = locations[highestOutput];
 
             /**QLearn*/
-            //YOU WANT SOME OTHER OBJECT HERE THAT WILL CALL ON QLearning
-            //IT WILL OUTPUT THE SAME SHIT, BUT THIS TIME QLEARNING IS PRESERVED
-            //ABM SHOULD HOUSE THE MAIN QLEARN OBJECT
-            //THEN MAYBE GET FITNESS VALUES TO SAVE WITH A SETTER METHOD WHICH SECONDARY OBJECT USES?
-            QLearning qLearn = new QLearning();
             List<int[]> adjacentTerrainLocations = GetAdjacentTerrainPositions();
             float[] adjacentTerrainElevations = GetAdjacentTerrainElevations();
             //change terrainElevations into a matrix
@@ -172,31 +159,26 @@ namespace HillClimberExample
                     index++;
                 }
             }
-
-            int direction = qLearn.getDirection(landscapePatch, min, max);
+            int direction = this.qLearn.getDirection(landscapePatch, min, max);
             int[] newLocation = adjacentTerrainLocations[direction];
 
-            //Does not work. Question is, how do we get the total fitness and use it with ABM?
-            //int localFit = Math.Abs(Terrain.GetIntegerValue(newLocation[0], newLocation[1]) - Elevation);
-            // Console.WriteLine(Terrain.GetIntegerValue(newLocation[0], newLocation[1]));
-            // Console.WriteLine(Elevation);
-            // Console.WriteLine(localFit);
-            //
-            // Environment.Exit(0);
 
-            //ABM.QlearningTotalFittness += localFit;
-
+            //MoveTo (animal object, location, traveling distance)
             Terrain._AnimalEnvironment.MoveTo(this, newLocation[0], newLocation[1], 1, predicate: null);
+
+            int tempElevation = Elevation;
             Elevation = Terrain.GetIntegerValue(this.Position.X, this.Position.Y);
+            this.qLearn.getNewFit(Elevation, tempElevation, this.AnimalId, this.tickNum, landscapePatch, export: true);
             BioEnergy = (Elevation < 0) ? 0 : Elevation;
+            this.tickNum++;
         }
 
         // helper methods
 
         private Tuple<int, int> InitialPosition()
         {
-            //var random = new Random(ID.GetHashCode());
-            var random = new Random(ID.GetHashCode()); //using hard coded value for testing
+            var random = new Random(18);
+            //var random = new Random(ID.GetHashCode()); //using hard coded value for testing
             return new Tuple<int, int>(random.Next(Terrain.DimensionX()), random.Next(Terrain.DimensionY()));
         }
 
@@ -234,5 +216,7 @@ namespace HillClimberExample
 
             return locations;
         }
+
+
     }
 }
