@@ -314,7 +314,7 @@ namespace CognitiveABM.QLearning
           * @return: index of row of qMap which represents direction
           */
         public int biasedRouletteWheel(int col){
-          var random = new Random(18);//seed for random is just 18 so we can consitantly get the same result
+          var random = new Random();//seed for random is just 18 so we can consitantly get the same result
           float rFloat = (float)random.NextDouble();
           float addedVal = 0.0f;
           //we add all values of the col together, when > rDouble, we choose last column
@@ -350,7 +350,7 @@ namespace CognitiveABM.QLearning
          * @description: Gets the absolute of the difference of elevations and adds it to fitness
          * Writes value to file (should end up with single total fitness value)
          */
-        public void getNewFit(int newEle, int oldEle, int animalId, int tickNum, float[,] landScapePatch, bool export){
+        public void getNewFit(int newEle, int oldEle, int animalId, int tickNum, float[,] landScapePatch, bool export, int x, int y){
           float fitDiff =  Math.Abs(newEle-oldEle);
 
           fitness.Add(fitDiff);
@@ -366,7 +366,7 @@ namespace CognitiveABM.QLearning
           }
 
           if(export){
-            setExportValues(landScapePatch, animalId, tickNum, newEle, oldEle, fitDiff);
+            setExportValues(landScapePatch, animalId, tickNum, newEle, oldEle, fitDiff,x,y);
           }
 
         }
@@ -375,16 +375,23 @@ namespace CognitiveABM.QLearning
          * @param landScapePatch: array of current landScape
          * @param animalId: id of current animal
          * @param tickNum: tick number
+         * @param newEle: next elevation
+         * @param oldEle: current elevation
+         * @param fitVal: current fitness gained from moving
+         * @param x: x value of position
+         * @param y: y value of position
          * @description: Puts the following parameters into a public list of arrays
          */
-        public void setExportValues(float[,] landScapePatch, int animalId, int tickNum, int newEle, int oldEle, float fitVal){
+        public void setExportValues(float[,] landScapePatch, int animalId, int tickNum, int newEle, int oldEle, float fitVal, int x, int y){
           //spots 0,1,11,12,13 are reserved for these values
-          float[] temp = new float[16];
+          float[] temp = new float[18];
           temp[0] = (float)animalId;
           temp[1] = (float)tickNum;
           temp[11] = (float)oldEle;
           temp[12] = (float)newEle;
           temp[13] = temp[14] = temp[15]= fitVal;
+          temp[16] = (float)x;
+          temp[17] = (float)y;
 
           int counter = 2;
           for(int row = 0; row < landScapePatch.GetLength(0); row++){

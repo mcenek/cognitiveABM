@@ -161,7 +161,7 @@ public class ABM
           var w = new StreamWriter(path: fileName);
 
           //write headers to csv
-          string[] headers = new string[16];
+          string[] headers = new string[18];
           headers[0] = "AnimalID";
           headers[1] = "TickNum";
           for(int k = 2; k < headers.Length-3; k++){
@@ -172,6 +172,8 @@ public class ABM
           headers[13] = "Fitness Gained";
           headers[14] = "Average Fitness";
           headers[15] = "Total Fitness";
+          headers[16] = "X Pos";
+          headers[17] = "Y Pos";
           w.Write(String.Join(",", headers) + "\n");
 
           //write data to csv

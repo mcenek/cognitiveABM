@@ -5,8 +5,15 @@ import csv
 from celluloid import Camera
 
 NUM_STEPS = 250
-AgentData = './Animal.csv'
-LayerFile = './layers/grid.csv'
+
+# AgentData = './output/landScape_exportInfo.csv'
+# LayerFile = './layers/landScape.csv'
+
+# AgentData = './output/grid_exportInfo.csv'
+# LayerFile = './layers/grid.csv'
+
+AgentData = './output/gradient_exportInfo.csv'
+LayerFile = './layers/gradient.csv'
 
 x = []
 y = []
@@ -18,9 +25,9 @@ with open(AgentData, newline='') as csvfile:
     reader = csv.DictReader(csvfile)
 
     for row in reader:
-        x.append(int(float(row['0_Position'])))
-        y.append(int(float(row['1_Position'])))
-        fitness.append(int(float(row['BioEnergy'])))
+        x.append(int(float(row['X Pos'])))
+        y.append(int(float(row['Y Pos'])))
+        fitness.append(int(float(row['Current Elevation'])))
 
 numpoints = 96
 points = np.random.random((2, numpoints))
