@@ -129,13 +129,7 @@ public class ABM
             if (loopResults.IsFinished)
             {
                 stopWatch.Stop();
-                // Console.WriteLine($"Simulation execution finished in {stopWatch.ElapsedMilliseconds / 1000:N2} seconds");
-
-                //stopWatch.Restart();
-                //var values = fcm.Run(false, 200, true);
-                //stopWatch.Stop();
-                // Console.WriteLine($"FCM finished in {stopWatch.ElapsedMilliseconds / 100:N2} seconds");
-                //List<float> agentFitness = Fitness(steps, fitnessColumnName, fitnessFileName);
+                
                 List<float> agentFitness = QLearning.fitness;
                 var avg = agentFitness.Average();
                 var max = agentFitness.Max();
