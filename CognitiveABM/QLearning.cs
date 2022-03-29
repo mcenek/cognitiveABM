@@ -345,33 +345,6 @@ namespace CognitiveABM.QLearning
         }//end MSE
 
         /**
-         * @param newEle: integer value of the new elevation
-         * @param oldEle: integer value of the old elevation
-         * @description: Gets the absolute of the difference of elevations and adds it to fitness
-         * Writes value to file (should end up with single total fitness value)
-         */
-        public void getNewFit(int newEle, int oldEle, int animalId, int tickNum, float[,] landScapePatch, bool export, int x, int y){
-          float fitDiff =  Math.Abs(newEle-oldEle);
-
-          fitness.Add(fitDiff);
-          List<float> tempList =  new List<float>();
-          if(fitDict.ContainsKey(animalId) == null || !fitDict.ContainsKey(animalId)){
-            tempList.Add(fitDiff);
-            fitDict.Add(animalId, tempList);
-          }
-          else{
-            tempList = fitDict[animalId];
-            tempList.Add(fitDiff);
-            fitDict[animalId] = tempList;
-          }
-
-          if(export){
-            setExportValues(landScapePatch, animalId, tickNum, newEle, oldEle, fitDiff,x,y);
-          }
-
-        }
-
-        /**
          * @param landScapePatch: array of current landScape
          * @param animalId: id of current animal
          * @param tickNum: tick number
@@ -382,17 +355,16 @@ namespace CognitiveABM.QLearning
          * @param y: y value of position
          * @description: Puts the following parameters into a public list of arrays
          */
-        public void setExportValues(float[,] landScapePatch, int animalId, int tickNum, int newEle, int oldEle, float fitVal, int x, int y){
-          //spots 0,1,11,12,13 are reserved for these values
+        public void setExportValues(float[,] landScapePatch, int animalId, int tickNum, int currentEle, int x, int y){
+          //spots 0,1,11,12,13,16,17 are reserved values
           float[] temp = new float[18];
           temp[0] = (float)animalId;
           temp[1] = (float)tickNum;
-          temp[11] = (float)oldEle;
-          temp[12] = (float)newEle;
-          temp[13] = temp[14] = temp[15]= fitVal;
+          temp[11] = (float)currentEle;
           temp[16] = (float)x;
           temp[17] = (float)y;
 
+          //put landscape matrix in array form
           int counter = 2;
           for(int row = 0; row < landScapePatch.GetLength(0); row++){
             for(int col = 0; col < landScapePatch.GetLength(1); col++){
@@ -401,28 +373,63 @@ namespace CognitiveABM.QLearning
             }
           }
 
-          //look at previous fit val for all of it, take average and mwhatnot
+
           if(!animalIDHolder.Contains(animalId)){
             animalIDHolder.Add(animalId);
           }
 
           List<float[]> tempList = new List<float[]>();
+          //if animal has yet to be seen
           if(patchDict.ContainsKey(animalId) == null || !patchDict.ContainsKey(animalId)){
+            temp[12] = 0.0f;
+            temp[13] = temp[14] = temp[15]= 0.0f;
             tempList.Add(temp);
             patchDict.Add(animalId, tempList);
           }
+
           else{
             tempList = patchDict[animalId];
-            int numberOfFitVals = 1;
-            foreach(float[] array in tempList){
-              temp[15] += array[13];
-              numberOfFitVals++;
-            }
-            temp[14] = temp[15]/numberOfFitVals;
+            temp[12] = (tempList.Last())[11];
+            temp[13] = Math.Abs((float)currentEle - temp[12]);
+            float[] avgMax = getAverageandTotal(tempList, temp[13]);
+            temp[14] = avgMax[0];
+            temp[15] = avgMax[1];
+            fitness.Add(temp[13]);
             tempList.Add(temp);
             patchDict[animalId] = tempList;
           }
         }//end exportValues
+
+        /**
+         * @param tempList: List of float arrays containing previous animal info
+         * @param currentFit: current fitness gained value from this animal
+         * @return: returns the average and total of all fitness gains of animal
+         * @description: calculates the average and total fitness of an animal at current moment in time
+         */
+        public float[] getAverageandTotal(List<float[]> tempList, float currentFit){
+          int counter;
+          float[] returnVals = {0.0f, 0.0f};
+
+          if(currentFit > 0){
+            counter = 1;
+          }
+          else{
+            counter = 0;
+          }
+
+          foreach(float[] array in tempList){
+            if(array[13] > 0){
+              currentFit += array[13];
+              counter++;
+            }
+          }
+
+          if(counter != 0){
+            returnVals[0] = currentFit/counter;
+            returnVals[1] = currentFit;
+          }
+          return returnVals;
+        }//end getAverage
 
 
     }

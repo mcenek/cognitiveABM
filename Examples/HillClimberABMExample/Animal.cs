@@ -167,10 +167,10 @@ namespace HillClimberExample
             Terrain._AnimalEnvironment.MoveTo(this, newLocation[0], newLocation[1], 1, predicate: null);
             int xPos = (int)Position.X;
             int yPos = (int)Position.Y;
-            
+
             int tempElevation = Elevation;
             Elevation = Terrain.GetIntegerValue(this.Position.X, this.Position.Y);
-            this.qLearn.getNewFit(Elevation, tempElevation, this.AnimalId, this.tickNum, landscapePatch, export: true, xPos, yPos);
+            this.qLearn.setExportValues(landscapePatch,this.AnimalId, this.tickNum, Elevation, xPos, yPos);
             BioEnergy = (Elevation < 0) ? 0 : Elevation;
             this.tickNum++;
         }

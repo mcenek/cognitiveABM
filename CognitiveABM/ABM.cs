@@ -141,7 +141,7 @@ public class ABM
                 var max = agentFitness.Max();
 
                 Console.WriteLine("Average fitness: {0:F2}, Max fitness: {1:F2}", avg, max);
-                exportInfo(QLearning.patchDict, QLearning.animalIDHolder, QLearning.fitDict, terrianFilePath);
+                exportInfo(QLearning.patchDict, QLearning.animalIDHolder, terrianFilePath);
                 GC.Collect();
                 return agentFitness;
             }
@@ -156,7 +156,7 @@ public class ABM
      * @param terrianFilePath: String of full pathway to selected terrian File
      * @description: prints all values of the values parameter into a csv file named after the terrian
      */
-    public void exportInfo(Dictionary<int,List<float[]>> patchDict, List<int> animalIdList, Dictionary<int, List<float>> fitDict, string terrianFilePath){
+    public void exportInfo(Dictionary<int,List<float[]>> patchDict, List<int> animalIdList, string terrianFilePath){
           string fileName = "./output/" + Path.GetFileNameWithoutExtension(terrianFilePath) + "_exportInfo.csv";
           var w = new StreamWriter(path: fileName);
 
@@ -168,7 +168,7 @@ public class ABM
             headers[k] = "LandscapePatch " + (k-2).ToString();
           }
           headers[11] = "Current Elevation";
-          headers[12] = "Next Elevation";
+          headers[12] = "Previous Elevation";
           headers[13] = "Fitness Gained";
           headers[14] = "Average Fitness";
           headers[15] = "Total Fitness";
