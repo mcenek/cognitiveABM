@@ -178,11 +178,9 @@ public class ABM
 
           //write data to csv
           List<float[]> patchList = new List<float[]>();
-          List<float> fitList = new List<float>();
           List<float> currentFit = new List<float>();
           foreach (int id in animalIdList){
             patchList = patchDict[id];
-            fitList = fitDict[id];
             foreach (float[] array in patchList){
                w.Write(String.Join(",", array) + "\n");
 

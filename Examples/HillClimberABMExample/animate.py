@@ -3,8 +3,10 @@ from matplotlib import cm
 import matplotlib.pyplot as plt
 import csv
 from celluloid import Camera
+import pandas as pandasForSortingCSV
 
-NUM_STEPS = 250
+NUM_STEPS = 150
+
 
 # AgentData = './output/landScape_exportInfo.csv'
 # LayerFile = './layers/landScape.csv'
@@ -12,8 +14,20 @@ NUM_STEPS = 250
 # AgentData = './output/grid_exportInfo.csv'
 # LayerFile = './layers/grid.csv'
 
-AgentData = './output/gradient_exportInfo.csv'
-LayerFile = './layers/gradient.csv'
+# AgentData = './output/gradient_exportInfo.csv'
+# LayerFile = './layers/gradient.csv'
+
+Data = ['./output/landScape_exportInfo.csv','./output/grid_exportInfo.csv', './output/gradient_exportInfo.csv']
+Layer = ['./layers/landScape.csv', './layers/grid.csv', './layers/gradient.csv']
+
+AgentData = Data[0]
+LayerFile = Layer[0]
+
+for file in Data:
+    csvData = pandasForSortingCSV.read_csv(file)
+    sorted_data = csvData.sort_values(by=["TickNum", "AnimalID"],ascending=[True, True])
+    sorted_data.to_csv(file, index=False)
+
 
 x = []
 y = []
@@ -43,7 +57,7 @@ avg_fit = []
 fitness_map.set_xlabel('Steps')
 fitness_map.set_ylabel('Average Fitness')
 
-heatmap.imshow(terrain)
+heatmap.imshow(terrain, origin = 'lower')
 
 for i in range(NUM_STEPS):
     fit_val = fitness[i*96: i*96 + 96]
@@ -51,7 +65,6 @@ for i in range(NUM_STEPS):
     norm = [(float(i)/(max(fit_val) + 1)) for i in fit_val]
     colors = cm.rainbow(norm)
     fitness_map.plot(avg_fit)
-    heatmap.imshow(terrain)
     agent_pos.scatter(x[i*96: i*96 + 96], y[i*96: i*96 + 96], c=colors, s=100)
     camera.snap()
 anim = camera.animate(blit=True)
