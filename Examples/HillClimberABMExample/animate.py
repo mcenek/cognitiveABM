@@ -60,12 +60,12 @@ fitness_map.set_ylabel('Average Fitness')
 heatmap.imshow(terrain, origin = 'lower')
 
 for i in range(NUM_STEPS):
-    fit_val = fitness[i*96: i*96 + 96]
-    avg_fit.append(sum(fitness[i*96: i*96 + 96])/96)
+    fit_val = fitness[i*numpoints: i*numpoints + numpoints]
+    avg_fit.append(sum(fitness[i*numpoints: i*numpoints + numpoints])/numpoints)
     norm = [(float(i)/(max(fit_val) + 1)) for i in fit_val]
     colors = cm.rainbow(norm)
     fitness_map.plot(avg_fit)
-    agent_pos.scatter(x[i*96: i*96 + 96], y[i*96: i*96 + 96], c=colors, s=100)
+    agent_pos.scatter(x[i*numpoints: i*numpoints + numpoints], y[i*numpoints: i*numpoints + numpoints], c=colors, s=100)
     camera.snap()
 anim = camera.animate(blit=True)
 plt.show()

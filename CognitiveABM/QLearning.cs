@@ -4,8 +4,6 @@ using System.Linq;
 using System.IO;
 using System.Collections.Concurrent;
 
-//using CognitiveABM.ABM;
-
 
 namespace CognitiveABM.QLearning
 {
@@ -33,6 +31,16 @@ namespace CognitiveABM.QLearning
          * For now, all qMap will be of four different angles:
          * 45, 90, 135, and 180 degrees. Values are either .7,.125, or .05
          * All landscapes will have one of these angles
+         */
+        //--------------------------------//
+        /**
+         * Make list of arrays for different qmaps
+         * starts off as a bunch of random qmaps, 1 for each animal
+         * run simulation, then based off of a score value(derived from max fitness or something)
+         * pick like the top ten animals, maybe average the qmaps
+         * redo the test with the new qmap but the qmap is changed slightly for each animal
+         * continue this process until we get an average fitness or some fittness value we like
+         * then once again average the qmaps to get a single qmap, test this qmap and batta bing batta boom
          */
         //--------------------------------//
 

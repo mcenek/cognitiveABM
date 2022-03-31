@@ -179,8 +179,8 @@ namespace HillClimberExample
 
         private Tuple<int, int> InitialPosition()
         {
-            var random = new Random(18);
-            //var random = new Random(ID.GetHashCode()); //using hard coded value for testing
+            //var random = new Random(18);
+            var random = new Random(ID.GetHashCode()); //using hard coded value for testing
             return new Tuple<int, int>(random.Next(Terrain.DimensionX()), random.Next(Terrain.DimensionY()));
         }
 
