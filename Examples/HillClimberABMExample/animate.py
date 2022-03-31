@@ -55,7 +55,7 @@ camera = Camera(fig)
 avg_fit = []
 
 fitness_map.set_xlabel('Steps')
-fitness_map.set_ylabel('Average Fitness')
+fitness_map.set_ylabel('Average Elevation')
 
 heatmap.imshow(terrain, origin = 'lower')
 

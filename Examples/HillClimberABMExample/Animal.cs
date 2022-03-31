@@ -164,13 +164,13 @@ namespace HillClimberExample
 
 
             //MoveTo (animal object, location, traveling distance)
-            Terrain._AnimalEnvironment.MoveTo(this, newLocation[0], newLocation[1], 1, predicate: null);
             int xPos = (int)Position.X;
             int yPos = (int)Position.Y;
 
+            Terrain._AnimalEnvironment.MoveTo(this, newLocation[0], newLocation[1], 1, predicate: null);
             int tempElevation = Elevation;
-            Elevation = Terrain.GetIntegerValue(this.Position.X, this.Position.Y);
             this.qLearn.setExportValues(landscapePatch,this.AnimalId, this.tickNum, Elevation, xPos, yPos);
+            Elevation = Terrain.GetIntegerValue(this.Position.X, this.Position.Y);
             BioEnergy = (Elevation < 0) ? 0 : Elevation;
             this.tickNum++;
         }
@@ -182,6 +182,7 @@ namespace HillClimberExample
             //var random = new Random(18);
             var random = new Random(ID.GetHashCode()); //using hard coded value for testing
             return new Tuple<int, int>(random.Next(Terrain.DimensionX()), random.Next(Terrain.DimensionY()));
+
         }
 
         private float[] GetAdjacentTerrainElevations()
@@ -190,9 +191,9 @@ namespace HillClimberExample
             int x = (int)Position.X;
             int y = (int)Position.Y;
 
-            for (int dx = -1; dx <= 1; ++dx)
+            for (int dy = 1; dy >= -1; --dy)
             {
-                for (int dy = -1; dy <= 1; ++dy)
+                for (int dx = -1; dx <= 1; ++dx)
                 {
                     elevations.Add((float)Terrain.GetRealValue(dx + x, dy + y));
                 }
@@ -207,9 +208,9 @@ namespace HillClimberExample
             int x = (int)Position.X;
             int y = (int)Position.Y;
 
-            for (int dx = -1; dx <= 1; ++dx)
+            for (int dy = 1; dy >= -1; --dy)
             {
-                for (int dy = -1; dy <= 1; ++dy)
+                for (int dx = -1; dx <= 1; ++dx)
                 {
                     int[] location = new int[] { dx + x, dy + y };
                     locations.Add(location);
