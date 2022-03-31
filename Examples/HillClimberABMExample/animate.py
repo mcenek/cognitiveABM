@@ -57,7 +57,7 @@ avg_fit = []
 fitness_map.set_xlabel('Steps')
 fitness_map.set_ylabel('Average Elevation')
 
-heatmap.imshow(terrain, origin = 'lower')
+heatmap.imshow(terrain[::-1], origin = 'lower')
 
 for i in range(NUM_STEPS):
     fit_val = fitness[i*numpoints: i*numpoints + numpoints]
