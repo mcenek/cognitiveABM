@@ -7,16 +7,6 @@ import pandas as pandasForSortingCSV
 
 NUM_STEPS = 150
 
-
-# AgentData = './output/landScape_exportInfo.csv'
-# LayerFile = './layers/landScape.csv'
-
-# AgentData = './output/grid_exportInfo.csv'
-# LayerFile = './layers/grid.csv'
-
-# AgentData = './output/gradient_exportInfo.csv'
-# LayerFile = './layers/gradient.csv'
-
 Data = ['./output/landScape_exportInfo.csv','./output/grid_exportInfo.csv', './output/gradient_exportInfo.csv']
 Layer = ['./layers/landScape.csv', './layers/grid.csv', './layers/gradient.csv']
 

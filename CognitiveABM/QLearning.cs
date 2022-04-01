@@ -234,7 +234,7 @@ namespace CognitiveABM.QLearning
         //can be way more efficent, but this is just a temp job
         public void setQlearnMap(){
           //var filePath = @"..\HillClimberABMExample\layers\LandScapeSlopeHard.csv";
-          float[,] data = new float[4,4]; //4x4 qmap matrix hard coded
+          float[,] data = new float[8,8]; //4x4 qmap matrix hard coded
           using(var reader = new StreamReader(@"..\HillClimberABMExample\layers\LandScapeSlopeHard.csv"))
          {
              int counter = 0;
@@ -247,6 +247,10 @@ namespace CognitiveABM.QLearning
                  data[counter,1] = float.Parse(values[1]);
                  data[counter,2] = float.Parse(values[2]);
                  data[counter,3] = float.Parse(values[3]);
+                 // data[counter,4] = float.Parse(values[4]);
+                 // data[counter,5] = float.Parse(values[5]);
+                 // data[counter,6] = float.Parse(values[6]);
+                 // data[counter,7] = float.Parse(values[7]);
                  counter++;
                }
              }
@@ -267,6 +271,16 @@ namespace CognitiveABM.QLearning
           this.prototypes.Add(protoE);
           this.prototypes.Add(protoS);
           this.prototypes.Add(protoW);
+
+          // float[,] protoNE = new float[,] {{.5f,1f,1f},{0f,.5f,1f},{0f,0f,.5f}};
+          // float[,] protoSE = new float[,] {{0f,0f,.5f},{0f,.5f,1f},{.5f,1f,1f}};
+          // float[,] protoSW = new float[,] {{.5f,0f,0f},{1f,.5f,0f},{1f,1f,.5f}};
+          // float[,] protoNW = new float[,] {{1f,1f,.5f},{1f,.5f,0f},{.5f,0f,0f}};
+          //
+          // this.prototypes.Add(protoNE);
+          // this.prototypes.Add(protoSE);
+          // this.prototypes.Add(protoSW);
+          // this.prototypes.Add(protoNW);
         }
 
         //---HELPER FUNCTIONS---//
@@ -292,6 +306,7 @@ namespace CognitiveABM.QLearning
           //so, we need to change direction to work on a list
           //Direction will change via 0=>1, 1=>5, 2=>7, 3=>3
           int[] directionMap = {1,5,7,3};
+          // int[] directionMap = {1,5,7,3,2,8,6,0};
           return directionMap[direction];
         }//end getDirection
 
