@@ -10,14 +10,6 @@ namespace CognitiveABM.QLearning
 
     public class QLearning
     {
-        // private bool logging = true;
-        // private List<int[,]> priorLandscapes = new List<int[,]>();//2d array for prior lanscapes
-        // private List<float[,]> priorLandscapeResults = new List<float[,]>();
-        // private int similarLandscapeExperience;
-        // private int direction = 0;
-        // private int state = 0;//current position
-        // private int minVal, maxVal = 0;//NOT CONSTANT, TAKEN FROM LANDSCAPE VALUES FROM X TO Y
-
         //for simple version, only using these inst vars
         private float[,] qMap = new float[4,4];//Houses qMap used in MSE
         private List<float[,]> prototypes = new List<float[,]>(); //prototype list used for MSE
@@ -25,6 +17,8 @@ namespace CognitiveABM.QLearning
         public static List<int> animalIDHolder;
         public static Dictionary<int, List<float[]>> patchDict;
         public static Dictionary<int, List<float>> fitDict;
+        public static Dictionary<int, List<(int,int)>> agentQmapPath;
+        public static int usePerfectQMap = 1;
 
         //--------------------------------//
         /**
@@ -33,188 +27,7 @@ namespace CognitiveABM.QLearning
          * All landscapes will have one of these angles
          */
         //--------------------------------//
-        /**
-         * Make list of arrays for different qmaps
-         * starts off as a bunch of random qmaps, 1 for each animal
-         * run simulation, then based off of a score value(derived from max fitness or something)
-         * pick like the top ten animals, maybe average the qmaps
-         * redo the test with the new qmap but the qmap is changed slightly for each animal
-         * continue this process until we get an average fitness or some fittness value we like
-         * then once again average the qmaps to get a single qmap, test this qmap and batta bing batta boom
-         */
-        //--------------------------------//
 
-
-        // //Will find a similar landscape within 5% similiar. If none is found, or there are no other landscape,
-        // //A normallised lanscape of landscape array is added to the list of prior landscapes
-        // public int findSimlarLanscapeIndex(int[,] landscapeArray, int minVal, int maxVal)
-        // {
-        //     //normallise the array;
-        //     int[,] normallizedLandscape = new int[landscapeArray.GetLength(0), landscapeArray.GetLength(1)];
-        //     for (int row = 0; row < landscapeArray.GetLength(0); row += 1)
-        //     {
-        //         for (int col = 0; col < landscapeArray.GetLength(1); col += 1)
-        //         {
-        //             normallizedLandscape[row, col] = (landscapeArray[row, col] - minVal) / (maxVal - minVal);
-        //         }
-        //     }
-        //
-        //     //if this is the first array, add it to the experience array and return index 0
-        //     if (priorLandscapes.Count == 0)
-        //     {
-        //         if (logging)
-        //             Console.WriteLine("First landscape, adding a new one to the array.");
-        //         Console.WriteLine("normallizedLanscape" + normallizedLandscape.GetLength(0));
-        //         priorLandscapes.Add(normallizedLandscape);
-        //         Console.WriteLine("LISTCOUNTER " + priorLandscapes.Count);
-        //         priorLandscapeResults.Add(new float[landscapeArray.GetLength(0), landscapeArray.GetLength(1)]);
-        //         return 0;
-        //     }
-        //
-        //     // compute absolute value of pairwise diff
-        //     for (int listIndex = 0; listIndex < priorLandscapes.Count; listIndex += 1)
-        //     {
-        //         int comparedSum = 0;
-        //         for (int row = 0; row < landscapeArray.GetLength(0); row += 1)
-        //         {
-        //             for (int col = 0; col < landscapeArray.GetLength(1); col += 1)
-        //             {
-        //                 comparedSum += Math.Abs(normallizedLandscape[row, col] - priorLandscapes[listIndex][row, col]);
-        //             }
-        //         }
-        //
-        //         // if (logging)
-        //         //   Console.WriteLine("ComparedSum: " + comparedSum);
-        //         //if there is a prior landscape within +/- 5% of the current landscape return its index
-        //         if (comparedSum >= -.05 && comparedSum <= 0.5)
-        //         {
-        //             if (logging)
-        //                 Console.WriteLine("Found a similar landscape");
-        //             return listIndex;
-        //         }
-        //     }//end for listIndex
-        //
-        //     //if there are not any similar landscapes add it to the expereince array and return its index
-        //     if (logging)
-        //         Console.WriteLine("No similar landscape found, adding a new one");
-        //     priorLandscapes.Add(normallizedLandscape);
-        //     priorLandscapeResults.Add(new float[landscapeArray.GetLength(0), landscapeArray.GetLength(1)]);
-        //     return priorLandscapes.Count - 1;
-        //
-        // }
-        //
-        // //sets min and max val
-        // public QLearning(int minVal, int maxVal)
-        // {
-        //     this.minVal = minVal;
-        //     this.maxVal = maxVal;
-        // }
-        // //COMES FROM FCM
-        // //sets the current state
-        // public void setState(int state)
-        // {
-        //     this.state = state;
-        // }
-        //
-        // //get the current state
-        // public int getState()
-        // {
-        //     Console.WriteLine("State: " + state);
-        //     return state;
-        // }
-        //
-        // //finds a similar landscape and chooses a direction off said landscape
-        // public void newLandscape(int[,] landscapeArray)
-        // {
-        //     similarLandscapeExperience = findSimlarLanscapeIndex(landscapeArray, minVal, maxVal);
-        //     direction = PickDirection(state, similarLandscapeExperience);
-        //     //setState(direction);
-        //     // if (logging)
-        //     //   Console.WriteLine("Direction: " + direction);
-        //     //So, it finds a lanscape of similar experience, then it chooses a new direction based off said landscape
-        // }
-        //
-        // //Returns current direction
-        // public int getDirection()
-        // {
-        //     Console.WriteLine("Direction: " + direction);
-        //     return direction;
-        // }
-        //    //qmatrix for each action type of thing
-        //    //This is the random rouletteWheel in action
-        //    //comment out for now to deal with hard coding
-        // public int PickDirection(int state, int similarLandscapeExperience) // state chosen will be coming FCM (flee, eat, do nothing, etc)
-        // {
-        //     Random rand = new Random();
-        //
-        //     if (rand.NextDouble() < (1 / priorLandscapes.Count)) // rand.NextDouble() < (1 / priorLandscapes.Count) //use prior experience
-        //     {
-        //         float[] experienceArray = Enumerable.Range(0, priorLandscapeResults[similarLandscapeExperience].GetLength(0)).Select(x => priorLandscapeResults[similarLandscapeExperience][x, state]).ToArray();
-        //         float totalArrayValue = experienceArray.Sum();
-        //         List<float> biasAnswerList = new List<float>();
-        //
-        //         for (int i = 0; i < experienceArray.Length; i++)
-        //         {
-        //             // Console.WriteLine("experienceArray.Length: " + ((experienceArray[i] + 1) / (totalArrayValue + 1) * 100));
-        //             for (int j = 0; j < (experienceArray[i] + 1) / (totalArrayValue + 1) * 100; j++)
-        //             {
-        //                 biasAnswerList.Add(experienceArray[i]);
-        //             }
-        //         }
-        //
-        //         float value = biasAnswerList[rand.Next(0, biasAnswerList.Count)];
-        //
-        //         for (int x = 0; x < priorLandscapeResults[similarLandscapeExperience].GetLength(0); ++x)
-        //         {
-        //             for (int y = 0; y < priorLandscapeResults[similarLandscapeExperience].GetLength(1); ++y)
-        //             {
-        //                 if (priorLandscapeResults[similarLandscapeExperience][x, y].Equals(value))
-        //                 {
-        //                     return y;
-        //                 }
-        //             }
-        //         }
-        //         return 0;
-        //     }
-        //     else //explore
-        //     {
-        //         if (logging)
-        //             Console.WriteLine("Exploring");
-        //         float[] experienceArray = Enumerable.Range(0, priorLandscapeResults[similarLandscapeExperience].GetLength(0)).Select(x => priorLandscapeResults[similarLandscapeExperience][x, state]).ToArray();
-        //         float totalArrayValue = experienceArray.Sum();
-        //         List<int> biasAnswerList = new List<int>();
-        //
-        //         int answer = rand.Next(0, experienceArray.Length - 1) + rand.Next(0, experienceArray.Length - 1);
-        //         return answer;
-        //     }
-        // }
-        //
-        // //learning
-        // public void UpdateQTable(float oldFitness, float newFitness)
-        // {
-        //
-        //     float fitnessDelta = Math.Abs((newFitness - oldFitness) / newFitness);
-        //     priorLandscapeResults[similarLandscapeExperience][state, direction] += fitnessDelta;
-        //     if (priorLandscapeResults[similarLandscapeExperience][state, direction] < 0) priorLandscapeResults[similarLandscapeExperience][state, direction] = 0; // do not let it be negative
-        //
-        //     if (logging)
-        //     {
-        //         Console.WriteLine("Updated QTable");
-        //         for (int i = 0; i < priorLandscapeResults[similarLandscapeExperience].GetLength(0); i++)
-        //         {
-        //             for (int j = 0; j < priorLandscapeResults[similarLandscapeExperience].GetLength(1); j++)
-        //             {
-        //                 Console.Write(priorLandscapeResults[similarLandscapeExperience][i, j] + "\t");
-        //             }
-        //             Console.WriteLine();
-        //         }
-        //     }
-        //     if (logging)
-        //         Console.WriteLine("------------------------------------");
-        //
-        // }
-
-        //-----Code written for hard coded values: SIMPLIFIED VERSION-----//
 
         //constructor that sets the qMap and prototypes
         public QLearning(){
@@ -226,6 +39,8 @@ namespace CognitiveABM.QLearning
           patchDict.Add(-1, new List<float[]>());
           fitDict = new Dictionary<int, List<float>>();
           fitDict.Add(-1, new List<float>());
+          agentQmapPath = new Dictionary<int, List<(int,int)>>();
+          agentQmapPath.Add(-1, new List<(int,int)>());
 
         }
 
@@ -234,8 +49,12 @@ namespace CognitiveABM.QLearning
         //can be way more efficent, but this is just a temp job
         public void setQlearnMap(){
           //var filePath = @"..\HillClimberABMExample\layers\LandScapeSlopeHard.csv";
-          float[,] data = new float[8,8]; //4x4 qmap matrix hard coded
-          using(var reader = new StreamReader(@"..\HillClimberABMExample\layers\LandScapeSlopeHard.csv"))
+          float[,] data = new float[4,4]; //4x4 qmap matrix hard coded
+          string qMapFile = @"..\HillClimberABMExample\layers\qMapPerfect.csv";
+          if(usePerfectQMap == 0){
+            qMapFile = @"..\HillClimberABMExample\layers\qMapActualTest.csv";
+          }
+          using(var reader = new StreamReader(qMapFile))
          {
              int counter = 0;
              while (!reader.EndOfStream)
@@ -291,7 +110,7 @@ namespace CognitiveABM.QLearning
          * @description: finds out direction agent should go using MSE and biasedRouletteWheel
          * @return: value ranging from 1,5,7,3 which represents N. E. S. W.
          */
-        public int getDirection(float[,] landscapePatch, float min, float max){
+        public int getDirection(float[,] landscapePatch, float min, float max, int animalId){
           float[,] normallisedLandscapePatch = normalliseLandscapePatch(landscapePatch, min, max);
           float[] MSE = new float[4];
           for(int i = 0; i < this.prototypes.Count; i++){
@@ -301,6 +120,8 @@ namespace CognitiveABM.QLearning
           int minIndex = Enumerable.Range(0, MSE.Length).Aggregate((a, b) => (MSE[a] < MSE[b]) ? a : b);
 
           int direction = biasedRouletteWheel(minIndex);
+
+          recordPath(animalId, direction, minIndex);
 
           //direction gives 0-3. The list of locations in animal.cs contains 0-8.
           //so, we need to change direction to work on a list
@@ -371,12 +192,10 @@ namespace CognitiveABM.QLearning
          * @param landScapePatch: array of current landScape
          * @param animalId: id of current animal
          * @param tickNum: tick number
-         * @param newEle: next elevation
-         * @param oldEle: current elevation
-         * @param fitVal: current fitness gained from moving
+         * @param currentEle: current elevation
          * @param x: x value of position
          * @param y: y value of position
-         * @description: Puts the following parameters into a public list of arrays
+         * @description: puts needed exported values into patchDict inst var
          */
         public void setExportValues(float[,] landScapePatch, int animalId, int tickNum, int currentEle, int x, int y){
           //spots 0,1,11,12,13,16,17 are reserved values
@@ -413,7 +232,8 @@ namespace CognitiveABM.QLearning
           else{
             tempList = patchDict[animalId];
             temp[12] = (tempList.Last())[11];
-            temp[13] = Math.Abs((float)currentEle - temp[12]);
+            //temp[13] = Math.Abs((float)currentEle - temp[12]);
+            temp[13] = currentEle - temp[12];
             float[] avgMax = getAverageandTotal(tempList, temp[13]);
             temp[14] = avgMax[0];
             temp[15] = avgMax[1];
@@ -426,34 +246,57 @@ namespace CognitiveABM.QLearning
         /**
          * @param tempList: List of float arrays containing previous animal info
          * @param currentFit: current fitness gained value from this animal
-         * @return: returns the average and total of all fitness gains of animal
+         * @return: the average and total of all fitness gains of animal
          * @description: calculates the average and total fitness of an animal at current moment in time
          */
         public float[] getAverageandTotal(List<float[]> tempList, float currentFit){
           int counter;
+          float avgCurrentFit;
           float[] returnVals = {0.0f, 0.0f};
 
           if(currentFit > 0){
+            avgCurrentFit = currentFit;
             counter = 1;
           }
           else{
+            avgCurrentFit = 0.0f;
             counter = 0;
           }
 
           foreach(float[] array in tempList){
             if(array[13] > 0){
+              avgCurrentFit += array[13];
               currentFit += array[13];
               counter++;
             }
           }
 
           if(counter != 0){
-            returnVals[0] = currentFit/counter;
+            returnVals[0] = avgCurrentFit/counter;
             returnVals[1] = currentFit;
           }
           return returnVals;
         }//end getAverage
 
+        /**
+         * @param animalId: id of animal agent
+         * @param row: row of qmap chosen
+         * @param col: col of qmap chosen
+         * @description: Records and saves the pathway and agent travelled
+         */
+        public void recordPath(int animalId, int row, int col){
+          List<(int,int)> tempList = new List<(int,int)>();
+          if(agentQmapPath.ContainsKey(animalId) == null || !agentQmapPath.ContainsKey(animalId)){
+            tempList.Add((row,col));
+            agentQmapPath.Add(animalId, tempList);
+          }
+
+          else{
+            tempList = agentQmapPath[animalId];
+            tempList.Add((row,col));
+            agentQmapPath[animalId] = tempList;
+          }
+        }//end recordPath
 
     }
 }
