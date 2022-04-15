@@ -9,9 +9,9 @@ NUM_STEPS = 150
 
 Data = ['./output/landScape_exportInfo.csv','./output/grid_exportInfo.csv', './output/gradient_exportInfo.csv']
 Layer = ['./layers/landScape.csv', './layers/grid.csv', './layers/gradient.csv']
-
-AgentData = Data[0]
-LayerFile = Layer[0]
+terrain_num = 0
+AgentData = Data[terrain_num]
+LayerFile = Layer[terrain_num]
 
 for file in Data:
     csvData = pandasForSortingCSV.read_csv(file)
@@ -46,6 +46,10 @@ avg_fit = []
 
 fitness_map.set_xlabel('Steps')
 fitness_map.set_ylabel('Average Elevation')
+
+agent_pos.set_xlabel('X')
+agent_pos.set_ylabel('Y')
+agent_pos.set_title('Agent Position')
 
 heatmap.imshow(terrain[::-1], origin = 'lower')
 
