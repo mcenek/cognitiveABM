@@ -5,6 +5,7 @@ using System.IO;
 using System.Linq;
 using CognitiveABM.FCM;
 using CognitiveABM.QLearning;
+using CognitiveABM.QLearningABMAdditional;
 using Mars.Common.Logging;
 using Mars.Common.Logging.Enums;
 using Mars.Core.ModelContainer.Entities;
@@ -18,6 +19,7 @@ public class ABM
     public ModelDescription modelDescription;
 
     public static int QlearningTotalFittness = 0;
+    public QLearningABMAdditional QLABMA = new QLearningABMAdditional();
 
 
     public ABM(ModelDescription modelDescription)
@@ -110,7 +112,6 @@ public class ABM
     public List<float> Test(int generations, int steps, string fitnessColumnName, string fitnessFileName, string terrianFilePath, string[] args)
     {
         var startTime = DateTime.Now;
-
         for (int generation = 0; generation < generations; generation++)
         {
             Console.WriteLine("\nTest generation: {0} of {1}", generation, generations);
@@ -129,58 +130,69 @@ public class ABM
             if (loopResults.IsFinished)
             {
                 stopWatch.Stop();
-                
+
                 List<float> agentFitness = QLearning.fitness;
                 var avg = agentFitness.Average();
                 var max = agentFitness.Max();
 
                 Console.WriteLine("Average fitness: {0:F2}, Max fitness: {1:F2}", avg, max);
-                exportInfo(QLearning.patchDict, QLearning.animalIDHolder, terrianFilePath);
+
+                List<int> anIdList = QLearning.animalIDHolder;
+                Dictionary<int, List<float[]>> patch = QLearning.patchDict;
+                QLABMA.exportInfo(patch, anIdList, terrianFilePath);
+
                 GC.Collect();
                 return agentFitness;
             }
         }
+        // QLearning.usePerfectQMap = 1;
         return null;
     }
 
 
+    public void Train(int generations, string terrianFilePath, string[] args)
+    {
+        var startTime = DateTime.Now;
+        for (int generation = 0; generation < generations; generation++)
+        {
+            Console.WriteLine("\nGeneration: {0} of {1}", generation, generations);
 
-    /**
-     * @param values: list of string arrays containg values to print
-     * @param terrianFilePath: String of full pathway to selected terrian File
-     * @description: prints all values of the values parameter into a csv file named after the terrian
-     */
-    public void exportInfo(Dictionary<int,List<float[]>> patchDict, List<int> animalIdList, string terrianFilePath){
-          string fileName = "./output/" + Path.GetFileNameWithoutExtension(terrianFilePath) + "_exportInfo.csv";
-          var w = new StreamWriter(path: fileName);
+            LoggerFactory.SetLogLevel(LogLevel.Warning);
+            LoggerFactory.DeactivateConsoleLogging();
 
-          //write headers to csv
-          string[] headers = new string[18];
-          headers[0] = "AnimalID";
-          headers[1] = "TickNum";
-          for(int k = 2; k < headers.Length-3; k++){
-            headers[k] = "LandscapePatch " + (k-2).ToString();
-          }
-          headers[11] = "Current Elevation";
-          headers[12] = "Previous Elevation";
-          headers[13] = "Fitness Gained";
-          headers[14] = "Average Fitness";
-          headers[15] = "Total Fitness";
-          headers[16] = "X Pos";
-          headers[17] = "Y Pos";
-          w.Write(String.Join(",", headers) + "\n");
+            SimulationStarter task = SimulationStarter.Start(this.modelDescription, args);
 
-          //write data to csv
-          List<float[]> patchList = new List<float[]>();
-          List<float> currentFit = new List<float>();
-          foreach (int id in animalIdList){
-            patchList = patchDict[id];
-            foreach (float[] array in patchList){
-               w.Write(String.Join(",", array) + "\n");
+            Stopwatch stopWatch = new Stopwatch();
+            stopWatch.Start();
 
+            SimulationWorkflowState loopResults = task.Run();
+
+            if (loopResults.IsFinished)
+            {
+                stopWatch.Stop();
+                Console.WriteLine($"Simulation execution finished in {stopWatch.ElapsedMilliseconds / 1000:N2} seconds");
+
+                List<float> agentFitness = QLearning.fitness;
+                var avg = agentFitness.Average();
+                var max = agentFitness.Max();
+
+                Console.WriteLine("Generaton: {0:F2}, Average fitness: {1:F2}, Max fitness: {2:F2}", generation, avg, max);
+
+                //make method to get lambda value i guess
+                float[] lambdaArray = QLABMA.getLambda(generations);
+                List<int> anIdList = QLearning.animalIDHolder;
+                Dictionary<int, List<float[]>> patch = QLearning.patchDict;
+                Dictionary<int, List<(int,int)>> pathWay = QLearning.agentQmapPath;
+                Dictionary<int, float> scoreValue = QLABMA.getAgentScore(anIdList, patch, lambdaArray[generation]);
+                QLABMA.updateQMap(scoreValue,pathWay,anIdList);
+
+                Console.WriteLine("QMap has been updated");
+                GC.Collect();
             }
-          }
-          w.Close();
-    }//end exportInfo
+        }
+        //QLearning.usePerfectQMap = 0;
 
+    }
 }
+
+//DO I TRAIN THE GENERATIONS USING THE PERFECT QLEARNING MAP?
