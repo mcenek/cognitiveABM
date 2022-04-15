@@ -159,7 +159,7 @@ namespace HillClimberExample
                     index++;
                 }
             }
-            int direction = this.qLearn.getDirection(landscapePatch, min, max);
+            int direction = this.qLearn.getDirection(landscapePatch, min, max, this.AnimalId);
             int[] newLocation = adjacentTerrainLocations[direction];
 
 
@@ -180,8 +180,34 @@ namespace HillClimberExample
         private Tuple<int, int> InitialPosition()
         {
             //var random = new Random(18);
-            var random = new Random(ID.GetHashCode()); //using hard coded value for testing
-            return new Tuple<int, int>(random.Next(Terrain.DimensionX()), random.Next(Terrain.DimensionY()));
+            //var random = new Random(ID.GetHashCode()); //using hard coded value for testing
+            //return new Tuple<int, int>(random.Next(Terrain.DimensionX()), random.Next(Terrain.DimensionY()));
+            //make all agents start at same spot
+            var random = new Random();
+
+            //Puts agents on border of map
+            //Case 0: Along Y axis (left)
+            //Case 1: Along X axis (bottom)
+            //Case 2: Along opposite Y axis (right)
+            //Case 3: Along opposite X axis (top)
+            switch (random.Next(4)){
+              case 0:
+                return new Tuple<int, int>(0, random.Next(Terrain.DimensionY()));
+                break;
+              case 1:
+                return new Tuple<int, int>(random.Next(Terrain.DimensionX()), 0);
+                break;
+              case 2:
+                return new Tuple<int, int>(Terrain.DimensionX(), random.Next(Terrain.DimensionY()));
+                break;
+              case 3:
+                return new Tuple<int, int>(random.Next(Terrain.DimensionX()),Terrain.DimensionY());
+                break;
+              default:
+                return new Tuple<int, int>(0, 0);
+                Console.Write("Default Position");
+                break;
+            }
 
         }
 
