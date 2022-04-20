@@ -211,7 +211,7 @@ namespace CognitiveABM.QLearningABMAdditional{
      */
     public float[,] getQMap(){
       float[,] data = new float[4,4]; //4x4 qmap matrix hard coded
-      using(var reader = new StreamReader(@"..\HillClimberABMExample\layers\qMapActual.csv"))
+      using(var reader = new StreamReader(@"..\HillClimberABMExample\layers\qMapRandom.csv"))
      {
          int counter = 0;
          while (!reader.EndOfStream)
@@ -334,7 +334,7 @@ namespace CognitiveABM.QLearningABMAdditional{
      * @description: prints a qmap to file path
      */
     public void printNewQMap(float[,] qmap){
-      string fileName = @"..\HillClimberABMExample\layers\qMapActualTest.csv";
+      string fileName = @"..\HillClimberABMExample\layers\qMapGenerated.csv";
       var w = new StreamWriter(path: fileName);
       float[] qMapRow = new float[qmap.GetLength(0)];
 

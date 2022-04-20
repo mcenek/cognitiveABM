@@ -52,7 +52,7 @@ namespace CognitiveABM.QLearning
           float[,] data = new float[4,4]; //4x4 qmap matrix hard coded
           string qMapFile = @"..\HillClimberABMExample\layers\qMapPerfect.csv";
           if(usePerfectQMap == 0){
-            qMapFile = @"..\HillClimberABMExample\layers\qMapActualTest.csv";
+            qMapFile = @"..\HillClimberABMExample\layers\qMapGenerated.csv";
           }
           using(var reader = new StreamReader(qMapFile))
          {
