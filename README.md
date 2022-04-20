@@ -34,14 +34,14 @@ QLearning - Uses QLearning maps, found in `Examples/HillClimberABMExample/layers
 #### Essential:
 
 QLearning needs debuging:
-  Bugs:
-    On some occasions, the following bugs can occur: The generated QMap can get interrupted and produce NaN values and  dictionary can end up trying to read a key that already exists.
+Bugs:
+On some occasions, the following bugs can occur: The generated QMap can get interrupted and produce NaN values and one of the dictionaries will try adding a key that already exists.
 
-    For the QMap, I believe that when a dictionary bug or something along those lines is encountered, the map will just spit out NaN values. Fixing the other bug may fix this one.
+For the QMap, I believe that when a dictionary bug or something along those lines is encountered, the map will just spit out NaN values. Fixing the other bug may fix this one.
 
-    The dictionary bug is most likely occurring due to a small overlap between two dictionaries that are being compared. This overlap rarely happens. A suggested fix is coming up with a better system than relying on dictionaries to save data.
+The dictionary bug is most likely occurring due to a small overlap between two dictionaries that are being compared. This overlap rarely happens. A suggested fix is coming up with a better system than relying on dictionaries to save data.
 
-If these bugs are encountered, usually deleted qMapGenerated and rerunning the program once or twice will stop occurrences of these bugs. I am guessing some random seed value contributes to these bugs. One addition that could be added is saving the random seeds so that if a bug occurs, you can debug it using the same seed. 
+If these bugs are encountered, usually deleted qMapGenerated and rerunning the program once or twice will stop occurrences of these bugs. I am guessing some random seed value contributes to these bugs. One addition that could be added is saving the random seeds so that if a bug occurs, you can debug it using the same seed.
 
 The QLearning module needs to be edited to more extensively test the qlearning process (such as having the agents roam without a map and seeing what happens over time)
 
