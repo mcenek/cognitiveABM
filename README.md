@@ -45,6 +45,8 @@ The dictionary bug is most likely occurring due to a small overlap between two d
 
 If these bugs are encountered, usually deleted qMapGenerated and rerunning the program once or twice will stop occurrences of these bugs. I am guessing some random seed value contributes to these bugs. One addition that could be added is saving the random seeds so that if a bug occurs, you can debug it using the same seed.
 
+General QLearning changes:
+
 The QLearning module needs to be edited to more extensively test the qlearning process (such as having the agents roam without a map and seeing what happens over time)
 
 #### Desired:
