@@ -27,13 +27,19 @@ FCM - manages reproduction between generations
 
 Perceptron - uses an agent's genomes as values in a perceptron matrix and is used to make decisions.
 
-QLearning - Uses QLearning maps, found in `Examples/HillClimberABMExample/layers`, to train agents. To start, the generated qmap is not included in the files and will be created when the QLearning module is run for the first time. 
+QLearning - Uses QLearning maps, found in `Examples/HillClimberABMExample/layers`, to train agents. To start, the generated qmap is not included in the files and will be created when the QLearning module is run for the first time.
 
 ### What needs re-coding
 
 #### Essential:
 
-The QLearning module has a bug where the generated qmap can end up with NaN values if there was a previous generated qMap present while training agents
+QLearning needs debuging:
+  Bugs:
+    On some occasions, the following bugs can occur: The generated QMap can get interrupted and produce NaN values and  dictionary can end up trying to read a key that already exists.
+
+    For the QMap, I believe that when a dictionary bug or something along those lines is encountered, the map will just spit out NaN values. Fixing the other bug may fix this one.
+
+    The dictionary bug is most likely occurring due to a small overlap between two dictionaries that are being compared. This overlap rarely happens. A suggested fix is coming up with a better system than relying on dictionaries to save data.
 
 The QLearning module needs to be edited to more extensively test the qlearning process (such as having the agents roam without a map and seeing what happens over time)
 
