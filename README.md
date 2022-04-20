@@ -34,7 +34,9 @@ QLearning - Uses QLearning maps, found in `Examples/HillClimberABMExample/layers
 #### Essential:
 
 QLearning needs debuging:
+
 Bugs:
+
 On some occasions, the following bugs can occur: The generated QMap can get interrupted and produce NaN values and one of the dictionaries will try adding a key that already exists.
 
 For the QMap, I believe that when a dictionary bug or something along those lines is encountered, the map will just spit out NaN values. Fixing the other bug may fix this one.
