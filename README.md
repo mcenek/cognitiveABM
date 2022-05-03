@@ -27,17 +27,32 @@ FCM - manages reproduction between generations
 
 Perceptron - uses an agent's genomes as values in a perceptron matrix and is used to make decisions.
 
-QLearning - the newest and most experimental module of code, I would visit this first if I was going to redo/verify a section of code. We implemented this last and it has given Daniel a lot of trouble. Go to Daniel Borg for questions about this code.
+QLearning - Uses QLearning maps, found in `Examples/HillClimberABMExample/layers`, to train agents. To start, the generated qmap is not included in the files and will be created when the QLearning module is run for the first time.
 
 ### What needs re-coding
 
 #### Essential:
 
-The QLearning module we had working for a short while, but it's currently not in use (would be used in `Animal.cs`), but Daniel has been having some issues with the data structure as of late. Just needs to be cleaned up and some index out of bounds errors removed.
+QLearning needs debuging:
+
+Bugs:
+
+On some occasions, the following bugs can occur: The generated QMap can get interrupted and produce NaN values and one of the dictionaries will try adding a key that already exists.
+
+For the QMap, I believe that when a dictionary bug or something along those lines is encountered, the map will just spit out NaN values. Fixing the other bug may fix this one.
+
+The dictionary bug is most likely occurring due to a small overlap between two dictionaries that are being compared. This overlap rarely happens. A suggested fix is coming up with a better system than relying on dictionaries to save data.
+
+If these bugs are encountered, usually deleted qMapGenerated and rerunning the program once or twice will stop occurrences of these bugs. I am guessing some random seed value contributes to these bugs. One addition that could be added is saving the random seeds so that if a bug occurs, you can debug it using the same seed.
+
+General QLearning changes:
+
+The QLearning module needs to be edited to more extensively test the qlearning process (such as having the agents roam without a map and seeing what happens over time)
 
 #### Desired:
 
-The slowest part of each iteration is running the simulation of the agents itself, and I think this is caused by the amount of math and calculations that is done each step when agents use the perceptron to decide where to move. Optimizing the perceptron (`Perceptron.cs`) math would greatly increase performance. 
+The slowest part of each iteration is running the simulation of the agents itself, and I think this is caused by the amount of math and calculations that is done each step when agents use the perceptron to decide where to move. Optimizing the perceptron (`Perceptron.cs`) math would greatly increase performance. One potential optimization is using a faster matrix multiplication algorithm.
+
 
 ## Useful Additions
 
@@ -45,7 +60,7 @@ A visualization tool that could include the decision making process for a single
 
 ## Building and running application
 
-If you use VS Code you install the official C# extension, and then you can simply hit `F5` and it will run the example with the following launch configuration: 
+If you use VS Code you install the official C# extension, and then you can simply hit `F5` and it will run the example with the following launch configuration:
 
 ```json
 {
@@ -82,7 +97,7 @@ We have written a small but helpful visualization tool with `Python3` and `matpl
 
 It reads data from `Animal.csv` and displays the positions of the agents at each step of the simulation frame by frame.
 
-The top plot is the position of the agent relative to the terrain. Bottom left is the average agent fitness over steps. Bottom right is a top-down topographical view of the terrain layer. 
+The top plot is the position of the agent relative to the terrain. Bottom left is the average agent fitness over steps. Bottom right is a top-down topographical view of the terrain layer.
 
 #### Setup and running
 
@@ -113,4 +128,3 @@ Here is when the animation has just started, you can see all the agents (top plo
 In progress ABM run where the agents are not all perfect, but most are doing well.
 
 ![Example execution](images/animationProgress.png)
-

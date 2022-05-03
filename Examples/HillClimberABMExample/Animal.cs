@@ -16,6 +16,9 @@ namespace HillClimberExample
     using Mars.Common.Logging;
     using System.Collections.Generic;
     using CognitiveABM.Perceptron;
+    using CognitiveABM.QLearning;
+    using System.IO;
+
 
     public class Animal : Mars.Interfaces.Agent.IMarsDslAgent
     {
@@ -33,6 +36,10 @@ namespace HillClimberExample
         public bool Equals(Animal other) => Equals(ID, other.ID);
 
         public override int GetHashCode() => ID.GetHashCode();
+
+        public QLearning qLearn = new QLearning();
+
+        public int tickNum = 0;
 
         private string rule = default;
 
@@ -101,55 +108,107 @@ namespace HillClimberExample
             Elevation = Terrain.GetIntegerValue(Position.X, Position.Y);
             startingElevation = Elevation;
 
+            //AgentMemory is functionally useless right now
+            //it goes into perceptron, but it's useage is commented out
             AgentMemory = new float[] { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 };
         }
 
         // Tick function is called on each step of the simulation
         public void Tick()
         {
-            var inputs = GetAdjacentTerrainElevations();
 
-            int highestInput = 0;
-            for (int i = 0; i < 9; i++)
+            /**FCM*/
+            //-----FCM----//
+            // PerceptronFactory perceptron = new PerceptronFactory(9, 9, 1, 9);
+            // float[] outputs = perceptron.CalculatePerceptronFromId(AnimalId, inputs, AgentMemory);
+            // outputs.CopyTo(AgentMemory, 0);
+            // outputs.CopyTo(AgentMemory, outputs.Length);
+            // //more want outputs, aka a list of floats
+            //List<int[]> locations = GetAdjacentTerrainPositions();//leave alone
+            //
+            // int highestOutput = 0;
+            // for (int i = 0; i < 9; i++)
+            // {
+            //     if (outputs[i] > outputs[highestOutput])
+            //     {
+            //         highestOutput = i;
+            //     }
+            // }
+            //int[] newLocation = locations[highestOutput];
+
+            /**QLearn*/
+            List<int[]> adjacentTerrainLocations = GetAdjacentTerrainPositions();
+            float[] adjacentTerrainElevations = GetAdjacentTerrainElevations();
+            //change terrainElevations into a matrix
+            //adjacentTerrainElevations contains 9 elements, so we need 3x3 matrix
+            int index = 0;
+            float[,] landscapePatch = new float[3, 3];
+            float min = adjacentTerrainElevations[index];
+            float max = adjacentTerrainElevations[index];
+            for (int x = 0; x < 3; x++)
             {
-                if (inputs[i] > inputs[highestInput])
+                for (int y = 0; y < 3; y++)
                 {
-                    highestInput = i;
+                    if(adjacentTerrainElevations[index] < min){
+                      min = adjacentTerrainElevations[index];
+                    }
+                    if(adjacentTerrainElevations[index] > max){
+                      max = adjacentTerrainElevations[index];
+                    }
+                    landscapePatch[x, y] = adjacentTerrainElevations[index];
+                    index++;
                 }
             }
+            int direction = this.qLearn.getDirection(landscapePatch, min, max, this.AnimalId);
+            int[] newLocation = adjacentTerrainLocations[direction];
 
-            Boolean atPeak = highestInput == 4;
 
-            PerceptronFactory perceptron = new PerceptronFactory(9, 9, 1, 9);
-            float[] outputs = perceptron.CalculatePerceptronFromId(AnimalId, inputs, AgentMemory);
-            outputs.CopyTo(AgentMemory, 0);
-            outputs.CopyTo(AgentMemory, outputs.Length);
-
-            List<int[]> locations = GetAdjacentTerrainPositions();
-
-            int highestOutput = 0;
-            for (int i = 0; i < 9; i++)
-            {
-                if (outputs[i] > outputs[highestOutput])
-                {
-                    highestOutput = i;
-                }
-            }
-
-            int[] newLocation = locations[highestOutput];
+            //MoveTo (animal object, location, traveling distance)
+            int xPos = (int)Position.X;
+            int yPos = (int)Position.Y;
 
             Terrain._AnimalEnvironment.MoveTo(this, newLocation[0], newLocation[1], 1, predicate: null);
+            int tempElevation = Elevation;
+            this.qLearn.setExportValues(landscapePatch,this.AnimalId, this.tickNum, Elevation, xPos, yPos);
             Elevation = Terrain.GetIntegerValue(this.Position.X, this.Position.Y);
-
             BioEnergy = (Elevation < 0) ? 0 : Elevation;
+            this.tickNum++;
         }
 
         // helper methods
 
         private Tuple<int, int> InitialPosition()
         {
-            var random = new Random(ID.GetHashCode());
-            return new Tuple<int, int>(random.Next(Terrain.DimensionX()), random.Next(Terrain.DimensionY()));
+            //var random = new Random(18);
+            //var random = new Random(ID.GetHashCode()); //using hard coded value for testing
+            //return new Tuple<int, int>(random.Next(Terrain.DimensionX()), random.Next(Terrain.DimensionY()));
+            //make all agents start at same spot
+            var random = new Random();
+
+            //Puts agents on border of map
+            //Case 0: Along Y axis (left)
+            //Case 1: Along X axis (bottom)
+            //Case 2: Along opposite Y axis (right)
+            //Case 3: Along opposite X axis (top)
+            switch (random.Next(4)){
+              case 0:
+                return new Tuple<int, int>(0, random.Next(Terrain.DimensionY()));
+                break;
+              case 1:
+                return new Tuple<int, int>(random.Next(Terrain.DimensionX()), 0);
+                break;
+              case 2:
+                return new Tuple<int, int>(Terrain.DimensionX(), random.Next(Terrain.DimensionY()));
+                break;
+              case 3:
+                return new Tuple<int, int>(random.Next(Terrain.DimensionX()),Terrain.DimensionY());
+                break;
+              default:
+                return new Tuple<int, int>(0, 0);
+                Console.Write("Default Position");
+                break;
+            }
+
         }
 
         private float[] GetAdjacentTerrainElevations()
@@ -158,9 +217,9 @@ namespace HillClimberExample
             int x = (int)Position.X;
             int y = (int)Position.Y;
 
-            for (int dx = -1; dx <= 1; ++dx)
+            for (int dy = 1; dy >= -1; --dy)
             {
-                for (int dy = -1; dy <= 1; ++dy)
+                for (int dx = -1; dx <= 1; ++dx)
                 {
                     elevations.Add((float)Terrain.GetRealValue(dx + x, dy + y));
                 }
@@ -175,9 +234,9 @@ namespace HillClimberExample
             int x = (int)Position.X;
             int y = (int)Position.Y;
 
-            for (int dx = -1; dx <= 1; ++dx)
+            for (int dy = 1; dy >= -1; --dy)
             {
-                for (int dy = -1; dy <= 1; ++dy)
+                for (int dx = -1; dx <= 1; ++dx)
                 {
                     int[] location = new int[] { dx + x, dy + y };
                     locations.Add(location);
@@ -186,5 +245,7 @@ namespace HillClimberExample
 
             return locations;
         }
+
+
     }
 }

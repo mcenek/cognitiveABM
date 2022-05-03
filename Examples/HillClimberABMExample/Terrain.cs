@@ -10,7 +10,7 @@ namespace HillClimberExample
 	#pragma warning disable 162
 	#pragma warning disable 219
 	#pragma warning disable 169
-    
+
     using System;
     using System.Collections.Concurrent;
     using System.Collections.Generic;
@@ -156,14 +156,14 @@ namespace HillClimberExample
         {
             var id = Guid.NewGuid();
             var agent = new Animal(
-				id, 
-				this, 
+				id,
+				this,
 				_Register,
 				_Unregister,
             	_AnimalEnvironment,
             	default,
-				xcor, 
-				ycor, 
+				xcor,
+				ycor,
 				freq);
 
             _AnimalAgents.Add(id, agent);
