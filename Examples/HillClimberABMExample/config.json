@@ -1,0 +1,25 @@
+{
+  "globals": {
+    "output": "csv",
+    "options": {
+      "delimiter": ",",
+      "format": "en-EN"
+    },
+    "steps": "250"
+  },
+  "layers": [
+    {
+      "name": "Terrain",
+      "file": "./layers/gradient.csv",
+      "dimensionx": 50,
+      "dimensiony": 50
+    }
+  ],
+  "agents": [
+    {
+      "name": "Animal",
+      "count": 96,
+      "file": "animal_init.csv"
+    }
+  ]
+}
