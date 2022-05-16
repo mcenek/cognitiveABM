@@ -10,7 +10,7 @@
   "layers": [
     {
       "name": "Terrain",
-      "file": "./layers/gradient.csv",
+      "file": "./layers/grid.csv",
       "dimensionx": 50,
       "dimensiony": 50
     }

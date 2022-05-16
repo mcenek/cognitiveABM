@@ -11,7 +11,7 @@ namespace CognitiveABM.QLearning
     public class QLearning
     {
         //for simple version, only using these inst vars
-        private float[,] qMap = new float[4,4];//Houses qMap used in MSE
+        private float[,] qMap = new float[8,8];//Houses qMap used in MSE
         private List<float[,]> prototypes = new List<float[,]>(); //prototype list used for MSE
         public static List<float> fitness;
         public static List<int> animalIDHolder;
@@ -49,7 +49,7 @@ namespace CognitiveABM.QLearning
         //can be way more efficent, but this is just a temp job
         public void setQlearnMap(){
           //var filePath = @"..\HillClimberABMExample\layers\LandScapeSlopeHard.csv";
-          float[,] data = new float[4,4]; //4x4 qmap matrix hard coded
+          float[,] data = new float[8,8]; //4x4 qmap matrix hard coded
           string qMapFile = @"..\HillClimberABMExample\layers\qMapPerfect.csv";
           if(usePerfectQMap == 0){
             qMapFile = @"..\HillClimberABMExample\layers\qMapGenerated.csv";
@@ -61,15 +61,15 @@ namespace CognitiveABM.QLearning
              {
                  var line = reader.ReadLine();
                  var values = line.Split(',');
-                 if(counter < 4){
+                 if(counter < 8){
                  data[counter,0] = float.Parse(values[0]);
                  data[counter,1] = float.Parse(values[1]);
                  data[counter,2] = float.Parse(values[2]);
                  data[counter,3] = float.Parse(values[3]);
-                 // data[counter,4] = float.Parse(values[4]);
-                 // data[counter,5] = float.Parse(values[5]);
-                 // data[counter,6] = float.Parse(values[6]);
-                 // data[counter,7] = float.Parse(values[7]);
+                 data[counter,4] = float.Parse(values[4]);
+                 data[counter,5] = float.Parse(values[5]);
+                 data[counter,6] = float.Parse(values[6]);
+                 data[counter,7] = float.Parse(values[7]);
                  counter++;
                }
              }
@@ -81,26 +81,29 @@ namespace CognitiveABM.QLearning
         //hard codes the prototypes in
         //bad code that could be done way better but im just going for working right now
         public void setPrototype(){
+          //Float tuple higher float values represent 
+          //prototype direction, bellow if northwest 
+          //1f 1f .5
+          //1f .5 0
+          //0.5 0 0 
           float[,] protoN = new float[,] {{1f,1f,1f},{.5f,.5f,.5f},{0f,0f,0f}};
           float[,] protoE = new float[,] {{0f,.5f,1f},{0f,.5f,1f},{0f,.5f,1f}};
           float[,] protoS = new float[,] {{0f,0f,0f},{.5f,.5f,.5f},{1f,1f,1f}};
           float[,] protoW = new float[,] {{1f,.5f,0f},{1f,.5f,0f},{1f,.5f,0f}};
+          float[,] protoNE = new float[,] {{.5f,1f,1f},{0f,.5f,1f},{0f,0f,.5f}};
+          float[,] protoNW = new float[,] {{1f,1f,.5f},{1f,.5f,0f},{.5f,0f,0f}};
+          float[,] protoSE = new float[,] {{0f,0f,.5f},{0f,.5f,1f},{.5f,1f,1f}};
+          float[,] protoSW = new float[,] {{.5f,0f,0f},{1f,.5f,0f},{1f,1f,.5f}};
 
           this.prototypes.Add(protoN);
           this.prototypes.Add(protoE);
           this.prototypes.Add(protoS);
           this.prototypes.Add(protoW);
-
-          // float[,] protoNE = new float[,] {{.5f,1f,1f},{0f,.5f,1f},{0f,0f,.5f}};
-          // float[,] protoSE = new float[,] {{0f,0f,.5f},{0f,.5f,1f},{.5f,1f,1f}};
-          // float[,] protoSW = new float[,] {{.5f,0f,0f},{1f,.5f,0f},{1f,1f,.5f}};
-          // float[,] protoNW = new float[,] {{1f,1f,.5f},{1f,.5f,0f},{.5f,0f,0f}};
-          //
-          // this.prototypes.Add(protoNE);
-          // this.prototypes.Add(protoSE);
-          // this.prototypes.Add(protoSW);
-          // this.prototypes.Add(protoNW);
-        }
+          this.prototypes.Add(protoNE);
+          this.prototypes.Add(protoNW);
+          this.prototypes.Add(protoSE);
+          this.prototypes.Add(protoSW);
+        }//end of prototype
 
         //---HELPER FUNCTIONS---//
         /**
@@ -112,22 +115,26 @@ namespace CognitiveABM.QLearning
          */
         public int getDirection(float[,] landscapePatch, float min, float max, int animalId){
           float[,] normallisedLandscapePatch = normalliseLandscapePatch(landscapePatch, min, max);
-          float[] MSE = new float[4];
+          float[] MSE = new float[8];
           for(int i = 0; i < this.prototypes.Count; i++){
             MSE[i] = meanSquareError(normallisedLandscapePatch, prototypes.ElementAt(i));
           }
           //returns index of smallest value (Grabbed from: https://stackoverflow.com/questions/4204169/how-would-you-get-the-index-of-the-lowest-value-in-an-int-array)
           int minIndex = Enumerable.Range(0, MSE.Length).Aggregate((a, b) => (MSE[a] < MSE[b]) ? a : b);
 
-          int direction = biasedRouletteWheel(minIndex);
+          int direction = biasedRouletteWheel(minIndex); // make this return 0 - 8
 
           recordPath(animalId, direction, minIndex);
 
-          //direction gives 0-3. The list of locations in animal.cs contains 0-8.
+          //direction gives 0-8 The list of locations in animal.cs contains 0-8.
           //so, we need to change direction to work on a list
           //Direction will change via 0=>1, 1=>5, 2=>7, 3=>3
-          int[] directionMap = {1,5,7,3};
-          // int[] directionMap = {1,5,7,3,2,8,6,0};
+          //NW N NE     0 1 2 
+          //W  _  E     3 4 5
+          //SW S SE     6 7 8 
+          //int[] directionMap = {1,5,7,3};
+          //N E S W NE SE SW NE 
+          int[] directionMap = {1,5,7,3,2,8,6,0};
           try { //RNG may return a -1, 
             return directionMap[direction];
           }
@@ -168,7 +175,7 @@ namespace CognitiveABM.QLearning
           float rFloat = (float)random.NextDouble();
           float addedVal = 0.0f;
           //we add all values of the col together, when > rDouble, we choose last column
-          for(int i = 0; i < 4; i++){
+          for(int i = 0; i < 8; i++){
             addedVal += qMap[i,col];
             if(addedVal >= rFloat){
               return i;

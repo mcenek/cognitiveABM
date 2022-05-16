@@ -217,7 +217,7 @@ namespace CognitiveABM.QLearningABMAdditional{
      * @description: grabs the qmap from a selected csv file
      */
     public float[,] getQMap(){
-      float[,] data = new float[4,4]; //4x4 qmap matrix hard coded
+      float[,] data = new float[8,8]; //4x4 qmap matrix hard coded
       using(var reader = new StreamReader(@"..\HillClimberABMExample\layers\qMapRandom.csv"))
      {
          int counter = 0;
@@ -225,11 +225,15 @@ namespace CognitiveABM.QLearningABMAdditional{
          {
              var line = reader.ReadLine();
              var values = line.Split(',');
-             if(counter < 4){
+             if(counter < 8){
              data[counter,0] = float.Parse(values[0]);
              data[counter,1] = float.Parse(values[1]);
              data[counter,2] = float.Parse(values[2]);
              data[counter,3] = float.Parse(values[3]);
+             data[counter,4] = float.Parse(values[4]);
+             data[counter,5] = float.Parse(values[5]);
+             data[counter,6] = float.Parse(values[6]);
+             data[counter,7] = float.Parse(values[7]);
              counter++;
            }
          }
