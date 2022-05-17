@@ -100,9 +100,9 @@ namespace CognitiveABM.QLearning
           this.prototypes.Add(protoS);
           this.prototypes.Add(protoW);
           this.prototypes.Add(protoNE);
-          this.prototypes.Add(protoNW);
           this.prototypes.Add(protoSE);
           this.prototypes.Add(protoSW);
+          this.prototypes.Add(protoNW);
         }//end of prototype
 
         //---HELPER FUNCTIONS---//
