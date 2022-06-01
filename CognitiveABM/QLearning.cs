@@ -177,7 +177,7 @@ namespace CognitiveABM.QLearning
           //we add all values of the col together, when > rDouble, we choose last column
           for(int i = 0; i < 8; i++){
             addedVal += qMap[i,col];
-            addedVal += noiseGen(); //adds noise ranging from -0.2 and 0.2
+            //addedVal += noiseGen(); //adds noise ranging from -0.2 and 0.2
             if(addedVal >= rFloat){
               return i;
             }
