@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
+using System.Collections.Concurrent;
 
 namespace CognitiveABM.QLearningABMAdditional{
 
@@ -42,7 +43,7 @@ namespace CognitiveABM.QLearningABMAdditional{
     * Need to add comment
     */
 
-    public Dictionary<int, float> getAgentScore(List<int> animalIdList, Dictionary<int,List<float[]>> patchDict, float lambda){
+    public Dictionary<int, float> getAgentScore(List<int> animalIdList, ConcurrentDictionary<int,List<float[]>> patchDict, float lambda){
       Dictionary<int, float> scoreValue = new Dictionary<int, float>();
       Dictionary<int,int> maxSteps = new Dictionary<int,int>();
 
@@ -86,7 +87,7 @@ namespace CognitiveABM.QLearningABMAdditional{
      * @return: dictionary containing how many steps it took an agent to reach max elevation
      * @description: finds how many steps it took for an agent to reach its max elevation
      */
-    public Dictionary<int,int> getStepsToMax(Dictionary<int,List<float[]>> patchDict, List<int> animalIdList){
+    public Dictionary<int,int> getStepsToMax(ConcurrentDictionary<int,List<float[]>> patchDict, List<int> animalIdList){
       Dictionary<int,int> maxSteps = new Dictionary<int,int>();
       List<float[]> patchList = new List<float[]>();
 
@@ -198,7 +199,7 @@ namespace CognitiveABM.QLearningABMAdditional{
      * @param animalIdList: list of all animal ids
      * @description: updates the current qmap and prints it
      */
-    public void updateQMap(Dictionary<int, float> agentScore, Dictionary<int, List<(int,int)>> agentQmapPath, List<int> animalIdList){
+    public void updateQMap(Dictionary<int, float> agentScore, ConcurrentDictionary<int, List<(int,int)>> agentQmapPath, List<int> animalIdList){
       float[,] qmap = getQMap(); //4x4 qmap matrix hard coded
 
       foreach(int id in animalIdList){
@@ -247,7 +248,7 @@ namespace CognitiveABM.QLearningABMAdditional{
      * @param terrianFilePath: String of full pathway to selected terrian File
      * @description: prints all values of the values parameter into a csv file named after the terrian
      */
-    public void exportInfo(Dictionary<int,List<float[]>> patchDict, List<int> animalIdList, string terrianFilePath){
+    public void exportInfo(ConcurrentDictionary<int,List<float[]>> patchDict, List<int> animalIdList, string terrianFilePath){
           string fileName = "./output/" + Path.GetFileNameWithoutExtension(terrianFilePath) + "_exportInfo.csv";
           var w = new StreamWriter(path: fileName);
 

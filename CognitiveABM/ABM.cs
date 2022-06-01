@@ -12,6 +12,7 @@ using Mars.Core.ModelContainer.Entities;
 using Mars.Core.SimulationManager.Entities;
 using Mars.Core.SimulationStarter;
 using System.Text.RegularExpressions;
+using System.Collections.Concurrent;
 
 public class ABM
 {
@@ -139,7 +140,7 @@ public class ABM
                 Console.WriteLine("Average fitness: {0:F2}, Max fitness: {1:F2}", avg, max);
 
                 List<int> anIdList = QLearning.animalIDHolder;
-                Dictionary<int, List<float[]>> patch = QLearning.patchDict;
+                ConcurrentDictionary<int, List<float[]>> patch = QLearning.patchDict;
                 QLABMA.exportInfo(patch, anIdList, terrianFilePath);
 
                 GC.Collect();
@@ -182,8 +183,8 @@ public class ABM
                 //make method to get lambda value i guess
                 float[] lambdaArray = QLABMA.getLambda(generations); //Our discount value
                 List<int> anIdList = QLearning.animalIDHolder;
-                Dictionary<int, List<float[]>> patch = QLearning.patchDict; //current patch of land
-                Dictionary<int, List<(int,int)>> pathWay = QLearning.agentQmapPath; 
+                ConcurrentDictionary<int, List<float[]>> patch = QLearning.patchDict; //current patch of land
+                ConcurrentDictionary<int, List<(int,int)>> pathWay = QLearning.agentQmapPath; 
                 Dictionary<int, float> scoreValue = QLABMA.getAgentScore(anIdList, patch, lambdaArray[generation]); //value used to edit qmap
                 QLABMA.updateQMap(scoreValue,pathWay,anIdList);
 

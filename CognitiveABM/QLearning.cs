@@ -15,9 +15,9 @@ namespace CognitiveABM.QLearning
         private List<float[,]> prototypes = new List<float[,]>(); //prototype list used for MSE
         public static List<float> fitness;
         public static List<int> animalIDHolder;
-        public static Dictionary<int, List<float[]>> patchDict;
+        public static ConcurrentDictionary<int, List<float[]>> patchDict;
         public static Dictionary<int, List<float>> fitDict;
-        public static Dictionary<int, List<(int,int)>> agentQmapPath;
+        public static ConcurrentDictionary<int, List<(int,int)>> agentQmapPath;
         public static int usePerfectQMap = 1;
 
         //--------------------------------//
@@ -35,12 +35,12 @@ namespace CognitiveABM.QLearning
           setPrototype();
           fitness = new List<float>();
           animalIDHolder = new List<int>();
-          patchDict = new Dictionary<int, List<float[]>>();
-          patchDict.Add(-1, new List<float[]>());
-          fitDict = new Dictionary<int, List<float>>();
-          fitDict.Add(-1, new List<float>());
-          agentQmapPath = new Dictionary<int, List<(int,int)>>();
-          agentQmapPath.Add(-1, new List<(int,int)>());
+          patchDict = new ConcurrentDictionary<int, List<float[]>>();
+          patchDict.TryAdd(-1, new List<float[]>());
+          // fitDict = new ConcurrentDictionary<int, List<float>>();
+          // fitDict.Add(-1, new List<float>());
+          agentQmapPath = new ConcurrentDictionary<int, List<(int,int)>>();
+          agentQmapPath.TryAdd(-1, new List<(int,int)>());
 
         }
 
@@ -177,12 +177,27 @@ namespace CognitiveABM.QLearning
           //we add all values of the col together, when > rDouble, we choose last column
           for(int i = 0; i < 8; i++){
             addedVal += qMap[i,col];
+            addedVal += noiseGen(); //adds noise ranging from -0.2 and 0.2
             if(addedVal >= rFloat){
               return i;
             }
           }//end for
-              return -1; //return -1 so we know that it's this method that causes an error later down the road
+              return 7; //return -1 so we know that it's this method that causes an error later down the road
         }//end rouletteWheel
+        /**
+         * @description: creates a random float between -0.2 and 0.2
+         * @return: random noise value
+         */
+        public float noiseGen(){
+          var random = new Random();
+          float noise = (float)random.NextDouble()/5; //noise between 0 and 0.2
+          int sign = random.Next(1, 3);
+          if(sign == 2){ //noise becomes negative;
+            noise = noise * -1;
+          } //end for
+          return noise;
+        } //end noiseGen
+
 
         /**
          * @param landScapePatch: 3x3 matrix of landscape agent is on
@@ -244,7 +259,7 @@ namespace CognitiveABM.QLearning
             temp[12] = 0.0f;
             temp[13] = temp[14] = temp[15]= 0.0f;
             tempList.Add(temp);
-            patchDict.Add(animalId, tempList);
+            patchDict.TryAdd(animalId, tempList);
           }
 
           else{
@@ -306,7 +321,7 @@ namespace CognitiveABM.QLearning
           List<(int,int)> tempList = new List<(int,int)>();
           if(agentQmapPath.ContainsKey(animalId) == null || !agentQmapPath.ContainsKey(animalId)){
             tempList.Add((row,col));
-            agentQmapPath.Add(animalId, tempList);
+            agentQmapPath.TryAdd(animalId, tempList);
           }
           else{
             tempList = agentQmapPath[animalId];

@@ -154,7 +154,7 @@ namespace HillClimberExample
         [System.Runtime.CompilerServices.MethodImpl(System.Runtime.CompilerServices.MethodImplOptions.AggressiveInlining)]
         public Animal _SpawnAnimal(double xcor = 0, double ycor = 0, int freq = 1)
         {
-            var id = Guid.NewGuid();
+            var id = Guid.NewGuid(); //Add Agent object
             var agent = new Animal(
 				id,
 				this,
