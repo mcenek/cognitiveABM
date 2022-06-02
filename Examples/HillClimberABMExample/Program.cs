@@ -20,10 +20,10 @@ public static class Program
             FileUtils.ChangeTerrainFilePath(terrainFilePath);
 
             QLearning.usePerfectQMap = 1;
-            List<List<float>> trainGenomes = null;
-            if (terrainFilePath != terrainFilePaths[0]) {
-                trainGenomes = FileUtils.ReadGenomesFromFile(".\\output\\genomes.csv");
-            }
+            // List<List<float>> trainGenomes = null;
+            // if (terrainFilePath != terrainFilePaths[0]) {
+            //     trainGenomes = FileUtils.ReadGenomesFromFile(".\\output\\genomes.csv");
+            // }
             //HillClimberFCM fcm = new HillClimberFCM(population: 96, numberOfValues: 486, STEPS, OUTPUT_FILENAME, FITNESS_COLUMNNAME, trainGenomes);
             ABM abm = new ABM(modelDescription: GetModelDescription());
             abm.Train(10, terrainFilePath, args);

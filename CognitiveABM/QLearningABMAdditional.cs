@@ -3,10 +3,13 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
+using CognitiveABM.agentInformationHolder;
 
 namespace CognitiveABM.QLearningABMAdditional{
 
   public class QLearningABMAdditional{
+
+    //public agentInfoHolder agentHolder = new agentInfoHolder();
 
     public QLearningABMAdditional(){
       //Nothing to put here
@@ -19,7 +22,6 @@ namespace CognitiveABM.QLearningABMAdditional{
      */
     public float[] getLambda(int generations){
       float[] array = new float[generations];
-      float delta = .1f/generations;
       float lambda = .1f;
 
       for(int i = 0; i < generations; i++){
@@ -37,21 +39,28 @@ namespace CognitiveABM.QLearningABMAdditional{
     }//end getLambda
 
 
-    public Dictionary<int, float> getAgentScore(List<int> animalIdList, Dictionary<int,List<float[]>> patchDict, float lambda){
+    public Dictionary<int, float> getAgentScore(float lambda, agentInfoHolder agentHolder){
       Dictionary<int, float> scoreValue = new Dictionary<int, float>();
       Dictionary<int,int> maxSteps = new Dictionary<int,int>();
 
       List<float[]> patchList = new List<float[]>();
-      foreach (int id in animalIdList){
-        patchList = patchDict[id];
-        scoreValue.Add(id, patchList.Last()[15]);
+      foreach (KeyValuePair<int, (List<float[]>, List<(int,int)>)> entry in agentHolder.getInfo()){
+        patchList = entry.Value.Item1;
+        int num = 0;
+        // foreach(float[] tempname in entry.Value.Item1){
+        //   num++;
+        //   Console.Write(num);
+        // }
+
+        scoreValue.Add(entry.Key, patchList.Last()[15]);
+        //Environment.Exit(0);
       }//end for each id
 
       var temp = scoreValue.OrderByDescending(x => x.Value).ToDictionary(x => x.Key, x => x.Value);
       scoreValue = temp;
 
       scoreValue = setScoreValue(scoreValue);
-      maxSteps = getStepsToMax(patchDict,animalIdList);
+      maxSteps = getStepsToMax(agentHolder);
       scoreValue = calculateAgentScore(scoreValue, maxSteps, lambda);
 
       return scoreValue;
@@ -79,7 +88,7 @@ namespace CognitiveABM.QLearningABMAdditional{
      * @return: dictionary containing how many steps it took an agent to reach max elevation
      * @description: finds how many steps it took for an agent to reach its max elevation
      */
-    public Dictionary<int,int> getStepsToMax(Dictionary<int,List<float[]>> patchDict, List<int> animalIdList){
+    public Dictionary<int,int> getStepsToMax(agentInfoHolder agentHolder){
       Dictionary<int,int> maxSteps = new Dictionary<int,int>();
       List<float[]> patchList = new List<float[]>();
 
@@ -87,8 +96,8 @@ namespace CognitiveABM.QLearningABMAdditional{
       int maxStep = 0;
 
       //finds the max steps it took an agent to reach it's peak elevation
-      foreach (int id in animalIdList){
-        patchList = patchDict[id];
+      foreach (KeyValuePair<int, (List<float[]>, List<(int,int)>)> entry in agentHolder.getInfo()){
+        patchList = entry.Value.Item1;
         AME = 0.0f;
         foreach (float[] array in patchList){
          if(AME < array[11]){ //finds max elevation an agent reached
@@ -96,7 +105,7 @@ namespace CognitiveABM.QLearningABMAdditional{
            maxStep = (int)array[1];
          }
         }//end for each float[] array
-        maxSteps.Add(id,maxStep);
+        maxSteps.Add(entry.Key,maxStep);
       }//end for each id
 
       return maxSteps;
@@ -191,12 +200,12 @@ namespace CognitiveABM.QLearningABMAdditional{
      * @param animalIdList: list of all animal ids
      * @description: updates the current qmap and prints it
      */
-    public void updateQMap(Dictionary<int, float> agentScore, Dictionary<int, List<(int,int)>> agentQmapPath, List<int> animalIdList){
+    public void updateQMap(Dictionary<int, float> agentScore, agentInfoHolder agentHolder){
       float[,] qmap = getQMap(); //4x4 qmap matrix hard coded
 
-      foreach(int id in animalIdList){
-        foreach((int,int)tuple in agentQmapPath[id]){
-          qmap[tuple.Item1,tuple.Item2] += agentScore[id];
+      foreach(KeyValuePair<int, (List<float[]>, List<(int,int)>)> entry in agentHolder.getInfo()){
+        foreach((int,int)tuple in entry.Value.Item2){
+          qmap[tuple.Item1,tuple.Item2] += agentScore[entry.Key];
         }
         qmap = normalliseQMap(qmap);
       }
@@ -210,19 +219,24 @@ namespace CognitiveABM.QLearningABMAdditional{
      * @description: grabs the qmap from a selected csv file
      */
     public float[,] getQMap(){
-      float[,] data = new float[4,4]; //4x4 qmap matrix hard coded
-      using(var reader = new StreamReader(@"..\HillClimberABMExample\layers\qMapRandom.csv"))
+      float[,] data = new float[8,8]; //4x4 qmap matrix hard coded
+      using(var reader = new StreamReader(@"..\HillClimberABMExample\layers\qMapRandom8x8.csv"))
      {
          int counter = 0;
          while (!reader.EndOfStream)
          {
              var line = reader.ReadLine();
              var values = line.Split(',');
-             if(counter < 4){
+             if(counter < 8){
              data[counter,0] = float.Parse(values[0]);
              data[counter,1] = float.Parse(values[1]);
              data[counter,2] = float.Parse(values[2]);
              data[counter,3] = float.Parse(values[3]);
+             data[counter,4] = float.Parse(values[4]);
+             data[counter,5] = float.Parse(values[5]);
+             data[counter,6] = float.Parse(values[6]);
+             data[counter,7] = float.Parse(values[7]);
+
              counter++;
            }
          }
@@ -236,7 +250,7 @@ namespace CognitiveABM.QLearningABMAdditional{
      * @param terrianFilePath: String of full pathway to selected terrian File
      * @description: prints all values of the values parameter into a csv file named after the terrian
      */
-    public void exportInfo(Dictionary<int,List<float[]>> patchDict, List<int> animalIdList, string terrianFilePath){
+    public void exportInfo(string terrianFilePath, agentInfoHolder agentHolder){
           string fileName = "./output/" + Path.GetFileNameWithoutExtension(terrianFilePath) + "_exportInfo.csv";
           var w = new StreamWriter(path: fileName);
 
@@ -258,8 +272,8 @@ namespace CognitiveABM.QLearningABMAdditional{
 
           //write data to csv
           List<float[]> patchList = new List<float[]>();
-          foreach (int id in animalIdList){
-            patchList = patchDict[id];
+          foreach (KeyValuePair<int, (List<float[]>, List<(int,int)>)> entry in agentHolder.getInfo()){
+            patchList = entry.Value.Item1;
             foreach (float[] array in patchList){
                w.Write(String.Join(",", array) + "\n");
             }//end for each float[] array
@@ -334,7 +348,7 @@ namespace CognitiveABM.QLearningABMAdditional{
      * @description: prints a qmap to file path
      */
     public void printNewQMap(float[,] qmap){
-      string fileName = @"..\HillClimberABMExample\layers\qMapGenerated.csv";
+      string fileName = @"..\HillClimberABMExample\layers\qMapGenerated8x8.csv";
       var w = new StreamWriter(path: fileName);
       float[] qMapRow = new float[qmap.GetLength(0)];
 
@@ -342,11 +356,15 @@ namespace CognitiveABM.QLearningABMAdditional{
       for(int row = 0; row < qmap.GetLength(0); row++){
         for(int col = 0; col < qmap.GetLength(1); col++){
           qMapRow[col] = qmap[row,col];
+          // if(float.IsNaN(qMapRow[col])){
+          //   Console.WriteLine("NAN" + row + col);
+          //   Environment.Exit(0);
+          // }
         }
         w.Write(String.Join(",", qMapRow) + "\n");
       }
       w.Close();
     }//end printNewQMap
-  }
+  }//end class
 
-}
+}//end namespace

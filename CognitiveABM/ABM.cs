@@ -12,6 +12,7 @@ using Mars.Core.ModelContainer.Entities;
 using Mars.Core.SimulationManager.Entities;
 using Mars.Core.SimulationStarter;
 using System.Text.RegularExpressions;
+using CognitiveABM.agentInformationHolder;
 
 public class ABM
 {
@@ -20,7 +21,7 @@ public class ABM
 
     public static int QlearningTotalFittness = 0;
     public QLearningABMAdditional QLABMA = new QLearningABMAdditional();
-
+    public agentInfoHolder agentHolder = new agentInfoHolder();
 
     public ABM(ModelDescription modelDescription)
     {
@@ -131,15 +132,15 @@ public class ABM
             {
                 stopWatch.Stop();
 
-                List<float> agentFitness = QLearning.fitness;
+                List<float> agentFitness = agentHolder.getFit();
                 var avg = agentFitness.Average();
                 var max = agentFitness.Max();
 
                 Console.WriteLine("Average fitness: {0:F2}, Max fitness: {1:F2}", avg, max);
 
-                List<int> anIdList = QLearning.animalIDHolder;
-                Dictionary<int, List<float[]>> patch = QLearning.patchDict;
-                QLABMA.exportInfo(patch, anIdList, terrianFilePath);
+                // List<int> anIdList = QLearning.animalIDHolder;
+                // Dictionary<int, List<float[]>> patch = QLearning.patchDict;
+                QLABMA.exportInfo(terrianFilePath, agentHolder);
 
                 GC.Collect();
                 return agentFitness;
@@ -170,9 +171,10 @@ public class ABM
             if (loopResults.IsFinished)
             {
                 stopWatch.Stop();
+              //  Environment.Exit(0);
                 Console.WriteLine($"Simulation execution finished in {stopWatch.ElapsedMilliseconds / 1000:N2} seconds");
 
-                List<float> agentFitness = QLearning.fitness;
+                List<float> agentFitness = agentHolder.getFit();
                 var avg = agentFitness.Average();
                 var max = agentFitness.Max();
 
@@ -180,11 +182,8 @@ public class ABM
 
                 //make method to get lambda value i guess
                 float[] lambdaArray = QLABMA.getLambda(generations);
-                List<int> anIdList = QLearning.animalIDHolder;
-                Dictionary<int, List<float[]>> patch = QLearning.patchDict;
-                Dictionary<int, List<(int,int)>> pathWay = QLearning.agentQmapPath;
-                Dictionary<int, float> scoreValue = QLABMA.getAgentScore(anIdList, patch, lambdaArray[generation]);
-                QLABMA.updateQMap(scoreValue,pathWay,anIdList);
+                Dictionary<int, float> scoreValue = QLABMA.getAgentScore(lambdaArray[generation], agentHolder);
+                QLABMA.updateQMap(scoreValue, agentHolder);
 
                 Console.WriteLine("QMap has been updated");
                 GC.Collect();

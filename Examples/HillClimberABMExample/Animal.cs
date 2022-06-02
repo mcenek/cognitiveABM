@@ -119,6 +119,17 @@ namespace HillClimberExample
 
             /**FCM*/
             //-----FCM----//
+            // var inputs = GetAdjacentTerrainElevations();
+            // int highestInput = 0;
+            // for (int i = 0; i < 9; i++)
+            // {
+            //     if (inputs[i] > inputs[highestInput])
+            //     {
+            //         highestInput = i;
+            //     }
+            // }
+            //
+            // Boolean atPeak = highestInput == 4;
             // PerceptronFactory perceptron = new PerceptronFactory(9, 9, 1, 9);
             // float[] outputs = perceptron.CalculatePerceptronFromId(AnimalId, inputs, AgentMemory);
             // outputs.CopyTo(AgentMemory, 0);
@@ -159,16 +170,18 @@ namespace HillClimberExample
                     index++;
                 }
             }
-            int direction = this.qLearn.getDirection(landscapePatch, min, max, this.AnimalId);
+
+
+            int xPos = (int)Position.X;
+            int yPos = (int)Position.Y;
+
+            int direction = this.qLearn.getDirection(landscapePatch, min, max, this.AnimalId, this.tickNum, Elevation, xPos, yPos);
             int[] newLocation = adjacentTerrainLocations[direction];
 
 
             //MoveTo (animal object, location, traveling distance)
-            int xPos = (int)Position.X;
-            int yPos = (int)Position.Y;
 
             Terrain._AnimalEnvironment.MoveTo(this, newLocation[0], newLocation[1], 1, predicate: null);
-            int tempElevation = Elevation;
             this.qLearn.setExportValues(landscapePatch,this.AnimalId, this.tickNum, Elevation, xPos, yPos);
             Elevation = Terrain.GetIntegerValue(this.Position.X, this.Position.Y);
             BioEnergy = (Elevation < 0) ? 0 : Elevation;
