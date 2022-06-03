@@ -219,40 +219,11 @@ namespace CognitiveABM.QLearning
               counter++;
             }
           }
-
-          //set the temp array to have the place holders as if it is New
-          //then in agentInfoHolder, if there is an old one, we can reset the values
-          //
-
             temp[12] = 0.0f;
             temp[13] = temp[14] = temp[15]= 0.0f;
             tempList.Add(temp);
             return tempList;
-          // if(!animalIDHolder.Contains(animalId)){
-          //   animalIDHolder.Add(animalId);
-          // }
-          //
-          // List<float[]> tempList = new List<float[]>();
-          // //if animal has yet to be seen
-          // if(patchDict.ContainsKey(animalId) == null || !patchDict.ContainsKey(animalId)){
-          //   temp[12] = 0.0f;
-          //   temp[13] = temp[14] = temp[15]= 0.0f;
-          //   tempList.Add(temp);
-          //   patchDict.Add(animalId, tempList);
-          // }
-          //
-          // else{
-          //   tempList = patchDict[animalId];
-          //   temp[12] = (tempList.Last())[11];
-          //   //temp[13] = Math.Abs((float)currentEle - temp[12]);
-          //   temp[13] = currentEle - temp[12];
-          //   float[] avgMax = getAverageandTotal(tempList, temp[13]);
-          //   temp[14] = avgMax[0];
-          //   temp[15] = avgMax[1];
-          //   fitness.Add(temp[13]);
-          //   tempList.Add(temp);
-          //   patchDict[animalId] = tempList;
-          // }
+
         }//end exportValues
 
         /**
@@ -309,7 +280,7 @@ namespace CognitiveABM.QLearning
             agentQmapPath[animalId] = tempList;
           }
         }//end recordPath
-        //MAYBE DO THE DUEL DICTIONARIES THEN IN ABM COMBINE THEM INTO 1
+        
         public void savePathandExportValues(int animalId, int row, int col, float[,] patch, int tickNum, float Elevation, int xPos, int yPos){
           List<(int,int)> pathway = new List<(int,int)>();
           pathway.Add((row,col));

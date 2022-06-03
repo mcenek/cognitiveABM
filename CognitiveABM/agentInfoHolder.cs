@@ -18,6 +18,12 @@ namespace CognitiveABM.agentInformationHolder
 
       }
 
+      /**
+       * @param id: id of animal agent
+       * @param exportVals: list all values to be exported to a csv
+       * @param path: pathway agent took
+       * @description: adds the parameters to the agentInfo dictionary
+       */
       public void addItem(int id, List<float[]> exportVals, List<(int,int)> path){
         if(!agentInfo.TryAdd(id,(exportVals,path))){
           editItem(id,exportVals,path);
@@ -26,10 +32,22 @@ namespace CognitiveABM.agentInformationHolder
 
       }
 
+      /**
+       * @param id: id of animal agent
+       * @param exportVals: list all values to be exported to a csv
+       * @param path: pathway agent took
+       * @description: updates the dictionary with the new items
+       */
       public void editItem(int id, List<float[]> exportVals, List<(int,int)> path){
         agentInfo.TryUpdate(id,(getNewExportVals(id,exportVals),getNewPathWay(id,path)), (exportVals,path));
       }
 
+      /**
+       * @param id: id of animal agent
+       * @param exportVals: list all values to be exported to a csv
+       * @description: updates the export values based from the previous export value array
+       * @return: returns a list containing the updated export values
+       */
       public List<float[]> getNewExportVals(int id, List<float[]> exportVals){
         //agent info is our patchdict
         List<float[]> tempList = agentInfo[id].Item1;
@@ -44,6 +62,13 @@ namespace CognitiveABM.agentInformationHolder
         return tempList;
       }
 
+
+      /**
+       * @param tempList: list containing the export values
+       * @param currentFit: current fitness value
+       * @description: calculates the average and total fitness an agent has accumulated
+       * @returns: an array containing the average and total fitness
+       */
       public float[] getAverageandTotal(List<float[]> tempList, float currentFit){
         int counter;
         float avgCurrentFit;
@@ -73,6 +98,12 @@ namespace CognitiveABM.agentInformationHolder
         return returnVals;
       }//end getAverage
 
+      /**
+       * @param id: id of animal agent
+       * @param path: list of the pathway the agent traversed
+       * @description: updates the pathway based from the previous pathways
+       * @return: returns a list containing the updated pathways
+       */
       public List<(int,int)> getNewPathWay(int id, List<(int,int)> path){
         List<(int,int)> tempList = agentInfo[id].Item2;
         foreach((int,int)tuple in path){
@@ -81,10 +112,15 @@ namespace CognitiveABM.agentInformationHolder
         return tempList;
       }
 
+      //------GETTER METHODS------\\
+
+
+      //Returns the dictionary
       public ConcurrentDictionary<int, (List<float[]>, List<(int,int)>)> getInfo(){
         return agentInfo;
       }
 
+      //returns list containing fitness values
       public List<float> getFit(){
         return fitness;
       }
