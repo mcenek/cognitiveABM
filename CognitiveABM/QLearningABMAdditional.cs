@@ -75,7 +75,14 @@ namespace CognitiveABM.QLearningABMAdditional{
     public Dictionary<int, float> calculateAgentScore(Dictionary<int, float> scoreValue, Dictionary<int,int> maxSteps, float lambda){
       Dictionary<int, float> score = new Dictionary<int,float>();
       foreach(var item in scoreValue){
-        score.Add(item.Key,(scoreValue[item.Key]/(maxSteps[item.Key] * lambda))); 
+        //float value = (float)(maxSteps[item.Key] * lambda);
+        //score.Add(item.Key,(scoreValue[item.Key]/(((float)maxSteps[item.Key]) * lambda))); 
+        if(maxSteps[item.Key] * lambda == 0){
+          score.Add(item.Key,(scoreValue[item.Key]/(0.0001f))); 
+        }
+        else{
+          score.Add(item.Key,(scoreValue[item.Key]/(maxSteps[item.Key] * lambda))); 
+        }
         //every path will have this score added 
       }
       return score;
@@ -132,8 +139,14 @@ namespace CognitiveABM.QLearningABMAdditional{
 
       float[] threeValues = {agentTotalFit.First().Value, getMiddleValue(agentTotalFit), agentTotalFit.Last().Value};//values that should get 1, 0, -1 for score
       int totalFitSize = agentTotalFit.Values.Distinct().Count(); //total size of agentTotalFit dictionary
+      if(totalFitSize == 0){
+        Console.WriteLine("Total fitsize = 0");
+      }
       int halfWay = totalFitSize/2; //half way point of dictionary
       float scoreNumber = 1.0f; //score value for an agent
+      if(halfWay == 0){
+        Console.WriteLine("halfway = 0");
+      }
       float deltaVal = 1.0f/halfWay; //delta value that scorenumber gets subtracted by for all values 1-0
 
       //Console.Write("Total: " + totalFitSize + "; Half: " + halfWay + ", nextHalf:" + (totalFitSize-halfWay));
@@ -166,20 +179,20 @@ namespace CognitiveABM.QLearningABMAdditional{
           case float n when n == threeValues[2]:
             scoreNumber = -1.0f;
             scoreValue.Add(item.Key, scoreNumber);
-            //Console.Write("Score of -1: " + item.Key + ", " + item.Value + ", " + scoreNumber + "\n");
+            Console.Write("Score of -1: " + item.Key + ", " + item.Value + ", " + scoreNumber + "\n");
             lowest = item.Value;
             break;
 
           case float n when n == lowest:
             scoreValue.Add(item.Key, (float)Math.Round(scoreNumber,3));
-            //Console.Write("Is previous: " + item.Key + ", " + item.Value + ", " + scoreNumber + "\n");
+            Console.Write("Is previous: " + item.Key + ", " + item.Value + ", " + (float)Math.Round(scoreNumber,3) + "\n");
             break;
 
           case float n when n < lowest:
             lowest = item.Value;
             scoreNumber -= deltaVal;
             scoreValue.Add(item.Key, (float)Math.Round(scoreNumber,3));
-            //Console.Write("Less than previous: " + item.Key + ", " + item.Value + ", " + scoreNumber + "\n");
+            Console.Write("Less than previous: " + item.Key + ", " + item.Value + ", " + (float)Math.Round(scoreNumber,3) + "\n");
             break;
 
 
@@ -200,7 +213,7 @@ namespace CognitiveABM.QLearningABMAdditional{
      * @description: updates the current qmap and prints it
      */
     public void updateQMap(Dictionary<int, float> agentScore, ConcurrentDictionary<int, List<(int,int)>> agentQmapPath, List<int> animalIdList){
-      float[,] qmap = getQMap(); //4x4 qmap matrix hard coded
+      float[,] qmap = getQMap(); //8x8 qmap matrix hard coded
 
       foreach(int id in animalIdList){
         foreach((int,int)tuple in agentQmapPath[id]){
@@ -218,8 +231,8 @@ namespace CognitiveABM.QLearningABMAdditional{
      * @description: grabs the qmap from a selected csv file
      */
     public float[,] getQMap(){
-      float[,] data = new float[8,8]; //4x4 qmap matrix hard coded
-      using(var reader = new StreamReader(@"..\HillClimberABMExample\layers\qMapRandom.csv"))
+      float[,] data = new float[8,8]; //8x8 qmap matrix hard coded
+      using(var reader = new StreamReader(@"..\HillClimberABMExample\layers\qMapPerfect.csv"))
      {
          int counter = 0;
          while (!reader.EndOfStream)
@@ -294,7 +307,11 @@ namespace CognitiveABM.QLearningABMAdditional{
       for (int col = 0; col < qmap.GetLength(1); col++){
         for (int row = 0; row < qmap.GetLength(0); row++){ //adds all values from each column
           total += Math.Abs(qmap[row,col]);
+
           colVals[row] = Math.Abs(qmap[row,col]);
+        }
+        if(total == 0.0f){
+          Console.WriteLine("===" + total + "====");
         }
 
         for (int row = 0; row < qmap.GetLength(0); row++){ //should all add up to 1
@@ -355,9 +372,10 @@ namespace CognitiveABM.QLearningABMAdditional{
         for(int col = 0; col < qmap.GetLength(1); col++){
           qMapRow[col] = qmap[row,col];
         }
-        w.Write(String.Join(",", qMapRow) + "\n");
+        Console.WriteLine(String.Join(',', qMapRow) + "\n");
+        w.Write(String.Join(',', qMapRow) + "\n");
       }
-      w.Close();
+      w.Close();  
     }//end printNewQMap
   }
 

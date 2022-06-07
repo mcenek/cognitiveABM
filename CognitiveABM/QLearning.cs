@@ -136,7 +136,7 @@ namespace CognitiveABM.QLearning
           //N E S W NE SE SW NE 
           int[] directionMap = {1,5,7,3,2,8,6,0};
           try { //RNG may return a -1, 
-            return directionMap[direction];
+          return directionMap[direction];
           }
           catch (IndexOutOfRangeException e){//if RNG returned a -1 set directionmap to 3
             Console.Write("Index out of bounds in getDirection {0}", animalId);
@@ -329,6 +329,5 @@ namespace CognitiveABM.QLearning
             agentQmapPath[animalId] = tempList;
           }
         }//end recordPath
-
     }
 }

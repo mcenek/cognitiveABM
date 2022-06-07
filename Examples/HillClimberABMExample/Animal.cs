@@ -183,7 +183,7 @@ namespace HillClimberExample
             //var random = new Random(ID.GetHashCode()); //using hard coded value for testing
             //return new Tuple<int, int>(random.Next(Terrain.DimensionX()), random.Next(Terrain.DimensionY()));
             //make all agents start at same spot
-            var random = new Random();
+            var random = new Random(); //seed 
 
             //Puts agents on border of map
             //Case 0: Along Y axis (left)
