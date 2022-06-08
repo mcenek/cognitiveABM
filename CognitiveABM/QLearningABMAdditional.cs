@@ -77,7 +77,13 @@ namespace CognitiveABM.QLearningABMAdditional{
     public Dictionary<int, float> calculateAgentScore(Dictionary<int, float> scoreValue, Dictionary<int,int> maxSteps, float lambda){
       Dictionary<int, float> score = new Dictionary<int,float>();
       foreach(var item in scoreValue){
-        score.Add(item.Key,(scoreValue[item.Key]/(maxSteps[item.Key] * lambda)));
+        if(maxSteps[item.Key] * lambda == 0){
+        score.Add(item.Key,(scoreValue[item.Key]/(0.0001f)));
+        }
+
+        else{
+          score.Add(item.Key,(scoreValue[item.Key]/(maxSteps[item.Key] * lambda)));
+        }
       }
       return score;
     }//end calculateAgentScore
@@ -93,7 +99,7 @@ namespace CognitiveABM.QLearningABMAdditional{
       List<float[]> patchList = new List<float[]>();
 
       float AME = 0.0f;
-      int maxStep = 0;
+      int maxStep = 1;
 
       //finds the max steps it took an agent to reach it's peak elevation
       foreach (KeyValuePair<int, (List<float[]>, List<(int,int)>)> entry in agentHolder.getInfo()){
@@ -152,14 +158,14 @@ namespace CognitiveABM.QLearningABMAdditional{
           case float n when n == threeValues[0]:
             scoreNumber = 1.0f;
             scoreValue.Add(item.Key, scoreNumber);
-            //Console.Write("Score of 1: " + item.Key + ", " + item.Value + ", " + scoreNumber + "\n");
+            Console.Write("Score of 1: " + item.Key + ", " + item.Value + ", " + scoreNumber + "\n");
             lowest = item.Value;
             break;
 
           case float n when n == threeValues[1]:
             scoreNumber = 0.0f;
             scoreValue.Add(item.Key, scoreNumber);
-            //Console.Write("Score of 0: " + item.Key + ", " + item.Value + ", " + scoreNumber + "\n");
+            Console.Write("Score of 0: " + item.Key + ", " + item.Value + ", " + scoreNumber + "\n");
             lowest = item.Value;
             deltaVal = deltaVal;
             break;
@@ -167,20 +173,20 @@ namespace CognitiveABM.QLearningABMAdditional{
           case float n when n == threeValues[2]:
             scoreNumber = -1.0f;
             scoreValue.Add(item.Key, scoreNumber);
-            //Console.Write("Score of -1: " + item.Key + ", " + item.Value + ", " + scoreNumber + "\n");
+            Console.Write("Score of -1: " + item.Key + ", " + item.Value + ", " + scoreNumber + "\n");
             lowest = item.Value;
             break;
 
           case float n when n == lowest:
             scoreValue.Add(item.Key, (float)Math.Round(scoreNumber,3));
-            //Console.Write("Is previous: " + item.Key + ", " + item.Value + ", " + scoreNumber + "\n");
+            Console.Write("Is previous: " + item.Key + ", " + item.Value + ", " + scoreNumber + "\n");
             break;
 
           case float n when n < lowest:
             lowest = item.Value;
             scoreNumber -= deltaVal;
             scoreValue.Add(item.Key, (float)Math.Round(scoreNumber,3));
-            //Console.Write("Less than previous: " + item.Key + ", " + item.Value + ", " + scoreNumber + "\n");
+            Console.Write("Less than previous: " + item.Key + ", " + item.Value + ", " + scoreNumber + "\n");
             break;
 
 
@@ -220,7 +226,7 @@ namespace CognitiveABM.QLearningABMAdditional{
      */
     public float[,] getQMap(){
       float[,] data = new float[8,8]; //4x4 qmap matrix hard coded
-      using(var reader = new StreamReader(@"..\HillClimberABMExample\layers\qMapRandom8x8.csv"))
+      using(var reader = new StreamReader(@"..\HillClimberABMExample\layers\qMapGenerated8x8.csv"))
      {
          int counter = 0;
          while (!reader.EndOfStream)
