@@ -9,8 +9,6 @@ namespace CognitiveABM.QLearningABMAdditional{
 
   public class QLearningABMAdditional{
 
-    //public agentInfoHolder agentHolder = new agentInfoHolder();
-
     public QLearningABMAdditional(){
       //Nothing to put here
     }
@@ -26,19 +24,25 @@ namespace CognitiveABM.QLearningABMAdditional{
 
       for(int i = 0; i < generations; i++){
         if(i == 0 || i > 0 && i < (generations/3)){
-          array[i] = .1f;
+          array[i] = .5f;
         }
         else if(i == generations-1 || i < generations-1 && i > (generations/1.5)){
-          array[i] = .01f;
+          array[i] = .05f;
         }
         else{
-          array[i] = .05f;
+          array[i] = .1f;
         }
       }
       return array;
     }//end getLambda
 
 
+    /**
+     * @param lambda: value used to calculate how much an affect current generation has on qmap
+     * @param agentHolder: agentInfoHolder object that contains information for the agents
+     * @description: calculates the score each agent accumulated based from their run
+     * @return: returns a dictionary containing the score for each agent
+     */
     public Dictionary<int, float> getAgentScore(float lambda, agentInfoHolder agentHolder){
       Dictionary<int, float> scoreValue = new Dictionary<int, float>();
       Dictionary<int,int> maxSteps = new Dictionary<int,int>();
@@ -46,23 +50,14 @@ namespace CognitiveABM.QLearningABMAdditional{
       List<float[]> patchList = new List<float[]>();
       foreach (KeyValuePair<int, (List<float[]>, List<(int,int)>)> entry in agentHolder.getInfo()){
         patchList = entry.Value.Item1;
-        int num = 0;
-        // foreach(float[] tempname in entry.Value.Item1){
-        //   num++;
-        //   Console.Write(num);
-        // }
-
         scoreValue.Add(entry.Key, patchList.Last()[15]);
-        //Environment.Exit(0);
       }//end for each id
 
       var temp = scoreValue.OrderByDescending(x => x.Value).ToDictionary(x => x.Key, x => x.Value);
       scoreValue = temp;
-
       scoreValue = setScoreValue(scoreValue);
       maxSteps = getStepsToMax(agentHolder);
-      scoreValue = calculateAgentScore(scoreValue, maxSteps, lambda);
-
+      scoreValue = calculateAgentScore(scoreValue, maxSteps, lambda, agentHolder);
       return scoreValue;
     }//end getAgentScore
 
@@ -74,19 +69,69 @@ namespace CognitiveABM.QLearningABMAdditional{
      * @description: Calculates an agent's score using the below equation
      * (ScoreValue (ranges from 1 to -1))/(Steps to max elevation * lambda)
      */
-    public Dictionary<int, float> calculateAgentScore(Dictionary<int, float> scoreValue, Dictionary<int,int> maxSteps, float lambda){
+    public Dictionary<int, float> calculateAgentScore(Dictionary<int, float> scoreValue, Dictionary<int,int> maxSteps, float lambda, agentInfoHolder agentHolder){
       Dictionary<int, float> score = new Dictionary<int,float>();
+      float pathBonus = 0.0f;
       foreach(var item in scoreValue){
-        if(maxSteps[item.Key] * lambda == 0){
-        score.Add(item.Key,(scoreValue[item.Key]/(0.0001f)));
-        }
+        score.Add(item.Key,(scoreValue[item.Key]/(maxSteps[item.Key] * lambda)));
 
-        else{
-          score.Add(item.Key,(scoreValue[item.Key]/(maxSteps[item.Key] * lambda)));
-        }
       }
       return score;
     }//end calculateAgentScore
+
+    /**
+     * @param key: animal ID key used for dictionary
+     * @param agentHolder: agentInfoHolder object used to get pathway
+     * @description: Method calculates a score from -5 to 5 based off how similar the pathway was to the ideal direction
+     * Created mainly for when no qmap is used
+     * If the row and col (col is correct due to prototypes) are the same, then the agent went the correct direction
+     * Score meaning:
+     * .02 means right direction (IE Agent moves N when it should move N)
+     * .01 means semi right direction (IE Agent moves NE instead of N)
+     * 0 means neutral direction (IE Agent moves W instead of N)
+     * -.01 means semi wrong direction (IE Agent moves SE instead of N)
+     * -.02 means wrong direction (IE Agent moves S instead of N)
+     */
+    // public float calculatePathBonus(int key, agentInfoHolder agentHolder){
+    //   float lambdaPos = .02f;
+    //   float lambdaSemiPos = .01f;
+    //   float lambdaNeg = -.02f;
+    //   float lambdaSemiNeg = -.01f;
+    //   float score = 0.0f;
+    //   int difference = 0;
+    //   List<(int,int)> pathway = agentHolder.getInfo()[key].Item2;
+    //   foreach((int,int) tuple in pathway){
+    //     difference = Math.Abs(tuple.Item1 - tuple.Item2);
+    //
+    //     //if equal we are going the right way thus plus lambdapos
+    //     if(difference == 0){
+    //       score += lambdaPos;
+    //     }
+    //     // else{
+    //     //   score -= lambdaNeg;
+    //     // }
+    //     //if row and col within ceratin range they can either be neutral or opposite
+    //     else if((tuple.Item1 <= 3 && tuple.Item2 <= 3 )|| (tuple.Item1 >= 4 && tuple.Item2 >=4 )){
+    //
+    //       //if difference is 2, then they are opposite
+    //       if(difference == 2){
+    //         score -= lambdaNeg;
+    //       }
+    //       //if the modulo is different, then the item is neutral and would have no score added
+    //     }
+    //
+    //     //otherwise if the difference is a certain combination of values they are either semi opposites or semi similar
+    //     else {
+    //       if(difference == 6 || difference == 5 || difference == 1 || difference == 2){
+    //         score -= lambdaSemiNeg;
+    //       }
+    //       else{
+    //         score += lambdaSemiPos;
+    //       }
+    //     }//end big else
+    //   }//end forEach
+    //   return score;
+    // }
 
     /**
      * @param patchDict: dictionary containing the patches an agent has traversed
@@ -99,7 +144,7 @@ namespace CognitiveABM.QLearningABMAdditional{
       List<float[]> patchList = new List<float[]>();
 
       float AME = 0.0f;
-      int maxStep = 1;
+      int maxStep = 0;
 
       //finds the max steps it took an agent to reach it's peak elevation
       foreach (KeyValuePair<int, (List<float[]>, List<(int,int)>)> entry in agentHolder.getInfo()){
@@ -158,35 +203,34 @@ namespace CognitiveABM.QLearningABMAdditional{
           case float n when n == threeValues[0]:
             scoreNumber = 1.0f;
             scoreValue.Add(item.Key, scoreNumber);
-            Console.Write("Score of 1: " + item.Key + ", " + item.Value + ", " + scoreNumber + "\n");
+            //Console.Write("Score of 1: " + item.Key + ", " + item.Value + ", " + scoreNumber + "\n");
             lowest = item.Value;
             break;
 
           case float n when n == threeValues[1]:
             scoreNumber = 0.0f;
             scoreValue.Add(item.Key, scoreNumber);
-            Console.Write("Score of 0: " + item.Key + ", " + item.Value + ", " + scoreNumber + "\n");
+            //Console.Write("Score of 0: " + item.Key + ", " + item.Value + ", " + scoreNumber + "\n");
             lowest = item.Value;
             deltaVal = deltaVal;
             break;
 
           case float n when n == threeValues[2]:
-            scoreNumber = -1.0f;
             scoreValue.Add(item.Key, scoreNumber);
-            Console.Write("Score of -1: " + item.Key + ", " + item.Value + ", " + scoreNumber + "\n");
+            //Console.Write("Score of -1: " + item.Key + ", " + item.Value + ", " + scoreNumber + "\n");
             lowest = item.Value;
             break;
 
           case float n when n == lowest:
             scoreValue.Add(item.Key, (float)Math.Round(scoreNumber,3));
-            Console.Write("Is previous: " + item.Key + ", " + item.Value + ", " + scoreNumber + "\n");
+            //Console.Write("Is previous: " + item.Key + ", " + item.Value + ", " + scoreNumber + "\n");
             break;
 
           case float n when n < lowest:
             lowest = item.Value;
             scoreNumber -= deltaVal;
             scoreValue.Add(item.Key, (float)Math.Round(scoreNumber,3));
-            Console.Write("Less than previous: " + item.Key + ", " + item.Value + ", " + scoreNumber + "\n");
+            //Console.Write("Less than previous: " + item.Key + ", " + item.Value + ", " + scoreNumber + "\n");
             break;
 
 
@@ -208,17 +252,51 @@ namespace CognitiveABM.QLearningABMAdditional{
      */
     public void updateQMap(Dictionary<int, float> agentScore, agentInfoHolder agentHolder){
       float[,] qmap = getQMap(); //4x4 qmap matrix hard coded
-
       foreach(KeyValuePair<int, (List<float[]>, List<(int,int)>)> entry in agentHolder.getInfo()){
+
         foreach((int,int)tuple in entry.Value.Item2){
           qmap[tuple.Item1,tuple.Item2] += agentScore[entry.Key];
         }
+        qmap = roundQMap(qmap);
         qmap = normalliseQMap(qmap);
       }
-
       qmap = roundQMap(qmap);
+
+      qmap = setColToOne(qmap);
+
       printNewQMap(qmap);
     }//end updateQMap
+
+    /**
+     * @param qmap: matrix of the current qmap
+     * @description: checks to see if the columns of the qmap add to one
+     * If a column doesn't add to one, the difference of that column and 1 is added to largest row
+     * @return: fixed qmap where all columns add to one
+     */
+    public float[,] setColToOne(float[,] qmap){
+      float colMaxTotal = 0.0f;
+      float colMax = 0.0f;
+      int rowMaxLoc = -1;
+
+      for(int col = 0; col < qmap.GetLength(1); col++){
+        for(int row = 0; row < qmap.GetLength(0); row++){
+          if(qmap[row,col] >= colMax){
+            colMax = qmap[row,col];
+            rowMaxLoc = col;
+          }
+          colMaxTotal += qmap[row,col];
+        }//end row for
+
+        if(colMaxTotal < 1.0f){
+          qmap[rowMaxLoc,col] += (1.0f - colMaxTotal);
+        }
+        colMaxTotal = 0.0f;
+        colMax = 0.0f;
+        rowMaxLoc = -1;
+      }//end col for
+
+      return qmap;
+    }//end setColToOne
 
     /**
      * @return: qmap from selected file
@@ -226,27 +304,38 @@ namespace CognitiveABM.QLearningABMAdditional{
      */
     public float[,] getQMap(){
       float[,] data = new float[8,8]; //4x4 qmap matrix hard coded
-      using(var reader = new StreamReader(@"..\HillClimberABMExample\layers\qMapGenerated8x8.csv"))
-     {
-         int counter = 0;
-         while (!reader.EndOfStream)
-         {
-             var line = reader.ReadLine();
-             var values = line.Split(',');
-             if(counter < 8){
-             data[counter,0] = float.Parse(values[0]);
-             data[counter,1] = float.Parse(values[1]);
-             data[counter,2] = float.Parse(values[2]);
-             data[counter,3] = float.Parse(values[3]);
-             data[counter,4] = float.Parse(values[4]);
-             data[counter,5] = float.Parse(values[5]);
-             data[counter,6] = float.Parse(values[6]);
-             data[counter,7] = float.Parse(values[7]);
+      string path = @"..\HillClimberABMExample\layers\qMapGenerated8x8.csv";
+      if(File.Exists(path)){
+        using(var reader = new StreamReader(path))
+       {
+           int counter = 0;
+           while (!reader.EndOfStream)
+           {
+               var line = reader.ReadLine();
+               var values = line.Split(',');
+               if(counter < 8){
+               data[counter,0] = float.Parse(values[0]);
+               data[counter,1] = float.Parse(values[1]);
+               data[counter,2] = float.Parse(values[2]);
+               data[counter,3] = float.Parse(values[3]);
+               data[counter,4] = float.Parse(values[4]);
+               data[counter,5] = float.Parse(values[5]);
+               data[counter,6] = float.Parse(values[6]);
+               data[counter,7] = float.Parse(values[7]);
 
-             counter++;
+               counter++;
+             }
            }
+       }//end using
+     }//end if
+     else{
+       for(int i = 0; i < 8; i++){
+         for(int k = 0; k < 8; k++){
+           data[i,k] = 0.0f;
          }
+       }
      }
+
      return data;
     }//end getQMap
 
@@ -306,6 +395,9 @@ namespace CognitiveABM.QLearningABMAdditional{
         }
 
         for (int row = 0; row < qmap.GetLength(0); row++){
+          if(total == 0.0f){
+            total = 1.0f;
+          }
           normallizedQMap[row,col] = rowVals[row]/total;
         }
         total = 0.0f;

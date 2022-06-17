@@ -20,6 +20,7 @@ namespace CognitiveABM.QLearning
         //public static Dictionary<int, List<float>> fitDict;
         public static Dictionary<int, List<(int,int)>> agentQmapPath;
         public static int usePerfectQMap = 1;
+        public static bool useMap = true;
 
         //--------------------------------//
         /**
@@ -32,7 +33,9 @@ namespace CognitiveABM.QLearning
 
         //constructor that sets the qMap and prototypes
         public QLearning(){
-          setQlearnMap();
+          if(useMap){
+            setQlearnMap();
+          }
           setPrototype();
           infoHolder = new agentInfoHolder();
           fitness = new List<float>();
@@ -52,7 +55,7 @@ namespace CognitiveABM.QLearning
         public void setQlearnMap(){
           //var filePath = @"..\HillClimberABMExample\layers\LandScapeSlopeHard.csv";
           float[,] data = new float[8,8]; //4x4 qmap matrix hard coded
-          string qMapFile = @"..\HillClimberABMExample\layers\qMapPerfect8x8.csv";
+          string qMapFile = @"..\HillClimberABMExample\layers\qMapRandom8x8.csv";
           if(usePerfectQMap == 0){
             qMapFile = @"..\HillClimberABMExample\layers\qMapGenerated8x8.csv";
           }
@@ -122,6 +125,11 @@ namespace CognitiveABM.QLearning
           int minIndex = Enumerable.Range(0, MSE.Length).Aggregate((a, b) => (MSE[a] < MSE[b]) ? a : b);
 
           int direction = biasedRouletteWheel(minIndex);
+          if(direction < 0 || direction > 7){
+
+            Console.WriteLine(direction);
+          }
+
 
           //recordPath(animalId, direction, minIndex);
 
@@ -163,17 +171,24 @@ namespace CognitiveABM.QLearning
           */
         public int biasedRouletteWheel(int col){
           var random = new Random();//seed for random is just 18 so we can consitantly get the same result
+
           float rFloat = (float)random.NextDouble();
           float addedVal = 0.0f;
           //we add all values of the col together, when > rDouble, we choose last column
-          for(int i = 0; i < 8; i++){
-            addedVal += qMap[i,col];
-            if(addedVal >= rFloat){
-              return i;
-            }
-          }//end for
+          if(useMap){
+            for(int i = 0; i < 8; i++){
+              addedVal += qMap[i,col];
+              if(addedVal >= rFloat){
+                return i;
+              }
+            }//end for
+          }
+          else{
+            return random.Next(8);//randomly pick a direction
+          }
               return -1; //return -1 so we know that it's this method that causes an error later down the road
         }//end rouletteWheel
+
 
         /**
          * @param landScapePatch: 3x3 matrix of landscape agent is on
@@ -280,7 +295,7 @@ namespace CognitiveABM.QLearning
             agentQmapPath[animalId] = tempList;
           }
         }//end recordPath
-        
+
         public void savePathandExportValues(int animalId, int row, int col, float[,] patch, int tickNum, float Elevation, int xPos, int yPos){
           List<(int,int)> pathway = new List<(int,int)>();
           pathway.Add((row,col));

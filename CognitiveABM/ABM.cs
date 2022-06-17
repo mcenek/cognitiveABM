@@ -154,8 +154,17 @@ public class ABM
     public void Train(int generations, string terrianFilePath, string[] args)
     {
         var startTime = DateTime.Now;
+        //make method to get lambda value i guess
+        float[] lambdaArray = QLABMA.getLambda(generations);
+
         for (int generation = 0; generation < generations; generation++)
         {
+            if(generation == 0){
+              QLearning.useMap = false;
+            }
+            else{
+              QLearning.useMap = true;
+            }
             Console.WriteLine("\nGeneration: {0} of {1}", generation, generations);
 
             LoggerFactory.SetLogLevel(LogLevel.Warning);
@@ -180,11 +189,8 @@ public class ABM
 
                 Console.WriteLine("Generaton: {0:F2}, Average fitness: {1:F2}, Max fitness: {2:F2}", generation, avg, max);
 
-                //make method to get lambda value i guess
-                float[] lambdaArray = QLABMA.getLambda(generations);
                 Dictionary<int, float> scoreValue = QLABMA.getAgentScore(lambdaArray[generation], agentHolder);
                 QLABMA.updateQMap(scoreValue, agentHolder);
-
                 Console.WriteLine("QMap has been updated");
                 GC.Collect();
             }
