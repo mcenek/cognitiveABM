@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.IO;
 using System.Collections.Concurrent;
-
+using CognitiveABM.agentInformationHolder;
 
 namespace CognitiveABM.QLearning
 {
@@ -11,14 +11,16 @@ namespace CognitiveABM.QLearning
     public class QLearning
     {
         //for simple version, only using these inst vars
+        public agentInfoHolder infoHolder;
         private float[,] qMap = new float[4,4];//Houses qMap used in MSE
         private List<float[,]> prototypes = new List<float[,]>(); //prototype list used for MSE
         public static List<float> fitness;
         public static List<int> animalIDHolder;
         public static Dictionary<int, List<float[]>> patchDict;
-        public static Dictionary<int, List<float>> fitDict;
+        //public static Dictionary<int, List<float>> fitDict;
         public static Dictionary<int, List<(int,int)>> agentQmapPath;
         public static int usePerfectQMap = 1;
+        public static bool useMap = true;
 
         //--------------------------------//
         /**
@@ -31,14 +33,17 @@ namespace CognitiveABM.QLearning
 
         //constructor that sets the qMap and prototypes
         public QLearning(){
-          setQlearnMap();
+          if(useMap){
+            setQlearnMap();
+          }
           setPrototype();
+          infoHolder = new agentInfoHolder();
           fitness = new List<float>();
           animalIDHolder = new List<int>();
           patchDict = new Dictionary<int, List<float[]>>();
           patchDict.Add(-1, new List<float[]>());
-          fitDict = new Dictionary<int, List<float>>();
-          fitDict.Add(-1, new List<float>());
+          // fitDict = new Dictionary<int, List<float>>();
+          // fitDict.Add(-1, new List<float>());
           agentQmapPath = new Dictionary<int, List<(int,int)>>();
           agentQmapPath.Add(-1, new List<(int,int)>());
 
@@ -49,10 +54,10 @@ namespace CognitiveABM.QLearning
         //can be way more efficent, but this is just a temp job
         public void setQlearnMap(){
           //var filePath = @"..\HillClimberABMExample\layers\LandScapeSlopeHard.csv";
-          float[,] data = new float[4,4]; //4x4 qmap matrix hard coded
-          string qMapFile = @"..\HillClimberABMExample\layers\qMapPerfect.csv";
+          float[,] data = new float[8,8]; //4x4 qmap matrix hard coded
+          string qMapFile = @"..\HillClimberABMExample\layers\qMapRandom8x8.csv";
           if(usePerfectQMap == 0){
-            qMapFile = @"..\HillClimberABMExample\layers\qMapGenerated.csv";
+            qMapFile = @"..\HillClimberABMExample\layers\qMapGenerated8x8.csv";
           }
           using(var reader = new StreamReader(qMapFile))
          {
@@ -61,15 +66,15 @@ namespace CognitiveABM.QLearning
              {
                  var line = reader.ReadLine();
                  var values = line.Split(',');
-                 if(counter < 4){
+                 if(counter < 8){
                  data[counter,0] = float.Parse(values[0]);
                  data[counter,1] = float.Parse(values[1]);
                  data[counter,2] = float.Parse(values[2]);
                  data[counter,3] = float.Parse(values[3]);
-                 // data[counter,4] = float.Parse(values[4]);
-                 // data[counter,5] = float.Parse(values[5]);
-                 // data[counter,6] = float.Parse(values[6]);
-                 // data[counter,7] = float.Parse(values[7]);
+                 data[counter,4] = float.Parse(values[4]);
+                 data[counter,5] = float.Parse(values[5]);
+                 data[counter,6] = float.Parse(values[6]);
+                 data[counter,7] = float.Parse(values[7]);
                  counter++;
                }
              }
@@ -91,15 +96,15 @@ namespace CognitiveABM.QLearning
           this.prototypes.Add(protoS);
           this.prototypes.Add(protoW);
 
-          // float[,] protoNE = new float[,] {{.5f,1f,1f},{0f,.5f,1f},{0f,0f,.5f}};
-          // float[,] protoSE = new float[,] {{0f,0f,.5f},{0f,.5f,1f},{.5f,1f,1f}};
-          // float[,] protoSW = new float[,] {{.5f,0f,0f},{1f,.5f,0f},{1f,1f,.5f}};
-          // float[,] protoNW = new float[,] {{1f,1f,.5f},{1f,.5f,0f},{.5f,0f,0f}};
-          //
-          // this.prototypes.Add(protoNE);
-          // this.prototypes.Add(protoSE);
-          // this.prototypes.Add(protoSW);
-          // this.prototypes.Add(protoNW);
+          float[,] protoNE = new float[,] {{.5f,1f,1f},{0f,.5f,1f},{0f,0f,.5f}};
+          float[,] protoSE = new float[,] {{0f,0f,.5f},{0f,.5f,1f},{.5f,1f,1f}};
+          float[,] protoSW = new float[,] {{.5f,0f,0f},{1f,.5f,0f},{1f,1f,.5f}};
+          float[,] protoNW = new float[,] {{1f,1f,.5f},{1f,.5f,0f},{.5f,0f,0f}};
+
+          this.prototypes.Add(protoNE);
+          this.prototypes.Add(protoSE);
+          this.prototypes.Add(protoSW);
+          this.prototypes.Add(protoNW);
         }
 
         //---HELPER FUNCTIONS---//
@@ -110,9 +115,9 @@ namespace CognitiveABM.QLearning
          * @description: finds out direction agent should go using MSE and biasedRouletteWheel
          * @return: value ranging from 1,5,7,3 which represents N. E. S. W.
          */
-        public int getDirection(float[,] landscapePatch, float min, float max, int animalId){
+        public int getDirection(float[,] landscapePatch, float min, float max, int animalId, int tickNum, float Elevation, int xPos, int yPos){
           float[,] normallisedLandscapePatch = normalliseLandscapePatch(landscapePatch, min, max);
-          float[] MSE = new float[4];
+          float[] MSE = new float[8];
           for(int i = 0; i < this.prototypes.Count; i++){
             MSE[i] = meanSquareError(normallisedLandscapePatch, prototypes.ElementAt(i));
           }
@@ -120,14 +125,21 @@ namespace CognitiveABM.QLearning
           int minIndex = Enumerable.Range(0, MSE.Length).Aggregate((a, b) => (MSE[a] < MSE[b]) ? a : b);
 
           int direction = biasedRouletteWheel(minIndex);
+          if(direction < 0 || direction > 7){
 
-          recordPath(animalId, direction, minIndex);
+            Console.WriteLine(direction);
+          }
+
+
+          //recordPath(animalId, direction, minIndex);
+
+          savePathandExportValues(animalId,direction,minIndex,landscapePatch,tickNum, Elevation, xPos, yPos);
 
           //direction gives 0-3. The list of locations in animal.cs contains 0-8.
           //so, we need to change direction to work on a list
           //Direction will change via 0=>1, 1=>5, 2=>7, 3=>3
-          int[] directionMap = {1,5,7,3};
-          // int[] directionMap = {1,5,7,3,2,8,6,0};
+          //int[] directionMap = {1,5,7,3};
+          int[] directionMap = {1,5,7,3,2,8,6,0};
           return directionMap[direction];
         }//end getDirection
 
@@ -159,17 +171,24 @@ namespace CognitiveABM.QLearning
           */
         public int biasedRouletteWheel(int col){
           var random = new Random();//seed for random is just 18 so we can consitantly get the same result
+
           float rFloat = (float)random.NextDouble();
           float addedVal = 0.0f;
           //we add all values of the col together, when > rDouble, we choose last column
-          for(int i = 0; i < 4; i++){
-            addedVal += qMap[i,col];
-            if(addedVal >= rFloat){
-              return i;
-            }
-          }//end for
+          if(useMap){
+            for(int i = 0; i < 8; i++){
+              addedVal += qMap[i,col];
+              if(addedVal >= rFloat){
+                return i;
+              }
+            }//end for
+          }
+          else{
+            return random.Next(8);//randomly pick a direction
+          }
               return -1; //return -1 so we know that it's this method that causes an error later down the road
         }//end rouletteWheel
+
 
         /**
          * @param landScapePatch: 3x3 matrix of landscape agent is on
@@ -197,9 +216,10 @@ namespace CognitiveABM.QLearning
          * @param y: y value of position
          * @description: puts needed exported values into patchDict inst var
          */
-        public void setExportValues(float[,] landScapePatch, int animalId, int tickNum, int currentEle, int x, int y){
+        public List<float[]> setExportValues(float[,] landScapePatch, int animalId, int tickNum, float currentEle, int x, int y){
           //spots 0,1,11,12,13,16,17 are reserved values
           float[] temp = new float[18];
+          List<float[]> tempList = new List<float[]>();
           temp[0] = (float)animalId;
           temp[1] = (float)tickNum;
           temp[11] = (float)currentEle;
@@ -214,33 +234,11 @@ namespace CognitiveABM.QLearning
               counter++;
             }
           }
-
-
-          if(!animalIDHolder.Contains(animalId)){
-            animalIDHolder.Add(animalId);
-          }
-
-          List<float[]> tempList = new List<float[]>();
-          //if animal has yet to be seen
-          if(patchDict.ContainsKey(animalId) == null || !patchDict.ContainsKey(animalId)){
             temp[12] = 0.0f;
             temp[13] = temp[14] = temp[15]= 0.0f;
             tempList.Add(temp);
-            patchDict.Add(animalId, tempList);
-          }
+            return tempList;
 
-          else{
-            tempList = patchDict[animalId];
-            temp[12] = (tempList.Last())[11];
-            //temp[13] = Math.Abs((float)currentEle - temp[12]);
-            temp[13] = currentEle - temp[12];
-            float[] avgMax = getAverageandTotal(tempList, temp[13]);
-            temp[14] = avgMax[0];
-            temp[15] = avgMax[1];
-            fitness.Add(temp[13]);
-            tempList.Add(temp);
-            patchDict[animalId] = tempList;
-          }
         }//end exportValues
 
         /**
@@ -297,6 +295,14 @@ namespace CognitiveABM.QLearning
             agentQmapPath[animalId] = tempList;
           }
         }//end recordPath
+
+        public void savePathandExportValues(int animalId, int row, int col, float[,] patch, int tickNum, float Elevation, int xPos, int yPos){
+          List<(int,int)> pathway = new List<(int,int)>();
+          pathway.Add((row,col));
+          List<float[]> exportVals = setExportValues(patch, animalId, tickNum, Elevation, xPos, yPos);
+          infoHolder.addItem(animalId,exportVals,pathway);
+
+        }
 
     }
 }
