@@ -79,59 +79,7 @@ namespace CognitiveABM.QLearningABMAdditional{
       return score;
     }//end calculateAgentScore
 
-    /**
-     * @param key: animal ID key used for dictionary
-     * @param agentHolder: agentInfoHolder object used to get pathway
-     * @description: Method calculates a score from -5 to 5 based off how similar the pathway was to the ideal direction
-     * Created mainly for when no qmap is used
-     * If the row and col (col is correct due to prototypes) are the same, then the agent went the correct direction
-     * Score meaning:
-     * .02 means right direction (IE Agent moves N when it should move N)
-     * .01 means semi right direction (IE Agent moves NE instead of N)
-     * 0 means neutral direction (IE Agent moves W instead of N)
-     * -.01 means semi wrong direction (IE Agent moves SE instead of N)
-     * -.02 means wrong direction (IE Agent moves S instead of N)
-     */
-    // public float calculatePathBonus(int key, agentInfoHolder agentHolder){
-    //   float lambdaPos = .02f;
-    //   float lambdaSemiPos = .01f;
-    //   float lambdaNeg = -.02f;
-    //   float lambdaSemiNeg = -.01f;
-    //   float score = 0.0f;
-    //   int difference = 0;
-    //   List<(int,int)> pathway = agentHolder.getInfo()[key].Item2;
-    //   foreach((int,int) tuple in pathway){
-    //     difference = Math.Abs(tuple.Item1 - tuple.Item2);
-    //
-    //     //if equal we are going the right way thus plus lambdapos
-    //     if(difference == 0){
-    //       score += lambdaPos;
-    //     }
-    //     // else{
-    //     //   score -= lambdaNeg;
-    //     // }
-    //     //if row and col within ceratin range they can either be neutral or opposite
-    //     else if((tuple.Item1 <= 3 && tuple.Item2 <= 3 )|| (tuple.Item1 >= 4 && tuple.Item2 >=4 )){
-    //
-    //       //if difference is 2, then they are opposite
-    //       if(difference == 2){
-    //         score -= lambdaNeg;
-    //       }
-    //       //if the modulo is different, then the item is neutral and would have no score added
-    //     }
-    //
-    //     //otherwise if the difference is a certain combination of values they are either semi opposites or semi similar
-    //     else {
-    //       if(difference == 6 || difference == 5 || difference == 1 || difference == 2){
-    //         score -= lambdaSemiNeg;
-    //       }
-    //       else{
-    //         score += lambdaSemiPos;
-    //       }
-    //     }//end big else
-    //   }//end forEach
-    //   return score;
-    // }
+    
 
     /**
      * @param patchDict: dictionary containing the patches an agent has traversed
