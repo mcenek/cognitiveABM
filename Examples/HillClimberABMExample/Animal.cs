@@ -171,8 +171,6 @@ namespace HillClimberExample
                     landscapePatch[x, y] = distantTerrainElevations[index];
                     index++;
 
-
-
                 }
             }
             int direction = this.qLearn.getDirection(landscapePatch, min, max, this.AnimalId); //Which dirction we should be moving
@@ -244,22 +242,16 @@ namespace HillClimberExample
 
             return elevations.ToArray();
         }
+        //upgrade yo 7x7 or 9x9
         private float[] GetDistantTerrainElevations(){
             List<float> elevations = new List<float>();
             int x = (int)Position.X;
             int y = (int)Position.Y;
-            // elevations.Add((float)Terrain.GetRealValue(x - 3, y - 3));
-            // elevations.Add((float)Terrain.GetRealValue(x, y - 3));
-            // elevations.Add((float)Terrain.GetRealValue(x + 3, y - 3));
-            // elevations.Add((float)Terrain.GetRealValue(x - 3, y));
-            // elevations.Add((float)Terrain.GetRealValue(x, y));
-            // elevations.Add((float)Terrain.GetRealValue(x, y + 3));
-            // elevations.Add((float)Terrain.GetRealValue(x - 3, y - 3));
             for (int dy = 1; dy >= -1; --dy)
             {
                 for (int dx = -1; dx <= 1; ++dx)
                 {
-                    elevations.Add((float)Terrain.GetRealValue(3*dx + x, 3*dy + y));
+                    elevations.Add((float)Terrain.GetRealValue(7*dx + x, 7*dy + y));
                 }
             }
 
