@@ -12,7 +12,7 @@ namespace CognitiveABM.QLearning
     {
         //for simple version, only using these inst vars
         public agentInfoHolder infoHolder;
-        private float[,] qMap = new float[4,4];//Houses qMap used in MSE
+        private float[,] qMap = new float[8,8];//Houses qMap used in MSE
         private List<float[,]> prototypes = new List<float[,]>(); //prototype list used for MSE
         public static List<float> fitness;
         public static List<int> animalIDHolder;
@@ -178,6 +178,7 @@ namespace CognitiveABM.QLearning
           if(useMap){
             for(int i = 0; i < 8; i++){
               addedVal += qMap[i,col];
+              //addedVal += noiseGen();
               if(addedVal >= rFloat){
                 return i;
               }
@@ -188,6 +189,19 @@ namespace CognitiveABM.QLearning
           }
               return -1; //return -1 so we know that it's this method that causes an error later down the road
         }//end rouletteWheel
+                /**
+         * @description: creates a random float between -0.2 and 0.2
+         * @return: random noise value
+         */
+        public float noiseGen(){
+          var random = new Random();
+          float noise = (float)random.NextDouble()/5; //noise between 0 and 0.2
+          int sign = random.Next(1, 3);
+          if(sign == 2){ //noise becomes negative;
+            noise = noise * -1;
+          } //end for
+          return noise;
+        } //end noiseGen
 
 
         /**

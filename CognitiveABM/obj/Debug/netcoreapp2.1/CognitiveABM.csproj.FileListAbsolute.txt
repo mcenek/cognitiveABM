@@ -1,0 +1,10 @@
+C:\Users\austf\Desktop\sumRe\cognitiveABM-main\cognitiveABM-main\CognitiveABM\bin\Debug\netcoreapp2.1\CognitiveABM.deps.json
+C:\Users\austf\Desktop\sumRe\cognitiveABM-main\cognitiveABM-main\CognitiveABM\bin\Debug\netcoreapp2.1\CognitiveABM.dll
+C:\Users\austf\Desktop\sumRe\cognitiveABM-main\cognitiveABM-main\CognitiveABM\bin\Debug\netcoreapp2.1\CognitiveABM.pdb
+C:\Users\austf\Desktop\sumRe\cognitiveABM-main\cognitiveABM-main\CognitiveABM\obj\Debug\netcoreapp2.1\CognitiveABM.csproj.AssemblyReference.cache
+C:\Users\austf\Desktop\sumRe\cognitiveABM-main\cognitiveABM-main\CognitiveABM\obj\Debug\netcoreapp2.1\CognitiveABM.GeneratedMSBuildEditorConfig.editorconfig
+C:\Users\austf\Desktop\sumRe\cognitiveABM-main\cognitiveABM-main\CognitiveABM\obj\Debug\netcoreapp2.1\CognitiveABM.AssemblyInfoInputs.cache
+C:\Users\austf\Desktop\sumRe\cognitiveABM-main\cognitiveABM-main\CognitiveABM\obj\Debug\netcoreapp2.1\CognitiveABM.AssemblyInfo.cs
+C:\Users\austf\Desktop\sumRe\cognitiveABM-main\cognitiveABM-main\CognitiveABM\obj\Debug\netcoreapp2.1\CognitiveABM.csproj.CoreCompileInputs.cache
+C:\Users\austf\Desktop\sumRe\cognitiveABM-main\cognitiveABM-main\CognitiveABM\obj\Debug\netcoreapp2.1\CognitiveABM.dll
+C:\Users\austf\Desktop\sumRe\cognitiveABM-main\cognitiveABM-main\CognitiveABM\obj\Debug\netcoreapp2.1\CognitiveABM.pdb

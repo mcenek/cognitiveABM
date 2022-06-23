@@ -150,32 +150,43 @@ namespace HillClimberExample
             /**QLearn*/
             List<int[]> adjacentTerrainLocations = GetAdjacentTerrainPositions();
             float[] adjacentTerrainElevations = GetAdjacentTerrainElevations();
+            float[] distantTerrainElevations = GetDistantTerrainElevations();
             //change terrainElevations into a matrix
             //adjacentTerrainElevations contains 9 elements, so we need 3x3 matrix
             int index = 0;
             float[,] landscapePatch = new float[3, 3];
-            float min = adjacentTerrainElevations[index];
-            float max = adjacentTerrainElevations[index];
-            for (int x = 0; x < 3; x++)
+            // float min = adjacentTerrainElevations[index];
+            // float max = adjacentTerrainElevations[index];
+
+            float min = distantTerrainElevations[index];
+            float max = distantTerrainElevations[index];
+            for (int x = 0; x < 3; x++) //Getting patch values and turning it into a matrix
             {
                 for (int y = 0; y < 3; y++)
                 {
-                    if(adjacentTerrainElevations[index] < min){
-                      min = adjacentTerrainElevations[index];
+                    // if(adjacentTerrainElevations[index] < min){
+                    //   min = adjacentTerrainElevations[index];
+                    // }
+                    // if(adjacentTerrainElevations[index] > max){
+                    //   max = adjacentTerrainElevations[index];
+                    // }
+                    // landscapePatch[x, y] = adjacentTerrainElevations[index];
+                    // index++;
+
+                    if(distantTerrainElevations[index] < min){
+                      min = distantTerrainElevations[index];
                     }
-                    if(adjacentTerrainElevations[index] > max){
-                      max = adjacentTerrainElevations[index];
+                    if(distantTerrainElevations[index] > max){
+                      max = distantTerrainElevations[index];
                     }
-                    landscapePatch[x, y] = adjacentTerrainElevations[index];
+                    landscapePatch[x, y] = distantTerrainElevations[index];
                     index++;
+
                 }
             }
-
-
             int xPos = (int)Position.X;
             int yPos = (int)Position.Y;
-
-            int direction = this.qLearn.getDirection(landscapePatch, min, max, this.AnimalId, this.tickNum, Elevation, xPos, yPos);
+            int direction = this.qLearn.getDirection(landscapePatch, min, max, this.AnimalId, this.tickNum, Elevation, xPos, yPos); //Which dirction we should be moving
             int[] newLocation = adjacentTerrainLocations[direction];
 
 
@@ -196,7 +207,7 @@ namespace HillClimberExample
             //var random = new Random(ID.GetHashCode()); //using hard coded value for testing
             //return new Tuple<int, int>(random.Next(Terrain.DimensionX()), random.Next(Terrain.DimensionY()));
             //make all agents start at same spot
-            var random = new Random();
+            var random = new Random(); //seed 
 
             //Puts agents on border of map
             //Case 0: Along Y axis (left)
@@ -235,6 +246,21 @@ namespace HillClimberExample
                 for (int dx = -1; dx <= 1; ++dx)
                 {
                     elevations.Add((float)Terrain.GetRealValue(dx + x, dy + y));
+                }
+            }
+
+            return elevations.ToArray();
+        }
+        //upgrade yo 7x7 or 9x9
+        private float[] GetDistantTerrainElevations(){
+            List<float> elevations = new List<float>();
+            int x = (int)Position.X;
+            int y = (int)Position.Y;
+            for (int dy = 1; dy >= -1; --dy)
+            {
+                for (int dx = -1; dx <= 1; ++dx)
+                {
+                    elevations.Add((float)Terrain.GetRealValue(7*dx + x, 7*dy + y));
                 }
             }
 
