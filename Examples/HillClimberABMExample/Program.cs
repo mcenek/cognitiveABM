@@ -43,6 +43,5 @@ public static class Program
         description.AddLayer<Terrain>();
         description.AddAgent<Animal, Terrain>();
         return description;
-        //update
     }
 }
