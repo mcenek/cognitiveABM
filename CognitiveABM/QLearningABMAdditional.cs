@@ -209,12 +209,15 @@ namespace CognitiveABM.QLearningABMAdditional{
       foreach(KeyValuePair<int, (List<float[]>, List<(int,int)>)> entry in agentHolder.getInfo()){
 
         foreach((int,int)tuple in entry.Value.Item2){
+          if(float.IsNaN(qmap[tuple.Item1,tuple.Item2])){
+            Console.WriteLine("OVERHERE");
+          }
           qmap[tuple.Item1,tuple.Item2] += agentScore[entry.Key];
         }
-        //qmap = roundQMap(qmap);
         qmap = normalliseQMap(qmap);
+        qmap = roundQMap(qmap);
       }
-      qmap = roundQMap(qmap);
+      //qmap = roundQMap(qmap);
 
       //qmap = setColToOne(qmap);
 
@@ -258,7 +261,7 @@ namespace CognitiveABM.QLearningABMAdditional{
      */
     public float[,] getQMap(){
       float[,] data = new float[8,8]; //4x4 qmap matrix hard coded
-      string path = @"..\HillClimberABMExample\layers\qMapPerfect8x8.csv";
+      string path = @"..\HillClimberABMExample\layers\qMapGenerated8x8.csv";
       if(File.Exists(path)){
         using(var reader = new StreamReader(path))
        {
@@ -280,7 +283,9 @@ namespace CognitiveABM.QLearningABMAdditional{
                counter++;
              }
            }
+           reader.Close();
        }//end using
+
      }//end if
      else{
        for(int i = 0; i < 8; i++){
@@ -347,6 +352,7 @@ namespace CognitiveABM.QLearningABMAdditional{
           if(float.IsNaN(Math.Abs(qmap[row,col]))){
             total += 0.0f;
             rowVals[row] = 0.0f;
+            Console.WriteLine("NANAANANANANA");
           }
           else{
             total += Math.Abs(qmap[row,col]);
@@ -378,7 +384,7 @@ namespace CognitiveABM.QLearningABMAdditional{
       float[,] qMapCol= new float[qmap.GetLength(0),qmap.GetLength(1)];
       for(int col = 0; col < qmap.GetLength(1); col++){
         for(int row = 0; row < qmap.GetLength(0); row++){
-          qMapCol[row,col] = (float)Math.Round(qmap[row,col],3);
+          qMapCol[row,col] = (float)Math.Round(qmap[row,col],5);
           total += qMapCol[row,col];
         }
 
