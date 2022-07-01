@@ -159,12 +159,12 @@ public class ABM
 
         for (int generation = 0; generation < generations; generation++)
         {
-            if(generation == 0){
-              QLearning.useMap = false;
-            }
-            else{
-              QLearning.useMap = true;
-            }
+            // if(generation == 0){
+            //   QLearning.useMap = false;
+            // }
+            // else{
+            //   QLearning.useMap = true;
+            // }
             Console.WriteLine("\nGeneration: {0} of {1}", generation, generations);
 
             LoggerFactory.SetLogLevel(LogLevel.Warning);

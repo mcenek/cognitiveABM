@@ -55,7 +55,7 @@ namespace CognitiveABM.QLearning
         public void setQlearnMap(){
           //var filePath = @"..\HillClimberABMExample\layers\LandScapeSlopeHard.csv";
           float[,] data = new float[8,8]; //4x4 qmap matrix hard coded
-          string qMapFile = @"..\HillClimberABMExample\layers\qMapRandom8x8.csv";
+          string qMapFile = @"..\HillClimberABMExample\layers\qMapPerfect8x8.csv";
           if(usePerfectQMap == 0){
             qMapFile = @"..\HillClimberABMExample\layers\qMapGenerated8x8.csv";
           }
@@ -175,7 +175,7 @@ namespace CognitiveABM.QLearning
           float rFloat = (float)random.NextDouble();
           float addedVal = 0.0f;
           //we add all values of the col together, when > rDouble, we choose last column
-          if(useMap){
+          // if(useMap){
             for(int i = 0; i < 8; i++){
               addedVal += qMap[i,col];
               //addedVal += noiseGen();
@@ -183,10 +183,10 @@ namespace CognitiveABM.QLearning
                 return i;
               }
             }//end for
-          }
-          else{
-            return random.Next(8);//randomly pick a direction
-          }
+          // }
+          // else{
+          //   return random.Next(8);//randomly pick a direction
+          // }
               return -1; //return -1 so we know that it's this method that causes an error later down the road
         }//end rouletteWheel
                 /**

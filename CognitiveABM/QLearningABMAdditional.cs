@@ -24,13 +24,13 @@ namespace CognitiveABM.QLearningABMAdditional{
 
       for(int i = 0; i < generations; i++){
         if(i == 0 || i > 0 && i < (generations/3)){
-          array[i] = .5f;
+          array[i] = .1f;
         }
         else if(i == generations-1 || i < generations-1 && i > (generations/1.5)){
-          array[i] = .05f;
+          array[i] = .01f;
         }
         else{
-          array[i] = .1f;
+          array[i] = .05f;
         }
       }
       return array;
@@ -79,7 +79,7 @@ namespace CognitiveABM.QLearningABMAdditional{
       return score;
     }//end calculateAgentScore
 
-    
+
 
     /**
      * @param patchDict: dictionary containing the patches an agent has traversed
@@ -134,7 +134,13 @@ namespace CognitiveABM.QLearningABMAdditional{
       int totalFitSize = agentTotalFit.Values.Distinct().Count(); //total size of agentTotalFit dictionary
       int halfWay = totalFitSize/2; //half way point of dictionary
       float scoreNumber = 1.0f; //score value for an agent
-      float deltaVal = 1.0f/halfWay; //delta value that scorenumber gets subtracted by for all values 1-0
+      float deltaVal; //delta value that scorenumber gets subtracted by for all values 1-0
+      if(halfWay == 0){
+        deltaVal = 0.0f;
+      }
+      else{
+        deltaVal = 1.0f/halfWay;
+      }
 
       //Console.Write("Total: " + totalFitSize + "; Half: " + halfWay + ", nextHalf:" + (totalFitSize-halfWay));
 
@@ -205,12 +211,12 @@ namespace CognitiveABM.QLearningABMAdditional{
         foreach((int,int)tuple in entry.Value.Item2){
           qmap[tuple.Item1,tuple.Item2] += agentScore[entry.Key];
         }
-        qmap = roundQMap(qmap);
+        //qmap = roundQMap(qmap);
         qmap = normalliseQMap(qmap);
       }
       qmap = roundQMap(qmap);
 
-      qmap = setColToOne(qmap);
+      //qmap = setColToOne(qmap);
 
       printNewQMap(qmap);
     }//end updateQMap
@@ -252,7 +258,7 @@ namespace CognitiveABM.QLearningABMAdditional{
      */
     public float[,] getQMap(){
       float[,] data = new float[8,8]; //4x4 qmap matrix hard coded
-      string path = @"..\HillClimberABMExample\layers\qMapGenerated8x8.csv";
+      string path = @"..\HillClimberABMExample\layers\qMapPerfect8x8.csv";
       if(File.Exists(path)){
         using(var reader = new StreamReader(path))
        {
@@ -338,8 +344,14 @@ namespace CognitiveABM.QLearningABMAdditional{
 
       for (int col = 0; col < qmap.GetLength(1); col++){
         for (int row = 0; row < qmap.GetLength(0); row++){
-          total += Math.Abs(qmap[row,col]);
-          rowVals[row] = Math.Abs(qmap[row,col]);
+          if(float.IsNaN(Math.Abs(qmap[row,col]))){
+            total += 0.0f;
+            rowVals[row] = 0.0f;
+          }
+          else{
+            total += Math.Abs(qmap[row,col]);
+            rowVals[row] = Math.Abs(qmap[row,col]);
+          }
         }
 
         for (int row = 0; row < qmap.GetLength(0); row++){
