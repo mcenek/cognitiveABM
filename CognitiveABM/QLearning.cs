@@ -187,6 +187,7 @@ namespace CognitiveABM.QLearning
           // else{
           //   return random.Next(8);//randomly pick a direction
           // }
+              Console.WriteLine(addedVal);
               return -1; //return -1 so we know that it's this method that causes an error later down the road
         }//end rouletteWheel
                 /**

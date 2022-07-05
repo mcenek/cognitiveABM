@@ -209,17 +209,15 @@ namespace CognitiveABM.QLearningABMAdditional{
       foreach(KeyValuePair<int, (List<float[]>, List<(int,int)>)> entry in agentHolder.getInfo()){
 
         foreach((int,int)tuple in entry.Value.Item2){
-          if(float.IsNaN(qmap[tuple.Item1,tuple.Item2])){
-            Console.WriteLine("OVERHERE");
-          }
+          // if(float.IsNaN(qmap[tuple.Item1,tuple.Item2])){
+          //   Console.WriteLine("OVERHERE");
+          // }
           qmap[tuple.Item1,tuple.Item2] += agentScore[entry.Key];
         }
         qmap = normalliseQMap(qmap);
         qmap = roundQMap(qmap);
       }
-      //qmap = roundQMap(qmap);
 
-      //qmap = setColToOne(qmap);
 
       printNewQMap(qmap);
     }//end updateQMap
@@ -349,26 +347,45 @@ namespace CognitiveABM.QLearningABMAdditional{
 
       for (int col = 0; col < qmap.GetLength(1); col++){
         for (int row = 0; row < qmap.GetLength(0); row++){
-          if(float.IsNaN(Math.Abs(qmap[row,col]))){
+          if(float.IsNaN(Math.Abs(qmap[row,col])) || float.IsInfinity(Math.Abs(qmap[row,col]))){
             total += 0.0f;
             rowVals[row] = 0.0f;
-            Console.WriteLine("NANAANANANANA");
+            //Console.WriteLine("NANAANANANANA");
           }
           else{
-            total += Math.Abs(qmap[row,col]);
+            // if(float.IsInfinity(Math.Abs(qmap[row,col]))){
+            //   Console.WriteLine("FUCKYOU");
+            //   Console.WriteLine(qmap[row,col]);
+            // }
             rowVals[row] = Math.Abs(qmap[row,col]);
+            total += rowVals[row];
+            //Console.WriteLine(total);
           }
-        }
+        }//end inner for
 
         for (int row = 0; row < qmap.GetLength(0); row++){
           if(total == 0.0f){
             total = 1.0f;
           }
-          normallizedQMap[row,col] = rowVals[row]/total;
+
+          float normNum = rowVals[row]/total;
+
+          // if(float.IsInfinity(Math.Abs(normNum)) || float.IsNaN(normNum)){
+          //   normNum = 0.0f;
+          // }
+
+          normallizedQMap[row,col] = normNum;
+          // if(float.IsNaN(normallizedQMap[row,col])){
+          //   Console.WriteLine(normNum);
+          //   Console.WriteLine("TEST");
+          //   Console.WriteLine(total);
+          //   Console.WriteLine(rowVals[row]);
+          //   //System.Environment.Exit(0);
+          // }
         }
         total = 0.0f;
 
-      }
+      }//end out for
 
       return normallizedQMap;
     }//end normalliseQMap
@@ -384,7 +401,7 @@ namespace CognitiveABM.QLearningABMAdditional{
       float[,] qMapCol= new float[qmap.GetLength(0),qmap.GetLength(1)];
       for(int col = 0; col < qmap.GetLength(1); col++){
         for(int row = 0; row < qmap.GetLength(0); row++){
-          qMapCol[row,col] = (float)Math.Round(qmap[row,col],5);
+          qMapCol[row,col] = (float)Math.Round(qmap[row,col],4);
           total += qMapCol[row,col];
         }
 
@@ -420,10 +437,6 @@ namespace CognitiveABM.QLearningABMAdditional{
       for(int row = 0; row < qmap.GetLength(0); row++){
         for(int col = 0; col < qmap.GetLength(1); col++){
           qMapRow[col] = qmap[row,col];
-          // if(float.IsNaN(qMapRow[col])){
-          //   Console.WriteLine("NAN" + row + col);
-          //   Environment.Exit(0);
-          // }
         }
         w.Write(String.Join(",", qMapRow) + "\n");
       }
