@@ -155,32 +155,32 @@ namespace HillClimberExample
             //adjacentTerrainElevations contains 9 elements, so we need 3x3 matrix
             int index = 0;
             float[,] landscapePatch = new float[3, 3];
-            // float min = adjacentTerrainElevations[index];
-            // float max = adjacentTerrainElevations[index];
-
-            float min = distantTerrainElevations[index];
-            float max = distantTerrainElevations[index];
+            float min = adjacentTerrainElevations[index];
+            float max = adjacentTerrainElevations[index];
+            //
+            // float min = distantTerrainElevations[index];
+            // float max = distantTerrainElevations[index];
             for (int x = 0; x < 3; x++) //Getting patch values and turning it into a matrix
             {
                 for (int y = 0; y < 3; y++)
                 {
-                    // if(adjacentTerrainElevations[index] < min){
-                    //   min = adjacentTerrainElevations[index];
-                    // }
-                    // if(adjacentTerrainElevations[index] > max){
-                    //   max = adjacentTerrainElevations[index];
-                    // }
-                    // landscapePatch[x, y] = adjacentTerrainElevations[index];
-                    // index++;
-
-                    if(distantTerrainElevations[index] < min){
-                      min = distantTerrainElevations[index];
+                    if(adjacentTerrainElevations[index] < min){
+                      min = adjacentTerrainElevations[index];
                     }
-                    if(distantTerrainElevations[index] > max){
-                      max = distantTerrainElevations[index];
+                    if(adjacentTerrainElevations[index] > max){
+                      max = adjacentTerrainElevations[index];
                     }
-                    landscapePatch[x, y] = distantTerrainElevations[index];
+                    landscapePatch[x, y] = adjacentTerrainElevations[index];
                     index++;
+
+                    // if(distantTerrainElevations[index] < min){
+                    //   min = distantTerrainElevations[index];
+                    // }
+                    // if(distantTerrainElevations[index] > max){
+                    //   max = distantTerrainElevations[index];
+                    // }
+                    // landscapePatch[x, y] = distantTerrainElevations[index];
+                    // index++;
 
                 }
             }
@@ -207,7 +207,7 @@ namespace HillClimberExample
             //var random = new Random(ID.GetHashCode()); //using hard coded value for testing
             //return new Tuple<int, int>(random.Next(Terrain.DimensionX()), random.Next(Terrain.DimensionY()));
             //make all agents start at same spot
-            var random = new Random(); //seed 
+            var random = new Random(); //seed
 
             //Puts agents on border of map
             //Case 0: Along Y axis (left)

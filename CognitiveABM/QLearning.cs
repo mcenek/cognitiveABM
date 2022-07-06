@@ -152,11 +152,15 @@ namespace CognitiveABM.QLearning
          */
         public float[,] normalliseLandscapePatch(float[,] landscapePatch, float min, float max){
               float[,] normallizedLandscape = new float[landscapePatch.GetLength(0), landscapePatch.GetLength(1)];
+              float total = max - min;
+              if(total == 0.0f){
+                total = 1.0f;
+              }
               for (int row = 0; row < landscapePatch.GetLength(0); row += 1)
               {
                   for (int col = 0; col < landscapePatch.GetLength(1); col += 1)
                   {
-                      normallizedLandscape[row, col] = (landscapePatch[row, col] - min) / (Math.Abs(max - min));
+                      normallizedLandscape[row, col] = (landscapePatch[row, col] - min) / (Math.Abs(total));
                   }
               }
 
@@ -187,8 +191,8 @@ namespace CognitiveABM.QLearning
           // else{
           //   return random.Next(8);//randomly pick a direction
           // }
-              Console.WriteLine(addedVal);
-              return -1; //return -1 so we know that it's this method that causes an error later down the road
+              Console.WriteLine(addedVal + "ERROR");
+              return col; //return -1 so we know that it's this method that causes an error later down the road
         }//end rouletteWheel
                 /**
          * @description: creates a random float between -0.2 and 0.2

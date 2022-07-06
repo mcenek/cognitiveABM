@@ -51,13 +51,22 @@ namespace CognitiveABM.QLearningABMAdditional{
       foreach (KeyValuePair<int, (List<float[]>, List<(int,int)>)> entry in agentHolder.getInfo()){
         patchList = entry.Value.Item1;
         scoreValue.Add(entry.Key, patchList.Last()[15]);
+
       }//end for each id
 
       var temp = scoreValue.OrderByDescending(x => x.Value).ToDictionary(x => x.Key, x => x.Value);
       scoreValue = temp;
+
+
+
       scoreValue = setScoreValue(scoreValue);
+
       maxSteps = getStepsToMax(agentHolder);
+
+
+
       scoreValue = calculateAgentScore(scoreValue, maxSteps, lambda, agentHolder);
+
       return scoreValue;
     }//end getAgentScore
 
@@ -73,7 +82,14 @@ namespace CognitiveABM.QLearningABMAdditional{
       Dictionary<int, float> score = new Dictionary<int,float>();
       float pathBonus = 0.0f;
       foreach(var item in scoreValue){
-        score.Add(item.Key,(scoreValue[item.Key]/(maxSteps[item.Key] * lambda)));
+        pathBonus =scoreValue[item.Key];
+
+        if(maxSteps[item.Key] == 0.0f){
+          score.Add(item.Key,(scoreValue[item.Key]/lambda));
+        }
+        else{
+          score.Add(item.Key,(scoreValue[item.Key]/(maxSteps[item.Key] * lambda)));
+        }
 
       }
       return score;
@@ -213,6 +229,7 @@ namespace CognitiveABM.QLearningABMAdditional{
           //   Console.WriteLine("OVERHERE");
           // }
           qmap[tuple.Item1,tuple.Item2] += agentScore[entry.Key];
+
         }
         qmap = normalliseQMap(qmap);
         qmap = roundQMap(qmap);
@@ -347,12 +364,13 @@ namespace CognitiveABM.QLearningABMAdditional{
 
       for (int col = 0; col < qmap.GetLength(1); col++){
         for (int row = 0; row < qmap.GetLength(0); row++){
-          if(float.IsNaN(Math.Abs(qmap[row,col])) || float.IsInfinity(Math.Abs(qmap[row,col]))){
-            total += 0.0f;
-            rowVals[row] = 0.0f;
-            //Console.WriteLine("NANAANANANANA");
-          }
-          else{
+
+          // if(float.IsNaN(Math.Abs(qmap[row,col])) || float.IsInfinity(Math.Abs(qmap[row,col]))){
+          //   total += 0.0f;
+          //   rowVals[row] = 0.0f;
+          //   //Console.WriteLine("NANAANANANANA");
+          // }
+        //  else{
             // if(float.IsInfinity(Math.Abs(qmap[row,col]))){
             //   Console.WriteLine("FUCKYOU");
             //   Console.WriteLine(qmap[row,col]);
@@ -360,7 +378,7 @@ namespace CognitiveABM.QLearningABMAdditional{
             rowVals[row] = Math.Abs(qmap[row,col]);
             total += rowVals[row];
             //Console.WriteLine(total);
-          }
+        //  }
         }//end inner for
 
         for (int row = 0; row < qmap.GetLength(0); row++){
@@ -370,9 +388,13 @@ namespace CognitiveABM.QLearningABMAdditional{
 
           float normNum = rowVals[row]/total;
 
-          // if(float.IsInfinity(Math.Abs(normNum)) || float.IsNaN(normNum)){
-          //   normNum = 0.0f;
-          // }
+          if(float.IsInfinity(Math.Abs(normNum)) || float.IsNaN(normNum)){
+            //normNum = 0.0f;
+            Console.WriteLine(normNum);
+            Console.WriteLine(rowVals[row]);
+            Console.WriteLine(total);
+            System.Environment.Exit(0);
+          }
 
           normallizedQMap[row,col] = normNum;
           // if(float.IsNaN(normallizedQMap[row,col])){

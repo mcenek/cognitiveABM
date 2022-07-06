@@ -11,8 +11,8 @@ public static class Program
 
     public static void Main(string[] args)
     {
-        //var terrainFilePaths = new string[] { "./layers/landscape.csv" };
-        var terrainFilePaths = new string[] { "./layers/landscape.csv","./layers/grid.csv"  ,"./layers/gradient.csv"};
+        //var terrainFilePaths = new string[] { "./layers/gradient.csv" };
+        var terrainFilePaths = new string[] { "./layers/landscape.csv", "./layers/gradient.csv", "./layers/grid.csv" };
         var fitnessVals = new List<List<float>>();
 
         foreach (string terrainFilePath in terrainFilePaths)
@@ -27,11 +27,11 @@ public static class Program
             // }
             //HillClimberFCM fcm = new HillClimberFCM(population: 96, numberOfValues: 486, STEPS, OUTPUT_FILENAME, FITNESS_COLUMNNAME, trainGenomes);
             ABM abm = new ABM(modelDescription: GetModelDescription());
-            abm.Train(1, terrainFilePath, args);
+            abm.Train(10, terrainFilePath, args);
 
             QLearning.usePerfectQMap = 0;
             fitnessVals.Add(abm.Test(1, STEPS, FITNESS_COLUMNNAME,OUTPUT_FILENAME,terrainFilePath, args));
-            //abm.Train(fcm, 10, 200, true, args);
+            // abm.Train(fcm, 10, 200, true, args);
 
             // var genomes = FileUtils.ReadGenomesFromFile(".\\output\\good.csv");
             //fcm = new HillClimberFCM(population: 96, numberOfValues: 486, STEPS, OUTPUT_FILENAME, FITNESS_COLUMNNAME, trainGenomes);

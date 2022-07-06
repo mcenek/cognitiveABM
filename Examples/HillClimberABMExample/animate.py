@@ -10,7 +10,7 @@ TRESHOLD = 47
 
 Data = ['./output/landScape_exportInfo.csv','./output/grid_exportInfo.csv', './output/gradient_exportInfo.csv']
 Layer = ['./layers/landScape.csv', './layers/grid.csv', './layers/gradient.csv']
-terrain_num = 0
+terrain_num = 2
 AgentData = Data[terrain_num]
 LayerFile = Layer[terrain_num]
 
