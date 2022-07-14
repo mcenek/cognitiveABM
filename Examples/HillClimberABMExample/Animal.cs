@@ -43,6 +43,8 @@ namespace HillClimberExample
 
         private string rule = default;
 
+        protected List<Tuple<int, int>> memory; //list of where its been
+
         public string Rule
         {
             get => rule;
@@ -149,45 +151,58 @@ namespace HillClimberExample
 
             /**QLearn*/
             List<int[]> adjacentTerrainLocations = GetAdjacentTerrainPositions();
-            float[] adjacentTerrainElevations = GetAdjacentTerrainElevations();
+            List<int[]> distantTerrainLocations = GetDistantTerrainPositions();
+
+            Tuple<List<float>, List<float>> adjacentTerrainTuple = GetAdjacentTerrainInfo(); 
+            float[] adjacentTerrainElevations = adjacentTerrainTuple.Item1.ToArray();
+            float[] rewards = adjacentTerrainTuple.Item2.ToArray();
             float[] distantTerrainElevations = GetDistantTerrainElevations();
+
+            //get reward 
+            //convert back
+
             //change terrainElevations into a matrix
             //adjacentTerrainElevations contains 9 elements, so we need 3x3 matrix
             int index = 0;
             float[,] landscapePatch = new float[3, 3];
-            // float min = adjacentTerrainElevations[index];
-            // float max = adjacentTerrainElevations[index];
+            float min = adjacentTerrainElevations[index];
+            float max = adjacentTerrainElevations[index];
 
-            float min = distantTerrainElevations[index];
-            float max = distantTerrainElevations[index];
+            // float min = distantTerrainElevations[index];
+            // float max = distantTerrainElevations[index];
             for (int x = 0; x < 3; x++) //Getting patch values and turning it into a matrix
             {
                 for (int y = 0; y < 3; y++)
                 {
-                    // if(adjacentTerrainElevations[index] < min){
-                    //   min = adjacentTerrainElevations[index];
-                    // }
-                    // if(adjacentTerrainElevations[index] > max){
-                    //   max = adjacentTerrainElevations[index];
-                    // }
-                    // landscapePatch[x, y] = adjacentTerrainElevations[index];
-                    // index++;
-
-                    if(distantTerrainElevations[index] < min){
-                      min = distantTerrainElevations[index];
+                    if(adjacentTerrainElevations[index] < min){
+                      min = adjacentTerrainElevations[index];
                     }
-                    if(distantTerrainElevations[index] > max){
-                      max = distantTerrainElevations[index];
+                    if(adjacentTerrainElevations[index] > max){
+                      max = adjacentTerrainElevations[index];
                     }
-                    landscapePatch[x, y] = distantTerrainElevations[index];
+                    landscapePatch[x, y] = adjacentTerrainElevations[index];
                     index++;
+
+                    // if(distantTerrainElevations[index] < min){
+                    //   min = distantTerrainElevations[index];
+                    // }
+                    // if(distantTerrainElevations[index] > max){
+                    //   max = distantTerrainElevations[index];
+                    // }
+                    // landscapePatch[x, y] = distantTerrainElevations[index];
+                    // index++;
 
                 }
             }
             int xPos = (int)Position.X;
             int yPos = (int)Position.Y;
             int direction = this.qLearn.getDirection(landscapePatch, min, max, this.AnimalId, this.tickNum, Elevation, xPos, yPos); //Which dirction we should be moving
-            int[] newLocation = adjacentTerrainLocations[direction];
+            if(onReward(rewards)){
+                direction = 4;
+            }
+            int[] newLocation = adjacentTerrainLocations[direction]; //direction = 4 
+
+            //add location to memory
 
 
             //MoveTo (animal object, location, traveling distance)
@@ -234,10 +249,25 @@ namespace HillClimberExample
             }
 
         }
+        private bool onReward(float[] rewards){
 
-        private float[] GetAdjacentTerrainElevations()
+            if(rewards[4] == 1){
+                for(int i = 0; i < memory.Count; i++ ){
+                    if(memory[i].Item1 == (int)Position.X && memory[i].Item2 == (int)Position.X){//reward has already been collected by agent
+                        return false;
+                    }
+                }
+                Tuple<int, int> position = new ((int)Position.X, (int)Position.X);
+                memory.Add(position);
+                return true;
+            }
+            return false;
+        }
+
+        private Tuple<List<float>, List<float>> GetAdjacentTerrainInfo()
         {
             List<float> elevations = new List<float>();
+            List<float> rewards = new List<float>();
             int x = (int)Position.X;
             int y = (int)Position.Y;
 
@@ -245,13 +275,21 @@ namespace HillClimberExample
             {
                 for (int dx = -1; dx <= 1; ++dx)
                 {
-                    elevations.Add((float)Terrain.GetRealValue(dx + x, dy + y));
+                    elevations.Add((int)Terrain.GetRealValue(dx + x, dy + y));
+                    float reward = (float)Terrain.GetRealValue(dx + x, dy + y)  - (int)Terrain.GetRealValue(dx + x, dy + y); //Should be 0.1 0.0
+                    if(reward == 0.0){
+                        rewards.Add(0);
+                    }
+                    else if (reward == 0.1){
+                        rewards.Add(1);
+                    }
                 }
             }
-
-            return elevations.ToArray();
+            Tuple<List<float>, List<float>> terrain = new (elevations, rewards);
+            
+            return terrain;
         }
-        //upgrade yo 7x7 or 9x9
+        //upgrade to 7x7 or 9x9
         private float[] GetDistantTerrainElevations(){
             List<float> elevations = new List<float>();
             int x = (int)Position.X;
@@ -278,6 +316,24 @@ namespace HillClimberExample
                 for (int dx = -1; dx <= 1; ++dx)
                 {
                     int[] location = new int[] { dx + x, dy + y };
+                    locations.Add(location);
+                }
+            }
+
+            return locations;
+        }
+
+        private List<int[]> GetDistantTerrainPositions()
+        {
+            List<int[]> locations = new List<int[]>();
+            int x = (int)Position.X;
+            int y = (int)Position.Y;
+
+            for (int dy = 1; dy >= -1; --dy)
+            {
+                for (int dx = -1; dx <= 1; ++dx)
+                {
+                    int[] location = new int[] { 7*dx + x, 7*dy + y };
                     locations.Add(location);
                 }
             }

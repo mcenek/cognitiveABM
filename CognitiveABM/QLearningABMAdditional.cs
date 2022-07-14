@@ -56,6 +56,7 @@ namespace CognitiveABM.QLearningABMAdditional{
       var temp = scoreValue.OrderByDescending(x => x.Value).ToDictionary(x => x.Key, x => x.Value);
       scoreValue = temp;
       scoreValue = setScoreValue(scoreValue);
+
       maxSteps = getStepsToMax(agentHolder);
       scoreValue = calculateAgentScore(scoreValue, maxSteps, lambda, agentHolder);
       return scoreValue;
@@ -73,8 +74,14 @@ namespace CognitiveABM.QLearningABMAdditional{
       Dictionary<int, float> score = new Dictionary<int,float>();
       float pathBonus = 0.0f;
       foreach(var item in scoreValue){
-        score.Add(item.Key,(scoreValue[item.Key]/(maxSteps[item.Key] * lambda)));
-
+        
+        int maxStep = maxSteps[item.Key];
+        if(maxSteps[item.Key] == 0){
+          score.Add(item.Key,(scoreValue[item.Key]/(lambda)));
+        }
+        else{
+          score.Add(item.Key,(scoreValue[item.Key]/(maxStep * lambda)));
+        }
       }
       return score;
     }//end calculateAgentScore
@@ -205,12 +212,39 @@ namespace CognitiveABM.QLearningABMAdditional{
      * @description: updates the current qmap and prints it
      */
     public void updateQMap(Dictionary<int, float> agentScore, agentInfoHolder agentHolder){
-      float[,] qmap = getQMap(); //4x4 qmap matrix hard coded
-      foreach(KeyValuePair<int, (List<float[]>, List<(int,int)>)> entry in agentHolder.getInfo()){
+            float[,] qmap = new float[8,8]; //4x4 qmap matrix hard coded
+      string path = @"..\HillClimberABMExample\layers\qMapGenerated8x8.csv";
+      if(File.Exists(path)){
+        using(var reader = new StreamReader(path))
+       {
+           int counter = 0;
+           while (!reader.EndOfStream)
+           {
+               var line = reader.ReadLine();
+               var values = line.Split(',');
+               if(counter < 8){
+               qmap[counter,0] = float.Parse(values[0]);
+               qmap[counter,1] = float.Parse(values[1]);
+               qmap[counter,2] = float.Parse(values[2]);
+               qmap[counter,3] = float.Parse(values[3]);
+               qmap[counter,4] = float.Parse(values[4]);
+               qmap[counter,5] = float.Parse(values[5]);
+               qmap[counter,6] = float.Parse(values[6]);
+               qmap[counter,7] = float.Parse(values[7]);
+               counter++;
+             }
+           }
+           reader.Close();
+       }//end using
 
+     }//end if
+     //4x4 qmap matrix hard coded
+      foreach(KeyValuePair<int, (List<float[]>, List<(int,int)>)> entry in agentHolder.getInfo()){
         foreach((int,int)tuple in entry.Value.Item2){
+          //  Console.WriteLine(tuple.Item1 + " " + tuple.Item2);
           if(float.IsNaN(qmap[tuple.Item1,tuple.Item2])){
-            Console.WriteLine("OVERHERE");
+            Console.WriteLine(qmap[tuple.Item1,tuple.Item2]);
+            Console.WriteLine("OVERHERE    " + tuple.Item1 + " " + tuple.Item2);
           }
           qmap[tuple.Item1,tuple.Item2] += agentScore[entry.Key];
         }
@@ -279,7 +313,10 @@ namespace CognitiveABM.QLearningABMAdditional{
                data[counter,5] = float.Parse(values[5]);
                data[counter,6] = float.Parse(values[6]);
                data[counter,7] = float.Parse(values[7]);
-
+               for(int i = 0; i < 8; i++){
+                Console.Write(data[counter, i]);
+               }
+               Console.WriteLine();
                counter++;
              }
            }
@@ -294,7 +331,7 @@ namespace CognitiveABM.QLearningABMAdditional{
          }
        }
      }
-
+     
      return data;
     }//end getQMap
 
