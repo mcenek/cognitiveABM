@@ -8,8 +8,8 @@ import pandas as pandasForSortingCSV
 NUM_STEPS = 150
 TRESHOLD = 47
 
-Data = ['./output/landScape_exportInfo.csv','./output/grid_exportInfo.csv', './output/gradient_exportInfo.csv']
-Layer = ['./layers/landScape.csv', './layers/grid.csv', './layers/gradient.csv']
+Data = ['./output/landScape_exportInfo.csv','./output/moatGauss_exportInfo.csv', './output/gradient2_exportInfo.csv']
+Layer = ['./layers/landScape.csv', './layers/moatGauss.csv', './layers/gradient2.csv']
 terrain_num = 2
 AgentData = Data[terrain_num]
 LayerFile = Layer[terrain_num]

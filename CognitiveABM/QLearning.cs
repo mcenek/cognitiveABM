@@ -122,11 +122,16 @@ namespace CognitiveABM.QLearning
             MSE[i] = meanSquareError(normallisedLandscapePatch, prototypes.ElementAt(i));
           }
           //returns index of smallest value (Grabbed from: https://stackoverflow.com/questions/4204169/how-would-you-get-the-index-of-the-lowest-value-in-an-int-array)
-          int minIndex = Enumerable.Range(0, MSE.Length).Aggregate((a, b) => (MSE[a] < MSE[b]) ? a : b);
+          int minIndex = int.MaxValue;
+          for(int i = 0; i < this.prototypes.Count; i++){
+            if(MSE[i] < minIndex){
+              minIndex = i;
+            }
+          }
+          //int minIndex = Enumerable.Range(0, MSE.Length).Aggregate((a, b) => (MSE[a] < MSE[b]) ? a : b);
 
           int direction = biasedRouletteWheel(minIndex);
           if(direction < 0 || direction > 7){
-
             Console.WriteLine(direction);
           }
 
@@ -191,7 +196,6 @@ namespace CognitiveABM.QLearning
           // else{
           //   return random.Next(8);//randomly pick a direction
           // }
-              Console.WriteLine(addedVal + "ERROR");
               return col; //return -1 so we know that it's this method that causes an error later down the road
         }//end rouletteWheel
                 /**
