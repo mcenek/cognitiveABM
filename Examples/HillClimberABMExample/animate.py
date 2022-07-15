@@ -6,10 +6,11 @@ from celluloid import Camera
 import pandas as pandasForSortingCSV
 
 NUM_STEPS = 150
+TRESHOLD = 47
 
-Data = ['./output/landScape_exportInfo.csv','./output/grid_exportInfo.csv', './output/gradient_exportInfo.csv']
-Layer = ['./layers/landScape.csv', './layers/grid.csv', './layers/gradient.csv']
-terrain_num = 0
+Data = ['./output/landScape_exportInfo.csv','./output/moatGauss_exportInfo.csv', './output/gradient2_exportInfo.csv']
+Layer = ['./layers/landScape.csv', './layers/moatGauss.csv', './layers/gradient2.csv']
+terrain_num = 2
 AgentData = Data[terrain_num]
 LayerFile = Layer[terrain_num]
 
@@ -52,11 +53,21 @@ agent_pos.set_ylabel('Y')
 agent_pos.set_title('Agent Position')
 
 heatmap.imshow(terrain[::-1], origin = 'lower')
+maxIndex = 0
+
 
 for i in range(NUM_STEPS):
     fit_val = fitness[i*numpoints: i*numpoints + numpoints]
     avg_fit.append(sum(fitness[i*numpoints: i*numpoints + numpoints])/numpoints)
     norm = [(float(i)/(max(fit_val) + 1)) for i in fit_val]
+    for index in range(len(avg_fit)):
+        if(avg_fit[index]) >= TRESHOLD:
+            maxIndex = index
+            break
+    if maxIndex != 0 :
+        fitness_map.plot([maxIndex, maxIndex], [0, 50],color='black')
+        fitness_map.plot(maxIndex, TRESHOLD, marker='o', color='r')
+        fitness_map.text(maxIndex, TRESHOLD, str(maxIndex), horizontalalignment='right')
     colors = cm.rainbow(norm)
     fitness_map.plot(avg_fit)
     agent_pos.scatter(x[i*numpoints: i*numpoints + numpoints], y[i*numpoints: i*numpoints + numpoints], c=colors, s=100)

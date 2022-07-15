@@ -4,6 +4,18 @@
    // For further information visit https://github.com/OmniSharp/omnisharp-vscode/blob/master/debugger-launchjson.md
    "version": "0.2.0",
    "configurations": [
+<<<<<<< HEAD
+=======
+       
+       {
+           "name": ".NET Core Attach",
+           "type": "coreclr",
+           "request": "attach"
+       },
+
+
+
+>>>>>>> cenekRepo/austens_Test_Branch
         {
             "name": ".NET Core Launch (console)",
             "type": "coreclr",

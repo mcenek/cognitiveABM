@@ -12,7 +12,7 @@ namespace CognitiveABM.QLearning
     {
         //for simple version, only using these inst vars
         public agentInfoHolder infoHolder;
-        private float[,] qMap = new float[4,4];//Houses qMap used in MSE
+        private float[,] qMap = new float[8,8];//Houses qMap used in MSE
         private List<float[,]> prototypes = new List<float[,]>(); //prototype list used for MSE
         public static List<float> fitness;
         public static List<int> animalIDHolder;
@@ -55,7 +55,7 @@ namespace CognitiveABM.QLearning
         public void setQlearnMap(){
           //var filePath = @"..\HillClimberABMExample\layers\LandScapeSlopeHard.csv";
           float[,] data = new float[8,8]; //4x4 qmap matrix hard coded
-          string qMapFile = @"..\HillClimberABMExample\layers\qMapRandom8x8.csv";
+          string qMapFile = @"..\HillClimberABMExample\layers\qMapPerfect8x8.csv";
           if(usePerfectQMap == 0){
             qMapFile = @"..\HillClimberABMExample\layers\qMapGenerated8x8.csv";
           }
@@ -122,11 +122,16 @@ namespace CognitiveABM.QLearning
             MSE[i] = meanSquareError(normallisedLandscapePatch, prototypes.ElementAt(i));
           }
           //returns index of smallest value (Grabbed from: https://stackoverflow.com/questions/4204169/how-would-you-get-the-index-of-the-lowest-value-in-an-int-array)
-          int minIndex = Enumerable.Range(0, MSE.Length).Aggregate((a, b) => (MSE[a] < MSE[b]) ? a : b);
+          int minIndex = int.MaxValue;
+          for(int i = 0; i < this.prototypes.Count; i++){
+            if(MSE[i] < minIndex){
+              minIndex = i;
+            }
+          }
+          //int minIndex = Enumerable.Range(0, MSE.Length).Aggregate((a, b) => (MSE[a] < MSE[b]) ? a : b);
 
           int direction = biasedRouletteWheel(minIndex);
           if(direction < 0 || direction > 7){
-
             Console.WriteLine(direction);
           }
 
@@ -175,19 +180,33 @@ namespace CognitiveABM.QLearning
           float rFloat = (float)random.NextDouble();
           float addedVal = 0.0f;
           //we add all values of the col together, when > rDouble, we choose last column
-          if(useMap){
+          // if(useMap){
             for(int i = 0; i < 8; i++){
               addedVal += qMap[i,col];
+              //addedVal += noiseGen();
               if(addedVal >= rFloat){
                 return i;
               }
             }//end for
-          }
-          else{
-            return random.Next(8);//randomly pick a direction
-          }
-              return -1; //return -1 so we know that it's this method that causes an error later down the road
+          // }
+          // else{
+          //   return random.Next(8);//randomly pick a direction
+          // }
+              return col; //return -1 so we know that it's this method that causes an error later down the road
         }//end rouletteWheel
+                /**
+         * @description: creates a random float between -0.2 and 0.2
+         * @return: random noise value
+         */
+        public float noiseGen(){
+          var random = new Random();
+          float noise = (float)random.NextDouble()/5; //noise between 0 and 0.2
+          int sign = random.Next(1, 3);
+          if(sign == 2){ //noise becomes negative;
+            noise = noise * -1;
+          } //end for
+          return noise;
+        } //end noiseGen
 
 
         /**
