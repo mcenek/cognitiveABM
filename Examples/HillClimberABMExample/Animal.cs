@@ -27,6 +27,8 @@ namespace HillClimberExample
 
         private readonly float[] AgentMemory;
 
+        private bool useDistantView = false;
+
         private readonly int startingElevation;
 
         public Guid ID { get; }
@@ -165,32 +167,37 @@ namespace HillClimberExample
             //adjacentTerrainElevations contains 9 elements, so we need 3x3 matrix
             int index = 0;
             float[,] landscapePatch = new float[3, 3];
+
             float min = adjacentTerrainElevations[index];
             float max = adjacentTerrainElevations[index];
-            // float min = distantTerrainElevations[index];
-            // float max = distantTerrainElevations[index];
+            if(useDistantView == true){ //agent uses distant view
+                min = distantTerrainElevations[index];
+                max = distantTerrainElevations[index];
+            }
+
             for (int x = 0; x < 3; x++) //Getting patch values and turning it into a matrix
             {
                 for (int y = 0; y < 3; y++)
                 {
-                    if(adjacentTerrainElevations[index] < min){
-                      min = adjacentTerrainElevations[index];
+                    if(useDistantView){
+                      if(distantTerrainElevations[index] < min){
+                         min = distantTerrainElevations[index];
+                        }
+                        if(distantTerrainElevations[index] > max){
+                        max = distantTerrainElevations[index];
+                        }
+                      landscapePatch[x, y] = distantTerrainElevations[index];
                     }
-                    if(adjacentTerrainElevations[index] > max){
-                      max = adjacentTerrainElevations[index];
+                    else{
+                        if(adjacentTerrainElevations[index] < min){
+                            min = adjacentTerrainElevations[index];
                     }
-                    landscapePatch[x, y] = adjacentTerrainElevations[index];
-                    index++;
-
-                    // if(distantTerrainElevations[index] < min){
-                    //   min = distantTerrainElevations[index];
-                    // }
-                    // if(distantTerrainElevations[index] > max){
-                    //   max = distantTerrainElevations[index];
-                    // }
-                    // landscapePatch[x, y] = distantTerrainElevations[index];
-                    // index++;
-
+                        if(adjacentTerrainElevations[index] > max){
+                            max = adjacentTerrainElevations[index];
+                    }
+                        landscapePatch[x, y] = adjacentTerrainElevations[index];
+                    }
+                    index++;  
                 }
             }
             int xPos = (int)Position.X;
