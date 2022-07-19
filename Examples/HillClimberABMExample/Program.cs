@@ -11,7 +11,7 @@ public static class Program
 
     public static void Main(string[] args)
     {
-        var terrainFilePaths = new string[] { "./layers/gradient2.csv" };
+        var terrainFilePaths = new string[] { "./layers/heatmapExample.csv" };
         //var terrainFilePaths = new string[] { "./layers/landscape.csv", "./layers/moatGauss.csv", "./layers/grid.csv" };
         var fitnessVals = new List<List<float>>();
 
