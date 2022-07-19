@@ -10,7 +10,7 @@
   "layers": [
     {
       "name": "Terrain",
-      "file": "./layers/gradient2.csv",
+      "file": "./layers/heatmapExample.csv",
       "dimensionx": 50,
       "dimensiony": 50
     }
