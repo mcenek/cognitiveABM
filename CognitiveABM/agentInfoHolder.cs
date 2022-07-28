@@ -8,7 +8,7 @@ namespace CognitiveABM.agentInformationHolder
 {
     public class agentInfoHolder
     {
-      public static ConcurrentDictionary<int, (List<float[]>, List<(int,int)>)> agentInfo;
+      public static ConcurrentDictionary<int, (List<float[]>, List<(int,int)>, int)> agentInfo;
       public static List<float> fitness;
 
 
@@ -39,7 +39,7 @@ namespace CognitiveABM.agentInformationHolder
        * @description: updates the dictionary with the new items
        */
       public void editItem(int id, List<float[]> exportVals, List<(int,int)> path){
-        agentInfo.TryUpdate(id,(getNewExportVals(id,exportVals),getNewPathWay(id,path)), (exportVals,path));
+        agentInfo.TryUpdate(id,(getNewExportVals(id,exportVals),getNewPathWay(id,path)), (exportVals,path,numberOfRewards));
       }
 
       /**

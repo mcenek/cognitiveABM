@@ -14,10 +14,10 @@ namespace CognitiveABM.QLearning
         public agentInfoHolder infoHolder;
         private float[,] qMap = new float[8,8];//Houses qMap used in MSE
         private List<float[,]> prototypes = new List<float[,]>(); //prototype list used for MSE
+
         public static List<float> fitness;
         public static List<int> animalIDHolder;
         public static Dictionary<int, List<float[]>> patchDict;
-        //public static Dictionary<int, List<float>> fitDict;
         public static Dictionary<int, List<(int,int)>> agentQmapPath;
         public static int usePerfectQMap = 1;
         public static bool useMap = true;
@@ -42,8 +42,6 @@ namespace CognitiveABM.QLearning
           animalIDHolder = new List<int>();
           patchDict = new Dictionary<int, List<float[]>>();
           patchDict.Add(-1, new List<float[]>());
-          // fitDict = new Dictionary<int, List<float>>();
-          // fitDict.Add(-1, new List<float>());
           agentQmapPath = new Dictionary<int, List<(int,int)>>();
           agentQmapPath.Add(-1, new List<(int,int)>());
 
@@ -107,36 +105,31 @@ namespace CognitiveABM.QLearning
           this.prototypes.Add(protoNW);
         }
 
+
         //---HELPER FUNCTIONS---//
         /**
          * @param landScapePatch: 3x3 matrix of landscape agent is on
+         * @param rewardsPatch: 3x3 matrix of rewards agent is on
          * @param min: smallest elevation in landscapePatch
          * @param max: largest elevation in landscapePatch
          * @description: finds out direction agent should go using MSE and biasedRouletteWheel
          * @return: value ranging from 1,5,7,3 which represents N. E. S. W.
          */
-        public int getDirection(float[,] landscapePatch, float min, float max, int animalId, int tickNum, float Elevation, int xPos, int yPos){
+        public int getDirection(float[,] landscapePatch, float[,] rewardsPatch, float min, float max, int animalId, int tickNum, float Elevation, int xPos, int yPos){
+          landscapePatch = calculateRewardLandscape(landscapePatch, rewardsPatch);
+
           float[,] normallisedLandscapePatch = normalliseLandscapePatch(landscapePatch, min, max);
-          float[] MSE = new float[8];
-          for(int i = 0; i < this.prototypes.Count; i++){
-            MSE[i] = meanSquareError(normallisedLandscapePatch, prototypes.ElementAt(i));
-          }
-          //returns index of smallest value (Grabbed from: https://stackoverflow.com/questions/4204169/how-would-you-get-the-index-of-the-lowest-value-in-an-int-array)
-          int minIndex = int.MaxValue;
-          for(int i = 0; i < this.prototypes.Count; i++){
-            if(MSE[i] < minIndex){
-              minIndex = i;
-            }
-          }
-          //int minIndex = Enumerable.Range(0, MSE.Length).Aggregate((a, b) => (MSE[a] < MSE[b]) ? a : b);
+
+
+
+          int minIndex = getMSE(normallisedLandscapePatch);
+
 
           int direction = biasedRouletteWheel(minIndex);
-          if(direction < 0 || direction > 7){
-            Console.WriteLine(direction);
-          }
 
-
-          //recordPath(animalId, direction, minIndex);
+          // if(direction < 0 || direction > 7){
+          //   Console.WriteLine(direction);
+          // }
 
           savePathandExportValues(animalId,direction,minIndex,landscapePatch,tickNum, Elevation, xPos, yPos);
 
@@ -144,9 +137,51 @@ namespace CognitiveABM.QLearning
           //so, we need to change direction to work on a list
           //Direction will change via 0=>1, 1=>5, 2=>7, 3=>3
           //int[] directionMap = {1,5,7,3};
+          // ______
+          //|0|1|2|
+          //|3|x|5|
+          //|6|7|8|
+          //-------
           int[] directionMap = {1,5,7,3,2,8,6,0};
           return directionMap[direction];
         }//end getDirection
+
+        /**
+         * @param landScapePatch: 3x3 matrix of landscape agent is on
+         * @param rewardsPatch: 3x3 matrix of rewards agent is on
+         * @description: combines the rewardsPatch with the landscapePatch
+         * Adds 10 to every elevation value if it has a reward on it
+         * @return: returns a combined landscape reward patch
+         */
+        public float[,] calculateRewardLandscape(float[,] landscapePatch, float[,] rewardsPatch){
+          for(int row = 0; row < landscapePatch.GetLength(0); row++){
+            for(int col = 0; col < landscapePatch.GetLength(1); col++){
+              landscapePatch[row,col] += 10 * rewardsPatch[row,col];
+            }
+          }
+          return landscapePatch;
+        }
+
+        /**
+         * @param normallisedLandscapePatch: 3x3 normallised matrix of elevation in patch
+         * @description: Calculates the MSE for the patch
+         * Calculates and outputs column number that should be used for qmap (using the prototypes)
+         * @return: int value representing qmap column numbers
+         */
+        public int getMSE(float[,] normallisedLandscapePatch){
+          //MSE for Elevation
+          float[] MSE = new float[8];
+          for(int i = 0; i < this.prototypes.Count; i++){
+            MSE[i] = meanSquareError(normallisedLandscapePatch, prototypes.ElementAt(i));
+          }
+          //returns index of smallest value (Grabbed from: https://stackoverflow.com/questions/4204169/how-would-you-get-the-index-of-the-lowest-value-in-an-int-array)
+          int minIndex = Enumerable.Range(0, MSE.Length).Aggregate((a, b) => (MSE[a] < MSE[b]) ? a : b);
+
+
+          return minIndex;
+        }
+
+
 
         /**
          * @param landScapePatch: 3x3 matrix of landscape agent is on
@@ -161,7 +196,12 @@ namespace CognitiveABM.QLearning
               {
                   for (int col = 0; col < landscapePatch.GetLength(1); col += 1)
                   {
-                      normallizedLandscape[row, col] = (landscapePatch[row, col] - min) / (Math.Abs(max - min));
+                      if(max-min == 0){
+                        normallizedLandscape[row, col] = 0.0f;
+                      }
+                      else{
+                        normallizedLandscape[row, col] = (landscapePatch[row, col] - min) / (Math.Abs(max - min));
+                      }
                   }
               }
 

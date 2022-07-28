@@ -84,9 +84,11 @@ namespace CognitiveABM.Perceptron
 
                 // get the needed weight matrix width and height
 
+                //Way to make this faster is to say on the last item of for loop do the matrix multiplication
+
                 // matrix width = 3 * NumberOfInputs based on the fact that we have forwards, self, and backwards leading edges
                 int weightMatrixWidth = NumberOfInputs * 3 - (previousLayerHeight - currentLayerHeight); // should be 27
-                //27 * 2 
+                //27 * 2
                 int weightMatrixHeight = currentLayerHeight; // should be 9
 
                 // should need 243 weights (genomes) per matrix (per layer)
@@ -156,6 +158,9 @@ namespace CognitiveABM.Perceptron
          * @description: Multiples Matrix
          * @returns: the resulting matrix from multiplication
          */
+
+        //change this to return 2 values
+        //weight row should be same size at output
         private float[] MatrixMultiply(float[] inputs, float[,] weights)
         {
             // the resulting array will be the same length as the number of weight columns in the weight matrix
