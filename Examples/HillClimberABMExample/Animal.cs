@@ -144,7 +144,7 @@ namespace HillClimberExample
               }
             }
 
-            PerceptronFactory perceptron = new PerceptronFactory(18, 2, 2, 9);
+            PerceptronFactory perceptron = new PerceptronFactory(9, 2, 1, 9);
             float[] outputs = perceptron.CalculatePerceptronFromId(AnimalId, inputs, AgentMemory);
             outputs.CopyTo(AgentMemory, 0);
             outputs.CopyTo(AgentMemory, outputs.Length);

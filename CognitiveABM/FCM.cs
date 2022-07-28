@@ -50,7 +50,7 @@ namespace CognitiveABM.FCM
          * @description: This will train the agents. If already at target fitness it may print genomes
          * @return: agentFitness
          */
-        public List<float> Run(Boolean train, float fitnessTarget = 200, Boolean writeGenomes = false)
+        public List<float> Run(Boolean train, float fitnessTarget, Boolean writeGenomes)
         {
             List<float> agentFitness = Fitness(Agents);
 

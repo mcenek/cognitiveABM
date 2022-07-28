@@ -11,7 +11,7 @@ public static class Program
 
     public static void Main(string[] args)
     {
-        var terrainFilePaths = new string[] { "./layers/rewardTest.csv" };
+        var terrainFilePaths = new string[] { "./layers/landscape.csv" };
         //var terrainFilePaths = new string[] { "./layers/landscape.csv", "./layers/moatGauss.csv", "./layers/grid.csv" };
         var fitnessVals = new List<List<float>>();
 
@@ -25,15 +25,15 @@ public static class Program
             if (terrainFilePath != terrainFilePaths[0]) {
                 trainGenomes = FileUtils.ReadGenomesFromFile(".\\output\\genomes.csv");
             }
-            HillClimberFCM fcm = new HillClimberFCM(population: 96, numberOfValues: 486, STEPS, OUTPUT_FILENAME, FITNESS_COLUMNNAME, trainGenomes);
+            HillClimberFCM fcm = new HillClimberFCM(population: 96, numberOfValues: 1458, STEPS, OUTPUT_FILENAME, FITNESS_COLUMNNAME, trainGenomes);
             ABM abm = new ABM(modelDescription: GetModelDescription());
             //abm.Train(10, terrainFilePath, args);
 
-            abm.Train(fcm, 10, 100, true, terrainFilePath, args);
+            abm.Train(fcm, 10, 200, true, terrainFilePath, args);
             //QLearning.usePerfectQMap = 0;
 
-            var genomes = FileUtils.ReadGenomesFromFile(".\\output\\good.csv");
-            fcm = new HillClimberFCM(population: 96, numberOfValues: 486, STEPS, OUTPUT_FILENAME, FITNESS_COLUMNNAME, trainGenomes);
+            //  var genomes = FileUtils.ReadGenomesFromFile(".\\output\\good.csv");
+            fcm = new HillClimberFCM(population: 96, numberOfValues: 1458, STEPS, OUTPUT_FILENAME, FITNESS_COLUMNNAME, trainGenomes);
 
             fitnessVals.Add(abm.Test(fcm, 1, terrainFilePath, args));
 

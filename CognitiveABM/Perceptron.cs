@@ -90,17 +90,17 @@ namespace CognitiveABM.Perceptron
                 int weightMatrixWidth = NumberOfInputs * 3 - (previousLayerHeight - currentLayerHeight); // should be 27
                 //27 * 2
                 int weightMatrixHeight = currentLayerHeight; // should be 9
-
                 // should need 243 weights (genomes) per matrix (per layer)
+                // With 18 inputs and 9 inputs per layer we need 1458
 
                 // get a matrix of weights
                 float[,] weights = CreateWeightMatrix(weightMatrixWidth, weightMatrixHeight);
 
                 // calculate the values of the neurons of the current layer
                 values = MatrixMultiply(values, weights); // this
-                for(int i = 0; i < values.Length; i++){
-                    Console.WriteLine( values[i] + " ");
-                }
+                // for(int i = 0; i < values.Length; i++){
+                //     Console.WriteLine( values[i] + " ");
+                // }
 
                 // keep track of the hieght of the previous later
                 previousLayerHeight = currentLayerHeight;
