@@ -212,6 +212,8 @@ namespace HillClimberExample
             int direction;
             if(stayPut){//don't move cus we on reward
               direction = 4;
+              this.qLearn.savePathandExportValues(this.AnimalId,-1,-1,landscapePatch,this.tickNum, Elevation, xPos, yPos);
+
             }
             else{
               direction = this.qLearn.getDirection(landscapePatch, rewardsPatch, min, max,this.AnimalId, this.tickNum, Elevation, xPos, yPos); //Which dirction we should be moving
@@ -224,7 +226,6 @@ namespace HillClimberExample
             //MoveTo (animal object, location, traveling distance)
 
             Terrain._AnimalEnvironment.MoveTo(this, newLocation[0], newLocation[1], 1, predicate: null);
-            this.qLearn.setExportValues(landscapePatch,this.AnimalId, this.tickNum, Elevation, xPos, yPos);
             Elevation = Terrain.GetIntegerValue(this.Position.X, this.Position.Y);
             BioEnergy = (Elevation < 0) ? 0 : Elevation;
             if(stayPut && onReward(rewards)){

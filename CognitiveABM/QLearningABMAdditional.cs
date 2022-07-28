@@ -217,13 +217,11 @@ namespace CognitiveABM.QLearningABMAdditional{
      //4x4 qmap matrix hard coded
       foreach(KeyValuePair<int, (List<float[]>, List<(int,int)>)> entry in agentHolder.getInfo()){
         foreach((int,int)tuple in entry.Value.Item2){
-          //  Console.WriteLine(tuple.Item1 + " " + tuple.Item2);
-          if(float.IsNaN(qmap[tuple.Item1,tuple.Item2])){
-            Console.WriteLine(qmap[tuple.Item1,tuple.Item2]);
-            Console.WriteLine("OVERHERE    " + tuple.Item1 + " " + tuple.Item2);
-          }
 
-          qmap[tuple.Item1,tuple.Item2] += agentScore[entry.Key];
+          //(-1,-1) indicated we did not move so the qmap does not change  
+          if(tuple.Item1 != -1 && tuple.Item2 != -1){
+            qmap[tuple.Item1,tuple.Item2] += agentScore[entry.Key];
+          }
         }
         qmap = normalliseQMap(qmap);
         qmap = roundQMap(qmap);
