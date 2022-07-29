@@ -117,7 +117,8 @@ namespace HillClimberExample
 
             //AgentMemory is functionally useless right now
             //it goes into perceptron, but it's useage is commented out
-            AgentMemory = new float[] { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 };
+            AgentMemory = new float[18];
+            Array.Clear(AgentMemory, 0, AgentMemory.Length);
         }
 
         // Tick function is called on each step of the simulation
@@ -144,12 +145,28 @@ namespace HillClimberExample
               }
             }
 
-            PerceptronFactory perceptron = new PerceptronFactory(9, 2, 1, 9);
+            PerceptronFactory perceptron = new PerceptronFactory(18, 2, 2, 9);
             float[] outputs = perceptron.CalculatePerceptronFromId(AnimalId, inputs, AgentMemory);
-            outputs.CopyTo(AgentMemory, 0);
-            outputs.CopyTo(AgentMemory, outputs.Length);
+            try{
+
+             outputs.CopyTo(AgentMemory, 0);
+            }
+            catch{
+              System.Console.WriteLine(outputs.Length);
+              System.Console.WriteLine(AgentMemory.Length);
+
+            }
+            try{
+              //outputs.CopyTo(AgentMemory, outputs.Length);
+            }
+            catch{
+              System.Console.WriteLine(outputs.Length);
+              System.Console.WriteLine(AgentMemory.Length);
+              Console.WriteLine("TEST");
+              System.Environment.Exit(0);
+            }
             Boolean stayPut = false;
-            if(outputs[0] >= outputs[1]){
+            if(outputs[0] > outputs[1]){
               stayPut = true;
             }
 
@@ -227,13 +244,17 @@ namespace HillClimberExample
 
             Terrain._AnimalEnvironment.MoveTo(this, newLocation[0], newLocation[1], 1, predicate: null);
             Elevation = Terrain.GetIntegerValue(this.Position.X, this.Position.Y);
-            BioEnergy = (Elevation < 0) ? 0 : Elevation;
             if(stayPut && onReward(rewards)){
-              BioEnergy += 10;
+              Console.WriteLine("TEST");
+              BioEnergy = 10 + Elevation;
             }
             else if(stayPut && !onReward(rewards)){
-              BioEnergy = 0;
+              BioEnergy = -10 + Elevation;
             }
+            else{
+              BioEnergy = (Elevation < 0) ? 0 : Elevation;
+            }
+            stayPut = false;
             this.tickNum++;
         }
 

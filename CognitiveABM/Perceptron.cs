@@ -55,7 +55,8 @@ namespace CognitiveABM.Perceptron
          */
         public float[] CalculatePerceptron(float[] genomes, float[] inputs, float[] agentMemory)
         {
-
+            // float[] tempArray = new float[9];
+            // Array.Clear(tempArray,0,tempArray.Length);
 
             Genomes = genomes;
             // float[] outputs = new float[NumberOfOutputs];
@@ -63,12 +64,12 @@ namespace CognitiveABM.Perceptron
             // initialize and set currentValues to the inputs, then all zeros (for the backward and self faceing edges)
             float[] values;
 
-            List<float> temp = new List<float>(inputs);
+            List<float> temp = new List<float>(agentMemory);
 
-            // temp.AddRange(agentMemory);
+            //temp.AddRange(agentMemory);
             // temp.AddRange(agentMemory);
             // add 18 0's to temp
-            temp.AddRange(new float[] { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 });
+            //temp.AddRange(tempArray);
 
             //set valuess to an array copy of temp
             values = temp.ToArray();
@@ -80,7 +81,7 @@ namespace CognitiveABM.Perceptron
             {
 
                 // get how many nuerons are in the current layer
-                int currentLayerHeight = CalculateLayerHeight(layerNumber); // should always be 9
+                int currentLayerHeight = CalculateLayerHeight(layerNumber);
 
                 // get the needed weight matrix width and height
 
@@ -89,18 +90,22 @@ namespace CognitiveABM.Perceptron
                 // matrix width = 3 * NumberOfInputs based on the fact that we have forwards, self, and backwards leading edges
                 int weightMatrixWidth = NumberOfInputs * 3 - (previousLayerHeight - currentLayerHeight); // should be 27
                 //27 * 2
+                //27 * 9 + 27 * 9 +
                 int weightMatrixHeight = currentLayerHeight; // should be 9
                 // should need 243 weights (genomes) per matrix (per layer)
                 // With 18 inputs and 9 inputs per layer we need 1458
 
-                // get a matrix of weights
-                float[,] weights = CreateWeightMatrix(weightMatrixWidth, weightMatrixHeight);
+                if(layerNumber == _totalLayers - 1){
+                  // get a matrix of weights
+                  float[,] weights = CreateWeightMatrix(weightMatrixWidth, weightMatrixHeight);
 
-                // calculate the values of the neurons of the current layer
-                values = MatrixMultiply(values, weights); // this
-                // for(int i = 0; i < values.Length; i++){
-                //     Console.WriteLine( values[i] + " ");
-                // }
+                  // calculate the values of the neurons of the current layer
+                  values = MatrixMultiply(values, weights); // this
+                  // for(int i = 0; i < values.Length; i++){
+                  //     Console.WriteLine( values[i] + " ");
+                  // }
+
+               }
 
                 // keep track of the hieght of the previous later
                 previousLayerHeight = currentLayerHeight;

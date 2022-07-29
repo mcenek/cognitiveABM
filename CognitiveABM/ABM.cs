@@ -229,17 +229,17 @@ public class ABM
                 stopWatch.Stop();
                 // Console.WriteLine($"FCM finished in {stopWatch.ElapsedMilliseconds / 100:N2} seconds");
 
-                List<float> agentFitness = agentHolder.getFit();
-                var avg = agentFitness.Average();
-                var max = agentFitness.Max();
+                // List<float> agentFitness = agentHolder.getFit();
+                // var avg = agentFitness.Average();
+                // var max = agentFitness.Max();
 
-                Console.WriteLine("Average fitness: {0:F2}, Max fitness: {1:F2}", avg, max);
+                //Console.WriteLine("Average fitness: {0:F2}, Max fitness: {1:F2}", avg, max);
 
                 QLABMA.exportInfo(terrianFilePath, agentHolder);
 
                 GC.Collect();
 
-                return values;
+                //return values;
             }
         }
         return null;
@@ -286,11 +286,11 @@ public class ABM
 
                 //-----------------------------------------------------------------------------------------------//
 
-                List<float> agentFitness = agentHolder.getFit();
-                var avg = agentFitness.Average();
-                var max = agentFitness.Max();
-
-                Console.WriteLine("Generaton: {0:F2}, Average fitness: {1:F2}, Max fitness: {2:F2}", generation, avg, max);
+                // List<float> agentFitness = agentHolder.getFit();
+                // var avg = agentFitness.Average();
+                // var max = agentFitness.Max();
+                //
+                // Console.WriteLine("Generaton: {0:F2}, Average fitness: {1:F2}, Max fitness: {2:F2}", generation, avg, max);
 
                 Dictionary<int, float> scoreValue = QLABMA.getAgentScore(lambdaArray[generation], agentHolder);
                 QLABMA.updateQMap(scoreValue, agentHolder);
