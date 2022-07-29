@@ -27,7 +27,7 @@ namespace HillClimberExample
 
         private readonly float[] AgentMemory;
 
-        private bool useDistantView = false;
+        private bool useDistantView = true;
 
         private readonly int startingElevation;
 
@@ -134,7 +134,7 @@ namespace HillClimberExample
             // }
             //
             // Boolean atPeak = highestInput == 4;
-            // PerceptronFactory perceptron = new PerceptronFactory(9, 9, 1, 9);
+            // PerceptronFactory perceptron = new PerceptronFactory(18, 2, 2, 9);
             // float[] outputs = perceptron.CalculatePerceptronFromId(AnimalId, inputs, AgentMemory);
             // outputs.CopyTo(AgentMemory, 0);
             // outputs.CopyTo(AgentMemory, outputs.Length);
@@ -156,7 +156,7 @@ namespace HillClimberExample
             List<int[]> distantTerrainLocations = GetDistantTerrainPositions();
 
             Tuple<List<float>, List<float>> adjacentTerrainTuple = GetAdjacentTerrainInfo(); 
-            float[] adjacentTerrainElevations = GetDistantAdjacentElevations();
+            float[] adjacentTerrainElevations = GetAdjacentElevations();
             //float[] rewards = adjacentTerrainTuple.Item2.ToArray();
             float[] distantTerrainElevations = GetDistantTerrainElevations();
 
@@ -170,42 +170,42 @@ namespace HillClimberExample
 
             float min = adjacentTerrainElevations[index];
             float max = adjacentTerrainElevations[index];
-            // if(useDistantView == true){ //agent uses distant view
-            //     min = distantTerrainElevations[index];
-            //     max = distantTerrainElevations[index];
-            // }
+            if(useDistantView == true){ //agent uses distant view
+                min = distantTerrainElevations[index];
+                max = distantTerrainElevations[index];
+            }
 
             for (int x = 0; x < 3; x++) //Getting patch values and turning it into a matrix
             {
                 for (int y = 0; y < 3; y++)
                 {
-                    // if(useDistantView){
-                    //   if(distantTerrainElevations[index] < min){
-                    //      min = distantTerrainElevations[index];
-                    //     }
-                    //     if(distantTerrainElevations[index] > max){
-                    //     max = distantTerrainElevations[index];
-                    //     }
-                    //   landscapePatch[x, y] = distantTerrainElevations[index];
-                    // }
-                    // else{
-                    //     if(adjacentTerrainElevations[index] < min){
-                    //         min = adjacentTerrainElevations[index];
-                    // }
-                    //     if(adjacentTerrainElevations[index] > max){
-                    //         max = adjacentTerrainElevations[index];
-                    // }
-                    //     landscapePatch[x, y] = adjacentTerrainElevations[index];
-                    // }
-                    // index++;  
-                    if(adjacentTerrainElevations[index] < min){
+                    if(useDistantView){
+                      if(distantTerrainElevations[index] < min){
+                         min = distantTerrainElevations[index];
+                        }
+                        if(distantTerrainElevations[index] > max){
+                        max = distantTerrainElevations[index];
+                        }
+                      landscapePatch[x, y] = distantTerrainElevations[index];
+                    }
+                    else{
+                        if(adjacentTerrainElevations[index] < min){
                             min = adjacentTerrainElevations[index];
                     }
                         if(adjacentTerrainElevations[index] > max){
                             max = adjacentTerrainElevations[index];
                     }
-                    landscapePatch[x, y] = adjacentTerrainElevations[index];
+                        landscapePatch[x, y] = adjacentTerrainElevations[index];
+                    }
                     index++;  
+                    // if(adjacentTerrainElevations[index] < min){
+                    //         min = adjacentTerrainElevations[index];
+                    // }
+                    //     if(adjacentTerrainElevations[index] > max){
+                    //         max = adjacentTerrainElevations[index];
+                    // }
+                    // landscapePatch[x, y] = adjacentTerrainElevations[index];
+                    // index++;  
                 }
             }
             int xPos = (int)Position.X;
@@ -303,8 +303,7 @@ namespace HillClimberExample
             
             return terrain;
         }
-        //upgrade to 7x7 or 9x9
-        private float[] GetDistantAdjacentElevations(){
+        private float[] GetAdjacentElevations(){
             List<float> elevations = new List<float>();
             int x = (int)Position.X;
             int y = (int)Position.Y;
@@ -318,6 +317,11 @@ namespace HillClimberExample
 
             return elevations.ToArray();
         }
+        /**
+            * @description: creates a 3x3 grid of the agents terrain distant surroundings,
+            * condences its 7x7 view into 3x3 only saving the cardinal and diagonal information
+            * @return: list of the terrains elevation
+        */
         private float[] GetDistantTerrainElevations(){
             List<float> elevations = new List<float>();
             int x = (int)Position.X;
@@ -326,7 +330,15 @@ namespace HillClimberExample
             {
                 for (int dx = -1; dx <= 1; ++dx)
                 {
-                    elevations.Add((float)Terrain.GetRealValue(7*dx + x, 7*dy + y));
+                    int newX = 7*dx + x; 
+                    int nexY = 7*dy + y;
+                    if(newX >= 50){ //if the newX value is out of bounds use adjacent view
+                        newX = dx + x;
+                    }
+                    if(nexY >= 50){
+                        nexY = dy + y;
+                    }
+                    elevations.Add((float)Terrain.GetRealValue(newX, nexY));
                 }
             }
 
@@ -343,6 +355,7 @@ namespace HillClimberExample
             {
                 for (int dx = -1; dx <= 1; ++dx)
                 {
+                    
                     int[] location = new int[] { dx + x, dy + y };
                     locations.Add(location);
                 }
@@ -351,6 +364,11 @@ namespace HillClimberExample
             return locations;
         }
 
+        /**
+         *  @description: creates a 3x3 grid of the agents terrain distant surroundings,
+        * condences its 7x7 view into 3x3 only saving the cardinal and diagonal information
+        * @return: list of the distant positions coordinates
+        */
         private List<int[]> GetDistantTerrainPositions()
         {
             List<int[]> locations = new List<int[]>();
@@ -361,7 +379,15 @@ namespace HillClimberExample
             {
                 for (int dx = -1; dx <= 1; ++dx)
                 {
-                    int[] location = new int[] { 7*dx + x, 7*dy + y };
+                    int newX = 7*dx + x;
+                    int nexY = 7*dy + y;
+                    if(newX >= 49){
+                        newX = dx + x;
+                    }
+                    if(nexY >= 49){
+                        nexY = dx + y;
+                    }
+                    int[] location = new int[] { newX, nexY };
                     locations.Add(location);
                 }
             }
