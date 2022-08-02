@@ -18,6 +18,7 @@ namespace HillClimberExample
     using CognitiveABM.Perceptron;
     using CognitiveABM.QLearning;
     using System.IO;
+    //using CognitiveABM.Program;
 
 
     public class Animal : Mars.Interfaces.Agent.IMarsDslAgent
@@ -120,6 +121,7 @@ namespace HillClimberExample
         // Tick function is called on each step of the simulation
         public void Tick()
         {
+        
 
             /**FCM*/
             //-----FCM----//
@@ -393,6 +395,22 @@ namespace HillClimberExample
             }
 
             return locations;
+        }
+         private int[,] readRewards(){
+            string[] path = Program.terrainFilePaths;
+            int[,] rewardMap = new int[50,50];
+            string filePath = "./layers/rewardTest.csv";
+            using(var reader = new StreamReader(filePath)){
+                var line = reader.ReadLine();
+                var values = line.Split(',');
+                for(int x = 0; x < 50; x++){
+                    for(int y = 0; y < 50; y++){
+                        rewardMap[x, y] = int.Parse(values[x]);
+                    }
+                }
+            }
+            return rewardMap;
+        
         }
 
 
