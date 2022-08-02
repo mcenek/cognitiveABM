@@ -8,10 +8,7 @@ public static class Program
     public const string OUTPUT_FILENAME = "Animal.csv";
     public const string FITNESS_COLUMNNAME = "BioEnergy";
     public const int STEPS = 250;
-    public static string[] terrainFilePaths{
-            get { return terrainFilePaths; }
-            set { terrainFilePaths = value; }
-        }
+    public static string[] terrainFilePaths;
     public static void Main(string[] args)
     {
         terrainFilePaths = new string[] { "./layers/gradient2.csv" };

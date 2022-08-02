@@ -410,7 +410,6 @@ namespace HillClimberExample
                 }
             }
             return rewardMap;
-        
         }
 
 
