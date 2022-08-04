@@ -7,12 +7,13 @@ public static class Program
 {
     public const string OUTPUT_FILENAME = "Animal.csv";
     public const string FITNESS_COLUMNNAME = "BioEnergy";
-    public const int STEPS = 250;
     public static string[] terrainFilePaths;
+    public const int STEPS = 250;
+
     public static void Main(string[] args)
     {
-        terrainFilePaths = new string[] { "./layers/gradient2.csv" };
-        //var terrainFilePaths = new string[] { "./layers/landscape.csv", "./layers/gradient2.csv", "./layers/grid.csv" };
+        terrainFilePaths = new string[] { "./layers/moatGauss.csv" };
+        //var terrainFilePaths = new string[] { "./layers/landscape.csv", "./layers/moatGauss.csv", "./layers/grid.csv" };
         var fitnessVals = new List<List<float>>();
 
         foreach (string terrainFilePath in terrainFilePaths)
@@ -21,20 +22,25 @@ public static class Program
 
 
             QLearning.usePerfectQMap = 1;
-            // List<List<float>> trainGenomes = null;
-            // if (terrainFilePath != terrainFilePaths[0]) {
-            //     trainGenomes = FileUtils.ReadGenomesFromFile(".\\output\\genomes.csv");
-            // }
-            //HillClimberFCM fcm = new HillClimberFCM(population: 96, numberOfValues: 486, STEPS, OUTPUT_FILENAME, FITNESS_COLUMNNAME, trainGenomes);
+            List<List<float>> trainGenomes = null;
+            if (terrainFilePath != terrainFilePaths[0]) {
+                trainGenomes = FileUtils.ReadGenomesFromFile(".\\output\\genomes.csv");
+            }
+            HillClimberFCM fcm = new HillClimberFCM(population: 96, numberOfValues: 1864, STEPS, OUTPUT_FILENAME, FITNESS_COLUMNNAME, trainGenomes);
             ABM abm = new ABM(modelDescription: GetModelDescription());
-            abm.Train(25, terrainFilePath, args);
+            //abm.Train(10, terrainFilePath, args);
 
+            abm.Train(fcm, 10, 200, true, terrainFilePath, args);
             QLearning.usePerfectQMap = 0;
-            fitnessVals.Add(abm.Test(1, STEPS, FITNESS_COLUMNNAME,OUTPUT_FILENAME,terrainFilePath, args));
-            // abm.Train(fcm, 10, 200, true, args);
 
-            // var genomes = FileUtils.ReadGenomesFromFile(".\\output\\good.csv");
-            //fcm = new HillClimberFCM(population: 96, numberOfValues: 486, STEPS, OUTPUT_FILENAME, FITNESS_COLUMNNAME, trainGenomes);
+            //  var genomes = FileUtils.ReadGenomesFromFile(".\\output\\good.csv");
+            fcm = new HillClimberFCM(population: 96, numberOfValues: 1864, STEPS, OUTPUT_FILENAME, FITNESS_COLUMNNAME, trainGenomes);
+
+            fitnessVals.Add(abm.Test(fcm, 1, terrainFilePath, args));
+
+            // fitnessVals.Add(abm.Test(1, STEPS, FITNESS_COLUMNNAME,OUTPUT_FILENAME,terrainFilePath, args));
+            //abm.Train(fcm, 10, 200, true, args);
+
             //fitnessVals.Add(abm.Test(fcm, 1, args));
         }
     }

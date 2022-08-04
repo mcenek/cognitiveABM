@@ -68,7 +68,7 @@ namespace CognitiveABM.Perceptron
             // temp.AddRange(agentMemory);
             // temp.AddRange(agentMemory);
             // add 18 0's to temp
-            temp.AddRange(new float[] { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 });
+            temp.AddRange(new float[] { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0});
 
             //set valuess to an array copy of temp
             values = temp.ToArray();
@@ -86,8 +86,8 @@ namespace CognitiveABM.Perceptron
 
                 // matrix width = 3 * NumberOfInputs based on the fact that we have forwards, self, and backwards leading edges
                 int weightMatrixWidth = NumberOfInputs * 3 - (previousLayerHeight - currentLayerHeight); // should be 27
-                //27 * 2 
-                int weightMatrixHeight = currentLayerHeight; // should be 9
+                //27 * 2
+                int weightMatrixHeight = currentLayerHeight;
 
                 // should need 243 weights (genomes) per matrix (per layer)
 
@@ -96,14 +96,18 @@ namespace CognitiveABM.Perceptron
 
                 // calculate the values of the neurons of the current layer
                 values = MatrixMultiply(values, weights); // this
-                for(int i = 0; i < values.Length; i++){
-                    Console.WriteLine( values[i] + " ");
-                }
+
+
+                // for(int i = 0; i < values.Length; i++){
+                //     Console.WriteLine( values[i] + " ");
+                // }
 
                 // keep track of the hieght of the previous later
                 previousLayerHeight = currentLayerHeight;
 
             }
+            // Console.WriteLine(_weightIndex);
+            // System.Environment.Exit(0);
             return values;
 
         }
@@ -143,7 +147,15 @@ namespace CognitiveABM.Perceptron
             {
                 for (int j = 0; j < weights.GetLength(1); j++)
                 {
+                  try{
+
                     weights[i, j] = Genomes[_weightIndex];
+                  }
+                  catch{
+                    Console.WriteLine(Genomes.Length);
+
+                    System.Environment.Exit(0);
+                  }
                     _weightIndex++;
                 }
             }
