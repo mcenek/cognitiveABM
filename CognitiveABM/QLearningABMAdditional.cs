@@ -47,10 +47,9 @@ namespace CognitiveABM.QLearningABMAdditional{
       Dictionary<int, float> scoreValue = new Dictionary<int, float>();
       Dictionary<int,int> maxSteps = new Dictionary<int,int>();
 
-      List<float[]> patchList = new List<float[]>();
       foreach (KeyValuePair<int, (List<float[]>, List<(int,int)>)> entry in agentHolder.getInfo()){
-        patchList = entry.Value.Item1;
-        scoreValue.Add(entry.Key, patchList.Last()[15]);
+        float ElevationScore = entry.Value.Item1.Last()[15];
+        scoreValue.Add(entry.Key,ElevationScore);
       }//end for each id
 
       var temp = scoreValue.OrderByDescending(x => x.Value).ToDictionary(x => x.Key, x => x.Value);
@@ -74,7 +73,8 @@ namespace CognitiveABM.QLearningABMAdditional{
       Dictionary<int, float> score = new Dictionary<int,float>();
       float pathBonus = 0.0f;
       foreach(var item in scoreValue){
-        
+
+
         int maxStep = maxSteps[item.Key];
         if(maxSteps[item.Key] == 0){
           score.Add(item.Key,(scoreValue[item.Key]/(lambda)));
@@ -212,8 +212,35 @@ namespace CognitiveABM.QLearningABMAdditional{
      * @description: updates the current qmap and prints it
      */
     public void updateQMap(Dictionary<int, float> agentScore, agentInfoHolder agentHolder){
-            float[,] qmap = new float[8,8]; //4x4 qmap matrix hard coded
-      string path = @"..\HillClimberABMExample\layers\qMapGenerated8x8.csv";
+      float[,] qmap = getQMap(); //8x8 qmap matrix hard coded
+
+     //4x4 qmap matrix hard coded
+      foreach(KeyValuePair<int, (List<float[]>, List<(int,int)>)> entry in agentHolder.getInfo()){
+        foreach((int,int)tuple in entry.Value.Item2){
+
+          //(-1,-1) indicated we did not move so the qmap does not change
+          if(tuple.Item1 != -1 && tuple.Item2 != -1){
+            qmap[tuple.Item1,tuple.Item2] += agentScore[entry.Key];
+          }
+        }
+        qmap = normalliseQMap(qmap);
+        qmap = roundQMap(qmap);
+
+      }
+
+      printNewQMap(qmap);
+
+    }//end updateQMap
+
+
+    /**
+     * @return: qmap from selected file
+     * @description: grabs the qmap from a selected csv file
+     */
+    public float[,] getQMap(){
+      float[,] qmap = new float[8,8]; //4x4 qmap matrix hard coded
+      string path;
+      path = @"..\HillClimberABMExample\layers\qMapGenerated8x8.csv";
       if(File.Exists(path)){
         using(var reader = new StreamReader(path))
        {
@@ -238,101 +265,7 @@ namespace CognitiveABM.QLearningABMAdditional{
        }//end using
 
      }//end if
-     //4x4 qmap matrix hard coded
-      foreach(KeyValuePair<int, (List<float[]>, List<(int,int)>)> entry in agentHolder.getInfo()){
-        foreach((int,int)tuple in entry.Value.Item2){
-          //  Console.WriteLine(tuple.Item1 + " " + tuple.Item2);
-          if(float.IsNaN(qmap[tuple.Item1,tuple.Item2])){
-            Console.WriteLine(qmap[tuple.Item1,tuple.Item2]);
-            Console.WriteLine("OVERHERE    " + tuple.Item1 + " " + tuple.Item2);
-          }
-          qmap[tuple.Item1,tuple.Item2] += agentScore[entry.Key];
-        }
-        qmap = normalliseQMap(qmap);
-        qmap = roundQMap(qmap);
-      }
-      //qmap = roundQMap(qmap);
-
-      //qmap = setColToOne(qmap);
-
-      printNewQMap(qmap);
-    }//end updateQMap
-
-    /**
-     * @param qmap: matrix of the current qmap
-     * @description: checks to see if the columns of the qmap add to one
-     * If a column doesn't add to one, the difference of that column and 1 is added to largest row
-     * @return: fixed qmap where all columns add to one
-     */
-    public float[,] setColToOne(float[,] qmap){
-      float colMaxTotal = 0.0f;
-      float colMax = 0.0f;
-      int rowMaxLoc = -1;
-
-      for(int col = 0; col < qmap.GetLength(1); col++){
-        for(int row = 0; row < qmap.GetLength(0); row++){
-          if(qmap[row,col] >= colMax){
-            colMax = qmap[row,col];
-            rowMaxLoc = col;
-          }
-          colMaxTotal += qmap[row,col];
-        }//end row for
-
-        if(colMaxTotal < 1.0f){
-          qmap[rowMaxLoc,col] += (1.0f - colMaxTotal);
-        }
-        colMaxTotal = 0.0f;
-        colMax = 0.0f;
-        rowMaxLoc = -1;
-      }//end col for
-
-      return qmap;
-    }//end setColToOne
-
-    /**
-     * @return: qmap from selected file
-     * @description: grabs the qmap from a selected csv file
-     */
-    public float[,] getQMap(){
-      float[,] data = new float[8,8]; //4x4 qmap matrix hard coded
-      string path = @"..\HillClimberABMExample\layers\qMapGenerated8x8.csv";
-      if(File.Exists(path)){
-        using(var reader = new StreamReader(path))
-       {
-           int counter = 0;
-           while (!reader.EndOfStream)
-           {
-               var line = reader.ReadLine();
-               var values = line.Split(',');
-               if(counter < 8){
-               data[counter,0] = float.Parse(values[0]);
-               data[counter,1] = float.Parse(values[1]);
-               data[counter,2] = float.Parse(values[2]);
-               data[counter,3] = float.Parse(values[3]);
-               data[counter,4] = float.Parse(values[4]);
-               data[counter,5] = float.Parse(values[5]);
-               data[counter,6] = float.Parse(values[6]);
-               data[counter,7] = float.Parse(values[7]);
-               for(int i = 0; i < 8; i++){
-                Console.Write(data[counter, i]);
-               }
-               Console.WriteLine();
-               counter++;
-             }
-           }
-           reader.Close();
-       }//end using
-
-     }//end if
-     else{
-       for(int i = 0; i < 8; i++){
-         for(int k = 0; k < 8; k++){
-           data[i,k] = 0.0f;
-         }
-       }
-     }
-     
-     return data;
+     return qmap;
     }//end getQMap
 
 
@@ -449,7 +382,8 @@ namespace CognitiveABM.QLearningABMAdditional{
      * @description: prints a qmap to file path
      */
     public void printNewQMap(float[,] qmap){
-      string fileName = @"..\HillClimberABMExample\layers\qMapGenerated8x8.csv";
+      string fileName;
+      fileName = @"..\HillClimberABMExample\layers\qMapGenerated8x8.csv";
       var w = new StreamWriter(path: fileName);
       float[] qMapRow = new float[qmap.GetLength(0)];
 

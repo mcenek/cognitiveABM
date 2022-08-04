@@ -117,18 +117,14 @@ namespace CognitiveABM.QLearning
          */
         public int getDirection(float[,] landscapePatch, float min, float max, int animalId, int tickNum, float Elevation, int xPos, int yPos){
           float[,] normallisedLandscapePatch = normalliseLandscapePatch(landscapePatch, min, max);
+
           float[] MSE = new float[8];
           for(int i = 0; i < this.prototypes.Count; i++){
             MSE[i] = meanSquareError(normallisedLandscapePatch, prototypes.ElementAt(i));
           }
           //returns index of smallest value (Grabbed from: https://stackoverflow.com/questions/4204169/how-would-you-get-the-index-of-the-lowest-value-in-an-int-array)
-          int minIndex = int.MaxValue;
-          for(int i = 0; i < this.prototypes.Count; i++){
-            if(MSE[i] < minIndex){
-              minIndex = i;
-            }
-          }
-          //int minIndex = Enumerable.Range(0, MSE.Length).Aggregate((a, b) => (MSE[a] < MSE[b]) ? a : b);
+
+          int minIndex = Enumerable.Range(0, MSE.Length).Aggregate((a, b) => (MSE[a] < MSE[b]) ? a : b);
 
           int direction = biasedRouletteWheel(minIndex);
           if(direction < 0 || direction > 7){
@@ -157,11 +153,17 @@ namespace CognitiveABM.QLearning
          */
         public float[,] normalliseLandscapePatch(float[,] landscapePatch, float min, float max){
               float[,] normallizedLandscape = new float[landscapePatch.GetLength(0), landscapePatch.GetLength(1)];
+              float difference = Math.Abs(max - min);
               for (int row = 0; row < landscapePatch.GetLength(0); row += 1)
               {
                   for (int col = 0; col < landscapePatch.GetLength(1); col += 1)
                   {
-                      normallizedLandscape[row, col] = (landscapePatch[row, col] - min) / (Math.Abs(max - min));
+                      if(difference == 0.0f){
+                        normallizedLandscape[row, col] = 0.0f;
+                      }
+                      else{
+                        normallizedLandscape[row, col] = (landscapePatch[row, col] - min) / difference;
+                      }
                   }
               }
 
@@ -183,7 +185,7 @@ namespace CognitiveABM.QLearning
           // if(useMap){
             for(int i = 0; i < 8; i++){
               addedVal += qMap[i,col];
-              //addedVal += noiseGen();
+              addedVal += noiseGen();
               if(addedVal >= rFloat){
                 return i;
               }
