@@ -29,7 +29,7 @@ namespace HillClimberExample
 
         private readonly float[] AgentMemory;
 
-        private bool useDistantView = false;
+        private bool useDistantView = true;
 
         private readonly int startingElevation;
 
@@ -131,18 +131,23 @@ namespace HillClimberExample
 
             List<int[]> distantTerrainLocations = null;
             List<int[]> adjacentTerrainLocations = GetAdjacentTerrainPositions();
+
             Tuple<List<float>, List<float>> adjacentTerrainTuple = GetAdjacentTerrainInfo();
+
             Boolean onActiveReward = false;
             Boolean stayPut = false;
+
             float[] distantTerrainElevations = null;
             float[] adjacentTerrainElevations = GetAdjacentElevations();
             float[] rewards = adjacentTerrainTuple.Item2.ToArray();
+
             int xPos = (int)Position.X;
             int yPos = (int)Position.Y;
 
-            float[] inputs = new float[adjacentTerrainElevations.Length + rewards.Length];
-            Array.Copy(adjacentTerrainElevations, inputs, adjacentTerrainElevations.Length);
-            Array.Copy(rewards, 0, inputs, adjacentTerrainElevations.Length, rewards.Length);
+            //for if we want to try 18 inputs
+            // float[] inputs = new float[adjacentTerrainElevations.Length + rewards.Length];
+            // Array.Copy(adjacentTerrainElevations, inputs, adjacentTerrainElevations.Length);
+            // Array.Copy(rewards, 0, inputs, adjacentTerrainElevations.Length, rewards.Length);
 
             PerceptronFactory perceptron = new PerceptronFactory(9, 2, 1, 9);
             float[] outputs = perceptron.CalculatePerceptronFromId(AnimalId, rewards, AgentMemory);
@@ -181,33 +186,26 @@ namespace HillClimberExample
             {
                 for (int y = 0; y < 3; y++)
                 {
-                    if(useDistantView){
+                    if(useDistantView){//set landscape to distantTerrainElevations + 10*rewards
                       if(distantTerrainElevations[index] < min){
                          min = distantTerrainElevations[index];
                         }
                         if(distantTerrainElevations[index] > max){
                         max = distantTerrainElevations[index];
                         }
-                      landscapePatch[x, y] = distantTerrainElevations[index];
+                      landscapePatch[x, y] = distantTerrainElevations[index]  + (50/distantTerrainElevations[index] * rewards[index]);
                     }
-                    else{
+
+                    else{//set landscape to adjacentTerrainElevations + 10*rewards
                       if(adjacentTerrainElevations[index] < min){
                           min = adjacentTerrainElevations[index];
                       }
                       if(adjacentTerrainElevations[index] > max){
                           max = adjacentTerrainElevations[index];
                       }
-                      landscapePatch[x, y] = adjacentTerrainElevations[index];
+                      landscapePatch[x, y] = adjacentTerrainElevations[index] + (50/distantTerrainElevations[index] * rewards[index]);
                     }
                     index++;
-                    // if(adjacentTerrainElevations[index] < min){
-                    //         min = adjacentTerrainElevations[index];
-                    // }
-                    //     if(adjacentTerrainElevations[index] > max){
-                    //         max = adjacentTerrainElevations[index];
-                    // }
-                    // landscapePatch[x, y] = adjacentTerrainElevations[index];
-                    // index++;
                 }
             }
 
@@ -231,7 +229,6 @@ namespace HillClimberExample
             //MoveTo (animal object, location, traveling distance)
 
             Terrain._AnimalEnvironment.MoveTo(this, newLocation[0], newLocation[1], 1, predicate: null);
-            this.qLearn.setExportValues(landscapePatch,this.AnimalId, this.tickNum, Elevation, xPos, yPos);
             Elevation = Terrain.GetIntegerValue(this.Position.X, this.Position.Y);
 
             BioEnergy = calculateBioEnergy(stayPut, onActiveReward);
@@ -288,11 +285,11 @@ namespace HillClimberExample
           }
           //if moving on reward
           if(!stayPut && onActiveReward){
-            BioEnergy = -10;
+            BioEnergy = -20;
           }
           //if moving on non-reward
           if(!stayPut && !onActiveReward){
-            BioEnergy = (Elevation < 0) ? 0 : 3 * Elevation;
+            BioEnergy = (Elevation < 0) ? 10 : 10 + Elevation;
           }
 
 
@@ -356,7 +353,7 @@ namespace HillClimberExample
                     }
                     else{
 
-                      reward = rewardMap[dx + x, dy + y]; //Should be 0.1 0.0
+                      reward = rewardMap[dx + x, dy + y];
                     }
                     rewards.Add(reward);
 

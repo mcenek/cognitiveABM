@@ -89,7 +89,6 @@ namespace CognitiveABM.Perceptron
                 //27 * 2
                 int weightMatrixHeight = currentLayerHeight;
 
-                // should need 243 weights (genomes) per matrix (per layer)
 
                 // get a matrix of weights
                 float[,] weights = CreateWeightMatrix(weightMatrixWidth, weightMatrixHeight);
