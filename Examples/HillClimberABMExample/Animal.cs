@@ -29,7 +29,7 @@ namespace HillClimberExample
 
         private readonly float[] AgentMemory;
 
-        private bool useDistantView = true;
+        private bool useDistantView = false;
 
         private readonly int startingElevation;
         //values for size of reward map
@@ -149,12 +149,13 @@ namespace HillClimberExample
             int yPos = (int)Position.Y;
 
             //for if we want to try 18 inputs
-            // float[] inputs = new float[adjacentTerrainElevations.Length + rewards.Length];
-            // Array.Copy(adjacentTerrainElevations, inputs, adjacentTerrainElevations.Length);
-            // Array.Copy(rewards, 0, inputs, adjacentTerrainElevations.Length, rewards.Length);
+            float[] inputs = new float[adjacentTerrainElevations.Length + rewards.Length];
 
-            PerceptronFactory perceptron = new PerceptronFactory(9, 2, 1, 9);
-            float[] outputs = perceptron.CalculatePerceptronFromId(AnimalId, rewards, AgentMemory);
+            Array.Copy(rewards, inputs, rewards.Length);
+            Array.Copy(adjacentTerrainElevations, 0, inputs, rewards.Length, adjacentTerrainElevations.Length);
+
+            PerceptronFactory perceptron = new PerceptronFactory(18, 1, 2, 18);
+            float[] outputs = perceptron.CalculatePerceptronFromId(AnimalId, inputs, AgentMemory);
 
             if(outputs[0] > outputs[1]){
               stayPut = true;
@@ -199,7 +200,6 @@ namespace HillClimberExample
                         }
                       landscapePatch[x, y] = distantTerrainElevations[index]  + (50/distantTerrainElevations[index] * rewards[index]);
                     }
-
                     else{//set landscape to adjacentTerrainElevations + 10*rewards
                       if(adjacentTerrainElevations[index] < min){
                           min = adjacentTerrainElevations[index];
@@ -207,7 +207,7 @@ namespace HillClimberExample
                       if(adjacentTerrainElevations[index] > max){
                           max = adjacentTerrainElevations[index];
                       }
-                      landscapePatch[x, y] = adjacentTerrainElevations[index] + (50/distantTerrainElevations[index] * rewards[index]);
+                      landscapePatch[x, y] = adjacentTerrainElevations[index] + (50/adjacentTerrainElevations[index] * rewards[index]);
                     }
                     index++;
                 }
@@ -285,7 +285,8 @@ namespace HillClimberExample
           }
           //if staying put on non-reward
           if(stayPut && !onActiveReward){
-            BioEnergy = -10;
+
+            BioEnergy += -10;
           }
           //if moving on reward
           if(!stayPut && onActiveReward){

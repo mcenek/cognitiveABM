@@ -32,7 +32,7 @@ public static class Program
             ABM abm = new ABM(modelDescription: GetModelDescription());
             //abm.Train(10, terrainFilePath, args);
 
-            abm.Train(fcm, 10, 200, true, terrainFilePath, args);
+            abm.Train(fcm, 5000, 200, true, terrainFilePath, args);
             QLearning.usePerfectQMap = 0;
 
             //  var genomes = FileUtils.ReadGenomesFromFile(".\\output\\good.csv");
