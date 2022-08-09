@@ -32,6 +32,10 @@ namespace HillClimberExample
         private bool useDistantView = true;
 
         private readonly int startingElevation;
+        //values for size of reward map
+        private int height;
+        private int length;
+
 
         public Guid ID { get; }
 
@@ -348,7 +352,7 @@ namespace HillClimberExample
                     //if looking out of bounds of reward Maps
                     //having a variable that says the map size would be more ideal
                     float reward;
-                    if(dx + x >= 50 || dy + y >= 50 || dx + x < 0 || dy + y < 0){
+                    if(dx + x >= length || dy + y >= height || dx + x < 0 || dy + y < 0){
                       reward = 0.0f;
                     }
                     else{
@@ -393,10 +397,10 @@ namespace HillClimberExample
                     int newX = 7*dx + x;
                     int newY = 7*dy + y;
                     //need check for newX < 0
-                    if(newX >= 50 || newX < 0){ //if the newX value is out of bounds use adjacent view
+                    if(newX >= length || newX < 0){ //if the newX value is out of bounds use adjacent view
                         newX = dx + x;
                     }
-                    if(newY >= 50 || newY < 0){
+                    if(newY >= height || newY < 0){
                         newY = dy + y;
                     }
                     elevations.Add((float)Terrain.GetRealValue(newX, newY));
@@ -457,14 +461,21 @@ namespace HillClimberExample
         }
 
          private int[,] readRewards(){
-            string[] path = Program.terrainFilePaths;
-            int[,] rewardMap = new int[50,50];
-            string filePath = "./layers/moatGauss_reward.csv";
+            string path = Program.terrainFilePath;
+            string filePath = path.Replace(".csv", "_reward.csv");
+            height = 0;
+            using(var reader = new StreamReader(filePath)){//gets dimentions of reward map 
+                string line = reader.ReadLine();
+                string[] values = line.Split(',');
+                length = values.Length;
+                height = length;
+            }
+            int[,] rewardMap = new int[height,length];
             using(var reader = new StreamReader(filePath)){
-                var line = reader.ReadLine();
-                var values = line.Split(',');
-                for(int x = 0; x < 50; x++){
-                    for(int y = 0; y < 50; y++){
+                string line = reader.ReadLine();
+                string[] values = line.Split(',');
+            for(int x = 0; x < height; x++){
+                    for(int y = 0; y < length; y++){
                         rewardMap[x, y] = int.Parse(values[x]);
                     }
                 }

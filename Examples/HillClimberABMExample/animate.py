@@ -1,3 +1,4 @@
+from datetime import date
 import numpy as np
 from matplotlib import cm
 import matplotlib.pyplot as plt
@@ -8,11 +9,13 @@ import pandas as pandasForSortingCSV
 NUM_STEPS = 150
 TRESHOLD = 47
 
-Data = ['./output/landScape_exportInfo.csv','./output/moatGauss_exportInfo.csv', './output/landScape_exportInfo.csv']
-Layer = ['./layers/landScape.csv', './layers/moatGauss.csv', './layers/landScape.csv']
+Data = ['./output/landScape_exportInfo.csv','./output/flatTerrain_exportInfo.csv', './output/landScape_exportInfo.csv']
+Layer = ['./layers/landScape.csv', './layers/flatTerrain.csv', './layers/landScape.csv']
+rewardLayer = ['./layers/landScape.csv', './layers/flatTerrain_reward.csv', './layers/landScape.csv']
 terrain_num = 1
 AgentData = Data[terrain_num]
 LayerFile = Layer[terrain_num]
+rewardFile = rewardLayer[terrain_num]
 
 for file in Data:
     csvData = pandasForSortingCSV.read_csv(file)
@@ -40,6 +43,7 @@ colors = cm.rainbow(np.linspace(0, 1, numpoints))
 
 fig = plt.figure("Agents")
 agent_pos = fig.add_subplot(211)
+reward_pos = fig.add_subplot(211)
 fitness_map = fig.add_subplot(223)
 heatmap = fig.add_subplot(224)
 camera = Camera(fig)
@@ -52,8 +56,20 @@ agent_pos.set_xlabel('X')
 agent_pos.set_ylabel('Y')
 agent_pos.set_title('Agent Position')
 
+reward_pos.axes.get_xaxis().set_visible(False)
+reward_pos.axes.get_yaxis().set_visible(False)
+
 heatmap.imshow(terrain[::-1], origin = 'lower')
 maxIndex = 0
+data = list(csv.reader(open(rewardFile)))
+xVals = []
+yVals = []
+
+for height in range(50):
+        for length in range(50):
+            if data[height][length] == '1':
+                xVals.append(height)
+                yVals.append(length)
 
 
 for i in range(NUM_STEPS):
@@ -71,6 +87,7 @@ for i in range(NUM_STEPS):
     colors = cm.rainbow(norm)
     fitness_map.plot(avg_fit)
     agent_pos.scatter(x[i*numpoints: i*numpoints + numpoints], y[i*numpoints: i*numpoints + numpoints], c=colors, s=100)
+    reward_pos.scatter(xVals, yVals, marker='^', color = 'green', s=2)
     camera.snap()
 anim = camera.animate(blit=True)
 plt.show()
