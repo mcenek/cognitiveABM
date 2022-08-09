@@ -57,7 +57,7 @@ namespace CognitiveABM.agentInformationHolder
         float[] avgMax = getAverageandTotal(tempList, temp[13]);
         temp[14] = avgMax[0];
         temp[15] = avgMax[1];
-        fitness.Add(temp[13]);
+        //fitness.Add(temp[13]);
         tempList.Add(temp);
         return tempList;
       }

@@ -24,6 +24,10 @@ namespace CognitiveABM.Perceptron
 
         Boolean useMemory = false;
 
+        Boolean onOutPut = false;
+
+        protected int[] indexArr { get; }
+
         /**
          * Constructor
          */
@@ -35,6 +39,9 @@ namespace CognitiveABM.Perceptron
             NeuronsPerHiddenLayer = neuronsPerHiddenLayer;
             _totalLayers = 2 + numberOfHiddenLayers;
             memory = new float[numberOfInputs];
+            indexArr = new int[] {4,13,22,31,40};
+            onOutPut = false;
+
         }
 
         /**
@@ -68,7 +75,7 @@ namespace CognitiveABM.Perceptron
             // temp.AddRange(agentMemory);
             // temp.AddRange(agentMemory);
             // add 18 0's to temp
-            temp.AddRange(new float[] { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0});
+            //temp.AddRange(new float[] { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0});
 
             //set valuess to an array copy of temp
             values = temp.ToArray();
@@ -76,7 +83,7 @@ namespace CognitiveABM.Perceptron
             int previousLayerHeight = NumberOfInputs;
 
             // should only run twice
-            for (int layerNumber = 0; layerNumber < _totalLayers - 1; layerNumber++)
+            for (int layerNumber = 0; layerNumber < _totalLayers; layerNumber++)
             {
 
                 // get how many nuerons are in the current layer
@@ -87,12 +94,15 @@ namespace CognitiveABM.Perceptron
                 // matrix width = 3 * NumberOfInputs based on the fact that we have forwards, self, and backwards leading edges
                 int weightMatrixWidth = NumberOfInputs * 3 - (previousLayerHeight - currentLayerHeight); // should be 27
                 //27 * 2
-                int weightMatrixHeight = currentLayerHeight;
+                int weightMatrixHeight = currentLayerHeight; //18,18,2 for a 18,2,1,18
 
 
                 // get a matrix of weights
                 float[,] weights = CreateWeightMatrix(weightMatrixWidth, weightMatrixHeight);
 
+                if(layerNumber == _totalLayers - 1){
+                  onOutPut = true;
+                }
                 // calculate the values of the neurons of the current layer
                 values = MatrixMultiply(values, weights); // this
 
@@ -105,7 +115,7 @@ namespace CognitiveABM.Perceptron
                 previousLayerHeight = currentLayerHeight;
 
             }
-            // Console.WriteLine(_weightIndex);
+            // Console.WriteLine(values.Length);
             // System.Environment.Exit(0);
             return values;
 
@@ -118,17 +128,18 @@ namespace CognitiveABM.Perceptron
          */
         private int CalculateLayerHeight(int layer)
         {
+          //for 18 2 1 18
             if (layer == 0) // input layer
             {
-                return NumberOfInputs;
+                return NumberOfInputs;//18
             }
             else if (layer != _totalLayers - 1) // hidden layer
             {
-                return NeuronsPerHiddenLayer;
+                return NeuronsPerHiddenLayer;//18
             }
             else // output layer
             {
-                return NumberOfOutputs;
+                return NumberOfOutputs;//2
             }
         }
 
@@ -175,6 +186,17 @@ namespace CognitiveABM.Perceptron
             int outputLength = weights.GetLength(0); // should be 9
             float[] result = new float[outputLength];
 
+            if(onOutPut){
+              for(int i = 0; i < inputs.Length; i++){
+                if( i < 9){
+                  inputs[0] = inputs[i];
+                }
+                else{
+                  inputs[1] = inputs[i];
+                }
+              }
+            }
+
             Parallel.For(0, weights.GetLength(0) - 1, weightRow =>
             {
                 float sum = 0;
@@ -183,7 +205,23 @@ namespace CognitiveABM.Perceptron
                 // usuage of strassen's algorithm, or one based off of it, would improve run time
                 for (int i = 0; i < weights.GetLength(1); i++)
                 {
+                  // if(onOutPut){
+                    // try{
+                    //
+                    //   sum += weights[weightRow, i] * inputs[indexArr[weightRow]];
+                    // }
+                    // catch{
+                    //   Console.WriteLine(indexArr.Length);
+                    //   Console.WriteLine(weightRow);
+                    //   Console.WriteLine(indexArr[weightRow]);
+                    //   System.Environment.Exit(0);
+                    // }
+
+
+                  // }
+                  // else{
                     sum += weights[weightRow, i] * inputs[weightRow];
+                  // }
                 }
                 result[weightRow] = sum;
             });
