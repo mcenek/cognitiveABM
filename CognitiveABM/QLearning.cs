@@ -185,7 +185,7 @@ namespace CognitiveABM.QLearning
           // if(useMap){
             for(int i = 0; i < 8; i++){
               addedVal += qMap[i,col];
-              // addedVal += noiseGen();
+              addedVal += noiseGen();
               if(addedVal >= rFloat){
                 return i;
               }

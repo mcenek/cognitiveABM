@@ -148,16 +148,25 @@ namespace HillClimberExample
             int xPos = (int)Position.X;
             int yPos = (int)Position.Y;
 
+
+
             //for if we want to try 18 inputs
             float[] inputs = new float[adjacentTerrainElevations.Length + rewards.Length];
+            Array.Copy(adjacentTerrainElevations, inputs, adjacentTerrainElevations.Length);
+            Array.Copy(rewards, 0, inputs, adjacentTerrainElevations.Length, rewards.Length);
 
-            Array.Copy(rewards, inputs, rewards.Length);
-            Array.Copy(adjacentTerrainElevations, 0, inputs, rewards.Length, adjacentTerrainElevations.Length);
 
-            PerceptronFactory perceptron = new PerceptronFactory(18, 1, 2, 18);
+            // Array.Copy(adjacentTerrainElevations, 0, inputs, rewards.Length, adjacentTerrainElevations.Length);
+
+            // //try normalizing elevations
+            // float[] inputs = new float[adjacentTerrainElevations.Length + rewards.Length];
+            // Array.Copy(rewards, inputs, rewards.Length);
+            // Array.Copy(rewards, 0, inputs, rewards.Length, rewards.Length);
+            //try one hidden layer 18 inputs
+            PerceptronFactory perceptron = new PerceptronFactory(18, 2, 1, 18);
             float[] outputs = perceptron.CalculatePerceptronFromId(AnimalId, inputs, AgentMemory);
 
-            if(outputs[0] > outputs[1]){
+            if(outputs[1] > outputs[0]){
               stayPut = true;
             }
             if(rewards[4] != 0.0f){
@@ -281,20 +290,19 @@ namespace HillClimberExample
 
           //if staying put on reward
           if(stayPut && onActiveReward){
-            BioEnergy = (Elevation < 0) ? 0 : 3 * Elevation;
+            BioEnergy = (Elevation < 0) ? 30 : 3 * Elevation;
           }
           //if staying put on non-reward
           if(stayPut && !onActiveReward){
-
-            BioEnergy += -10;
+            BioEnergy = (Elevation < 0) ? -20 : -3 * Elevation;
           }
           //if moving on reward
           if(!stayPut && onActiveReward){
-            BioEnergy = -20;
+            BioEnergy = (Elevation < 0) ? -20 : -3 * Elevation;
           }
           //if moving on non-reward
           if(!stayPut && !onActiveReward){
-            BioEnergy = (Elevation < 0) ? 10 : 10 + Elevation;
+            BioEnergy = (Elevation < 0) ? 30 : 3 * Elevation;
           }
 
 
