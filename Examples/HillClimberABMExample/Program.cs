@@ -8,16 +8,18 @@ public static class Program
     public const string OUTPUT_FILENAME = "Animal.csv";
     public const string FITNESS_COLUMNNAME = "BioEnergy";
     public static string[] terrainFilePaths;
+    public static string terrainFilePath;
     public const int STEPS = 250;
 
     public static void Main(string[] args)
     {
-        terrainFilePaths = new string[] { "./layers/moatGauss.csv" };
+        terrainFilePaths = new string[] { "./layers/flatTerrain.csv" };
         //var terrainFilePaths = new string[] { "./layers/landscape.csv", "./layers/moatGauss.csv", "./layers/grid.csv" };
         var fitnessVals = new List<List<float>>();
 
-        foreach (string terrainFilePath in terrainFilePaths)
+        foreach (string filePath in terrainFilePaths)
         {
+            terrainFilePath = filePath;
             FileUtils.ChangeTerrainFilePath(terrainFilePath);
 
 
