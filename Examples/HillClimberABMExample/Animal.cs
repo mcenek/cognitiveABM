@@ -47,7 +47,7 @@ namespace HillClimberExample
 
         public QLearning qLearn = new QLearning();
 
-        public int[,] rewardMap;
+        public float[,] rewardMap;
 
         public static ConcurrentDictionary<int, List<(int,int)>> rewardMemory = new ConcurrentDictionary<int, List<(int,int)>>();
 
@@ -148,19 +148,29 @@ namespace HillClimberExample
             int xPos = (int)Position.X;
             int yPos = (int)Position.Y;
 
+
+
             //for if we want to try 18 inputs
             float[] inputs = new float[adjacentTerrainElevations.Length + rewards.Length];
+            Array.Copy(adjacentTerrainElevations, inputs, adjacentTerrainElevations.Length);
+            Array.Copy(rewards, 0, inputs, adjacentTerrainElevations.Length, rewards.Length);
 
-            Array.Copy(rewards, inputs, rewards.Length);
-            Array.Copy(adjacentTerrainElevations, 0, inputs, rewards.Length, adjacentTerrainElevations.Length);
 
-            PerceptronFactory perceptron = new PerceptronFactory(18, 1, 2, 18);
+            // Array.Copy(adjacentTerrainElevations, 0, inputs, rewards.Length, adjacentTerrainElevations.Length);
+
+            // //try normalizing elevations
+            // float[] inputs = new float[adjacentTerrainElevations.Length + rewards.Length];
+            // Array.Copy(rewards, inputs, rewards.Length);
+            // Array.Copy(rewards, 0, inputs, rewards.Length, rewards.Length);
+            //try one hidden layer 18 inputs
+            PerceptronFactory perceptron = new PerceptronFactory(18, 2, 1, 18);
             float[] outputs = perceptron.CalculatePerceptronFromId(AnimalId, inputs, AgentMemory);
 
-            if(outputs[0] > outputs[1]){
+            if(outputs[1] > outputs[0]){
               stayPut = true;
             }
             if(rewards[4] != 0.0f){
+              //Console.WriteLine(rewards[4]);
               onActiveReward = isOnActiveReward(xPos, yPos);
             }
             if(stayPut && onActiveReward){
@@ -207,7 +217,7 @@ namespace HillClimberExample
                       if(adjacentTerrainElevations[index] > max){
                           max = adjacentTerrainElevations[index];
                       }
-                      landscapePatch[x, y] = adjacentTerrainElevations[index] + (50/adjacentTerrainElevations[index] * rewards[index]);
+                      landscapePatch[x, y] = adjacentTerrainElevations[index] + (50 * rewards[index]);
                     }
                     index++;
                 }
@@ -281,20 +291,19 @@ namespace HillClimberExample
 
           //if staying put on reward
           if(stayPut && onActiveReward){
-            BioEnergy = (Elevation < 0) ? 0 : 3 * Elevation;
+            BioEnergy = (Elevation < 0) ? 30 : 30 * Elevation;
           }
           //if staying put on non-reward
           if(stayPut && !onActiveReward){
-
-            BioEnergy += -10;
+            BioEnergy = (Elevation < 0) ? -20 : -30 * Elevation;
           }
           //if moving on reward
           if(!stayPut && onActiveReward){
-            BioEnergy = -20;
+            BioEnergy = (Elevation < 0) ? -20 : -3 * Elevation;
           }
           //if moving on non-reward
           if(!stayPut && !onActiveReward){
-            BioEnergy = (Elevation < 0) ? 10 : 10 + Elevation;
+            BioEnergy = (Elevation < 0) ? 30 : 3 * Elevation;
           }
 
 
@@ -461,26 +470,36 @@ namespace HillClimberExample
             return locations;
         }
 
-         private int[,] readRewards(){
+         private float[,] readRewards(){
             string path = Program.terrainFilePath;
             string filePath = path.Replace(".csv", "_reward.csv");
-            height = 0;
+            int counter = 0;
+            int x = 0;
+            int y = 0;
+            height = 50;
+            length = 50;
+            float[,] rewardMap = new float[50,50];
+            if(File.Exists(filePath)){
             using(var reader = new StreamReader(filePath)){//gets dimentions of reward map 
-                string line = reader.ReadLine();
-                string[] values = line.Split(',');
-                length = values.Length;
-                height = length;
-            }
-            int[,] rewardMap = new int[height,length];
-            using(var reader = new StreamReader(filePath)){
-                string line = reader.ReadLine();
-                string[] values = line.Split(',');
-            for(int x = 0; x < height; x++){
-                    for(int y = 0; y < length; y++){
-                        rewardMap[x, y] = int.Parse(values[x]);
-                    }
+                while(!reader.EndOfStream){
+                  string line = reader.ReadLine();
+                  string[] values = line.Split(',');
+                  for(x = 0; x < 50; x++){
+                    rewardMap[y, x] = float.Parse(values[x]);
+                  }
+                  length = values.Length;
+                  height = length;
+                  y++;
                 }
             }
+            for(y = 0; y < 50; y++){
+              for(x = 0; x < 50; x ++){
+                Console.Write(rewardMap[y, x]);
+              }
+              Console.WriteLine();
+            }
+            }
+            System.Environment.Exit(0);
             return rewardMap;
         }
 
