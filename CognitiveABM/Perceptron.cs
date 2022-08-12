@@ -63,7 +63,10 @@ namespace CognitiveABM.Perceptron
          */
         public float[] CalculatePerceptron(float[] genomes, float[] inputs, float[] agentMemory)
         {
-
+            Boolean reward = false;
+            if(inputs[13] == 1.0f){
+              reward = true;
+            }
             Genomes = genomes;
 
             // float[] outputs = new float[NumberOfOutputs];
@@ -118,8 +121,10 @@ namespace CognitiveABM.Perceptron
                 previousLayerHeight = currentLayerHeight;
 
             }
-            // Console.WriteLine(values.Length);
-            // System.Environment.Exit(0);
+            // if(reward){
+            // Console.WriteLine(values[0] + " " + values[1]);
+            // // System.Environment.Exit(0);
+            // }
             return values;
 
         }
@@ -190,16 +195,21 @@ namespace CognitiveABM.Perceptron
             float[] result = new float[outputLength];
             if(onOutPut){
               // System.Environment.Exit(0);
-              float first = 0.0f;
-              float second = 0.0f;
-              for(int i = 0; i < inputs.Length; i++){
-                if( i < 9){
-                  first += inputs[i];
-                }
-                else{
-                  second += inputs[i];
-                }
-              }
+              // float first = 0.0f;
+              // float second = 0.0f;
+              // for(int i = 0; i < inputs.Length; i++){
+              //   if( i < 9){
+              //     first += inputs[i];
+              //   }
+              //   else{
+              //     second += inputs[i];
+              //   }
+              // }
+              //
+              // inputs[0] = first;
+              // inputs[1] = second;
+              inputs[0] = inputs[4];
+              inputs[1] = inputs[13];
               // Environment.Exit(0);
             }
 
@@ -226,8 +236,12 @@ namespace CognitiveABM.Perceptron
 
                   // }
                   // else{
-
-                    sum += weights[weightRow, i] * inputs[weightRow];
+                    if(weightRow >= 9){
+                    sum += weights[weightRow, i] * inputs[weightRow] * 5;
+                    }
+                    else{
+                      sum += weights[weightRow, i] * inputs[weightRow];
+                    }
 
                   // }
                 }

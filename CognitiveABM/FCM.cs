@@ -69,7 +69,7 @@ namespace CognitiveABM.FCM
                     {
                         WriteGenomes("genomes.csv");
                     }
-                    ABM.GlobalTargetFitnes = (int)avg;
+                    ABM.GlobalTargetFitnes = avg;
                     // Environment.Exit(0);
                 }
 
@@ -202,7 +202,7 @@ namespace CognitiveABM.FCM
         public void WriteGenomes(string filename)
         {
             string path = ".\\output\\" + filename;
-            var writer = new StreamWriter(path: path, append: true);
+            var writer = new StreamWriter(path: path);
             for (int i = 0; i < Population; i++)
             {
                 writer.Write(string.Join(",", Agents[i]) + "\n");

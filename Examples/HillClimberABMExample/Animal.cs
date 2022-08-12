@@ -186,7 +186,7 @@ namespace HillClimberExample
               // foreach (KeyValuePair<int, List<(int,int)>> agent in rewardMemory){
               //   for(int i = 0; i < agent.Value.Count; i++)
               //   Console.WriteLine("id = {0}, Coords{1}", agent.Key, agent.Value[i]);
-                
+
               //   }
             }
 
@@ -304,15 +304,15 @@ namespace HillClimberExample
 
           //if staying put on reward
           if(stayPut && onActiveReward){
-            BioEnergy = (Elevation < 0) ? 100 : 50 * Elevation;
+            BioEnergy = Elevation + 10;
           }
           //if staying put on non-reward
           if(stayPut && !onActiveReward){
-            BioEnergy = -10 ;
+            BioEnergy = -5 ;
           }
           //if moving on reward
           if(!stayPut && onActiveReward){
-            BioEnergy = 0;
+            BioEnergy = -5;
           }
           //if moving on non-reward
           if(!stayPut && !onActiveReward){
