@@ -2,10 +2,10 @@
  * HillClimberFCM.cs
  * Alex Weininger
  * Daniel Borg
- * 
- * This class implements the abstract FCM class from the CognitiveABM package. 
+ *
+ * This class implements the abstract FCM class from the CognitiveABM package.
  * This will control the genetic algorithm for the HillClimber agents.
- * 
+ *
  */
 
 using System;

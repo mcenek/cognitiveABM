@@ -174,11 +174,16 @@ namespace HillClimberExample
               stayPut = true;
             }
             if(rewards[4] != 0.0f){
+              // Console.WriteLine("checkingOnActive");
+              //Console.WriteLine(rewards[4]);
               onActiveReward = isOnActiveReward(xPos, yPos);
+
             }
             if(stayPut && onActiveReward){
               Console.WriteLine("YAY");
               pickUpReward(xPos, yPos);
+              Console.WriteLine("WOOPICKED Up");
+
             }
 
             //want to know if my current spot is an active reward spot
@@ -221,7 +226,7 @@ namespace HillClimberExample
                       if(adjacentTerrainElevations[index] > max){
                           max = adjacentTerrainElevations[index];
                       }
-                      landscapePatch[x, y] = adjacentTerrainElevations[index] + (50/adjacentTerrainElevations[index] * rewards[index]);
+                      landscapePatch[x, y] = adjacentTerrainElevations[index] + (10 * rewards[index]);
                     }
                     index++;
                 }
@@ -299,15 +304,15 @@ namespace HillClimberExample
           }
           //if staying put on non-reward
           if(stayPut && !onActiveReward){
-            BioEnergy = Elevation - 20;
+            BioEnergy = 0;
           }
           //if moving on reward
           if(!stayPut && onActiveReward){
-            BioEnergy = Elevation - 20;
+            BioEnergy = 0;
           }
           //if moving on non-reward
           if(!stayPut && !onActiveReward){
-            BioEnergy = (Elevation < 0) ? 30 :  10 + Elevation;
+            BioEnergy = (Elevation < 0) ? 10 : 10 + Elevation;
           }
 
 
@@ -474,31 +479,26 @@ namespace HillClimberExample
          private int[,] readRewards(){
             string path = Program.terrainFilePath;
             string filePath = path.Replace(".csv", "_reward.csv");
-            height = 0;
-            using(var reader = new StreamReader(filePath)){//gets dimentions of reward map 
-                string line = reader.ReadLine();
-                string[] values = line.Split(',');
-                length = values.Length;
-                height = length;
-            }
-            int[,] rewardMap = new int[height,length];
-            using(var reader = new StreamReader(filePath)){
-                string line = reader.ReadLine();
-                string[] values = line.Split(',');
-            for(int x = 0; x < height; x++){
-                    for(int y = 0; y < length; y++){
-                        rewardMap[x, y] = int.Parse(values[x]);
-                    }
+            int counter = 0;
+            int x = 0;
+            int y = 0;
+            height = 50;
+            length = 50;
+            float[,] rewardMap = new float[50,50];
+            if(File.Exists(filePath)){
+            using(var reader = new StreamReader(filePath)){//gets dimentions of reward map
+                while(!reader.EndOfStream){
+                  string line = reader.ReadLine();
+                  string[] values = line.Split(',');
+                  for(x = 0; x < 50; x++){
+                    rewardMap[y, x] = float.Parse(values[x]);
+                  }
+                  length = values.Length;
+                  height = length;
+                  y++;
                 }
             }
-            // for(y = 0; y < 50; y++){
-            //   for(x = 0; x < 50; x ++){
-            //     Console.Write(rewardMap[y, x]);
-            //   }
-            //   Console.WriteLine();
-            // }
-            }
-            //System.Environment.Exit(0);
+          }
             return rewardMap;
         }
     }
