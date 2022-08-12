@@ -121,10 +121,12 @@ namespace CognitiveABM.Perceptron
                 previousLayerHeight = currentLayerHeight;
 
             }
-            // if(reward){
-            // Console.WriteLine(values[0] + " " + values[1]);
-            // // System.Environment.Exit(0);
-            // }
+            if(!reward){
+              if(values[0] < values[1]){
+                Console.WriteLine("ok");
+              }
+            // System.Environment.Exit(0);
+            }
             return values;
 
         }
@@ -237,7 +239,7 @@ namespace CognitiveABM.Perceptron
                   // }
                   // else{
                     if(weightRow >= 9){
-                    sum += weights[weightRow, i] * inputs[weightRow] * 5;
+                    sum += weights[weightRow, i] * inputs[weightRow] * 3.5;
                     }
                     else{
                       sum += weights[weightRow, i] * inputs[weightRow];
