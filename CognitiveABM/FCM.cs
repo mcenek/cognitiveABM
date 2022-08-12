@@ -21,7 +21,7 @@ namespace CognitiveABM.FCM
          * @param genomes: 2d list of float values representing the genomes of agents
          * @description: creates the agents
          */
-        public FCM(int population, int numberOfValues, List<List<float>> genomes = null)
+        public FCM(int population, int numberOfValues, List<List<float>> genomes)
         {
             Population = population;
             NumberOfValues = numberOfValues;
@@ -50,7 +50,7 @@ namespace CognitiveABM.FCM
          * @description: This will train the agents. If already at target fitness it may print genomes
          * @return: agentFitness
          */
-        public List<float> Run(Boolean train, float fitnessTarget = 200, Boolean writeGenomes = false)
+        public List<float> Run(Boolean train, float fitnessTarget, Boolean writeGenomes)
         {
             List<float> agentFitness = Fitness(Agents);
 
@@ -67,7 +67,7 @@ namespace CognitiveABM.FCM
                     Console.WriteLine("FitnessTarget met.");
                     if (writeGenomes)
                     {
-                        WriteGenomes("genomes");
+                        WriteGenomes("genomes.csv");
                     }
                     Environment.Exit(0);
                 }
