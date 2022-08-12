@@ -295,11 +295,11 @@ namespace HillClimberExample
 
           //if staying put on reward
           if(stayPut && onActiveReward){
-            BioEnergy = (Elevation < 0) ? 20 : 20 + Elevation;
+            BioEnergy = (Elevation < 0) ? 100 : 50 * Elevation;
           }
           //if staying put on non-reward
           if(stayPut && !onActiveReward){
-            BioEnergy = 0;
+            BioEnergy = -10 ;
           }
           //if moving on reward
           if(!stayPut && onActiveReward){
@@ -307,7 +307,7 @@ namespace HillClimberExample
           }
           //if moving on non-reward
           if(!stayPut && !onActiveReward){
-            BioEnergy = (Elevation < 0) ? 10 : 10 + Elevation;
+            BioEnergy = Elevation;
           }
 
 
