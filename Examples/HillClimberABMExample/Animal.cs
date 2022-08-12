@@ -258,7 +258,7 @@ namespace HillClimberExample
             Terrain._AnimalEnvironment.MoveTo(this, newLocation[0], newLocation[1], 1, predicate: null);
             Elevation = Terrain.GetIntegerValue(this.Position.X, this.Position.Y);
 
-            BioEnergy = calculateBioEnergy(stayPut, onActiveReward);
+            BioEnergy += calculateBioEnergy(stayPut, onActiveReward);
 
             this.tickNum++;
         }
@@ -304,19 +304,22 @@ namespace HillClimberExample
 
           //if staying put on reward
           if(stayPut && onActiveReward){
-            BioEnergy = Elevation + 10;
+            BioEnergy = 10;
           }
+          // else{
+          //   BioEnergy = 0;
+          // }
           //if staying put on non-reward
           if(stayPut && !onActiveReward){
-            BioEnergy = -5 ;
+            BioEnergy = -1;
           }
           //if moving on reward
           if(!stayPut && onActiveReward){
-            BioEnergy = -5;
+            BioEnergy = -1;
           }
           //if moving on non-reward
           if(!stayPut && !onActiveReward){
-            BioEnergy = Elevation;
+            BioEnergy = 5;
           }
 
 
