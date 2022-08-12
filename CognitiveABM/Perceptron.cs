@@ -26,6 +26,7 @@ namespace CognitiveABM.Perceptron
 
         Boolean onOutPut = false;
 
+
         protected int[] indexArr { get; }
 
         /**
@@ -63,8 +64,8 @@ namespace CognitiveABM.Perceptron
         public float[] CalculatePerceptron(float[] genomes, float[] inputs, float[] agentMemory)
         {
 
-
             Genomes = genomes;
+
             // float[] outputs = new float[NumberOfOutputs];
 
             // initialize and set currentValues to the inputs, then all zeros (for the backward and self faceing edges)
@@ -103,8 +104,10 @@ namespace CognitiveABM.Perceptron
                 if(layerNumber == _totalLayers - 1){
                   onOutPut = true;
                 }
+
                 // calculate the values of the neurons of the current layer
                 values = MatrixMultiply(values, weights); // this
+
 
 
                 // for(int i = 0; i < values.Length; i++){
@@ -185,19 +188,22 @@ namespace CognitiveABM.Perceptron
             // ouput vector length
             int outputLength = weights.GetLength(0); // should be 9
             float[] result = new float[outputLength];
-
             if(onOutPut){
+              // System.Environment.Exit(0);
+              float first = 0.0f;
+              float second = 0.0f;
               for(int i = 0; i < inputs.Length; i++){
                 if( i < 9){
-                  inputs[0] = inputs[i];
+                  first += inputs[i];
                 }
                 else{
-                  inputs[1] = inputs[i];
+                  second += inputs[i];
                 }
               }
+              // Environment.Exit(0);
             }
 
-            Parallel.For(0, weights.GetLength(0) - 1, weightRow =>
+            Parallel.For(0, weights.GetLength(0), weightRow =>
             {
                 float sum = 0;
 
@@ -220,9 +226,12 @@ namespace CognitiveABM.Perceptron
 
                   // }
                   // else{
+
                     sum += weights[weightRow, i] * inputs[weightRow];
+
                   // }
                 }
+
                 result[weightRow] = sum;
             });
 
