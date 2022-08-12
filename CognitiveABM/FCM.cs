@@ -69,6 +69,7 @@ namespace CognitiveABM.FCM
                     {
                         WriteGenomes("genomes.csv");
                     }
+                    ABM.GlobalTargetFitnes = (int)avg;
                     // Environment.Exit(0);
                 }
 
