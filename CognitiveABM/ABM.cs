@@ -22,6 +22,7 @@ public class ABM
     public static int QlearningTotalFittness = 0;
     public QLearningABMAdditional QLABMA = new QLearningABMAdditional();
     public agentInfoHolder agentHolder = new agentInfoHolder();
+    public static int GlobalTargetFitnes = -15;
 
     public ABM(ModelDescription modelDescription)
     {
@@ -279,7 +280,7 @@ public class ABM
 
                 //-----------------------------------------------------------------------------------------------//
                 stopWatch.Restart();
-                fcm.Run(true, targetFitness, saveGenomes);
+                fcm.Run(true, GlobalTargetFitnes, saveGenomes);
                 stopWatch.Stop();
 
                 Console.WriteLine($"FCM finished in {stopWatch.ElapsedMilliseconds / 100:N2} seconds");

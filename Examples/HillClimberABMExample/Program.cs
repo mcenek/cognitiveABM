@@ -33,8 +33,8 @@ public static class Program
             ABM abm = new ABM(modelDescription: GetModelDescription());
             //abm.Train(10, terrainFilePath, args);
 
-            abm.Train(fcm, 50, 500, true, terrainFilePath, args);
-            //QLearning.usePerfectQMap = 0;
+            abm.Train(fcm, 1000, -3, true, terrainFilePath, args);
+            // QLearning.usePerfectQMap = 0;
 
             //  var genomes = FileUtils.ReadGenomesFromFile(".\\output\\good.csv");
             fcm = new HillClimberFCM(population: 96, numberOfValues: 2022, STEPS, OUTPUT_FILENAME, FITNESS_COLUMNNAME, trainGenomes);
