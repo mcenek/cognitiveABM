@@ -11,6 +11,7 @@ public static class Program
     public static string terrainFilePath;
     public const int STEPS = 250;
 
+
     public static void Main(string[] args)
     {
         terrainFilePaths = new string[] { "./layers/moatGauss.csv" };
@@ -28,15 +29,15 @@ public static class Program
             if (terrainFilePath != terrainFilePaths[0]) {
                 trainGenomes = FileUtils.ReadGenomesFromFile(".\\output\\genomes.csv");
             }
-            HillClimberFCM fcm = new HillClimberFCM(population: 96, numberOfValues: 2021, STEPS, OUTPUT_FILENAME, FITNESS_COLUMNNAME, trainGenomes);
+            HillClimberFCM fcm = new HillClimberFCM(population: 96, numberOfValues: 2022, STEPS, OUTPUT_FILENAME, FITNESS_COLUMNNAME, trainGenomes);
             ABM abm = new ABM(modelDescription: GetModelDescription());
             //abm.Train(10, terrainFilePath, args);
 
-            abm.Train(fcm, 10, 500, true, terrainFilePath, args);
-            QLearning.usePerfectQMap = 0;
+            abm.Train(fcm, 50, 500, true, terrainFilePath, args);
+            //QLearning.usePerfectQMap = 0;
 
             //  var genomes = FileUtils.ReadGenomesFromFile(".\\output\\good.csv");
-            fcm = new HillClimberFCM(population: 96, numberOfValues: 2021, STEPS, OUTPUT_FILENAME, FITNESS_COLUMNNAME, trainGenomes);
+            fcm = new HillClimberFCM(population: 96, numberOfValues: 2022, STEPS, OUTPUT_FILENAME, FITNESS_COLUMNNAME, trainGenomes);
 
             fitnessVals.Add(abm.Test(fcm, 1, terrainFilePath, args));
 
