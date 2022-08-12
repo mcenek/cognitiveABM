@@ -22,7 +22,7 @@ public class ABM
     public static int QlearningTotalFittness = 0;
     public QLearningABMAdditional QLABMA = new QLearningABMAdditional();
     public agentInfoHolder agentHolder = new agentInfoHolder();
-    public static int GlobalTargetFitnes = -15;
+    public static float GlobalTargetFitnes = -15.0f;
 
     public ABM(ModelDescription modelDescription)
     {
@@ -248,6 +248,7 @@ public class ABM
 
     public void Train(FCM fcm, int generations, float targetFitness, Boolean saveGenomes, string terrianFilePath, string[] args)
     {
+        GlobalTargetFitnes = targetFitness;
         var startTime = DateTime.Now;
         //make method to get lambda value i guess
         float[] lambdaArray = QLABMA.getLambda(generations);
@@ -281,6 +282,7 @@ public class ABM
                 //-----------------------------------------------------------------------------------------------//
                 stopWatch.Restart();
                 fcm.Run(true, GlobalTargetFitnes, saveGenomes);
+                Console.WriteLine("New Target Fitness: " + GlobalTargetFitnes);
                 stopWatch.Stop();
 
                 Console.WriteLine($"FCM finished in {stopWatch.ElapsedMilliseconds / 100:N2} seconds");
