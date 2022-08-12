@@ -25,7 +25,7 @@ namespace HillClimberExample
         private readonly string fitnessFileName;
         private readonly string fitnessColumnName;
 
-        public HillClimberFCM(int population, int numberOfValues, int steps, string fitnessFileName, string fitnessColumnName, List<List<float>> genomes = null) : base(population, numberOfValues, genomes)
+        public HillClimberFCM(int population, int numberOfValues, int steps, string fitnessFileName, string fitnessColumnName, List<List<float>> genomes) : base(population, numberOfValues, genomes)
         {
             this.fitnessFileName = fitnessFileName;
             this.fitnessColumnName = fitnessColumnName;

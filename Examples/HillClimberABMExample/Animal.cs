@@ -154,6 +154,10 @@ namespace HillClimberExample
             float[] inputs = new float[adjacentTerrainElevations.Length + rewards.Length];
             Array.Copy(adjacentTerrainElevations, inputs, adjacentTerrainElevations.Length);
             Array.Copy(rewards, 0, inputs, adjacentTerrainElevations.Length, rewards.Length);
+            // Console.WriteLine(inputs.Length);
+            // for(int i = 0; i < inputs.Length; i++){
+            //   Console.WriteLine(inputs[i]);
+            // }
 
 
             // Array.Copy(adjacentTerrainElevations, 0, inputs, rewards.Length, adjacentTerrainElevations.Length);
@@ -174,6 +178,7 @@ namespace HillClimberExample
               onActiveReward = isOnActiveReward(xPos, yPos);
             }
             if(stayPut && onActiveReward){
+              Console.WriteLine("YAY");
               pickUpReward(xPos, yPos);
             }
 
@@ -291,19 +296,19 @@ namespace HillClimberExample
 
           //if staying put on reward
           if(stayPut && onActiveReward){
-            BioEnergy = (Elevation < 0) ? 30 : 30 * Elevation;
+            BioEnergy = (Elevation < 0) ? 20 : 20 + Elevation;
           }
           //if staying put on non-reward
           if(stayPut && !onActiveReward){
-            BioEnergy = (Elevation < 0) ? -20 : -30 * Elevation;
+            BioEnergy = Elevation - 20;
           }
           //if moving on reward
           if(!stayPut && onActiveReward){
-            BioEnergy = (Elevation < 0) ? -20 : -3 * Elevation;
+            BioEnergy = Elevation - 20;
           }
           //if moving on non-reward
           if(!stayPut && !onActiveReward){
-            BioEnergy = (Elevation < 0) ? 30 : 3 * Elevation;
+            BioEnergy = (Elevation < 0) ? 30 :  10 + Elevation;
           }
 
 
@@ -356,9 +361,6 @@ namespace HillClimberExample
                 for (int dx = -1; dx <= 1; ++dx)
                 {
                     elevations.Add((float)Terrain.GetRealValue(dx + x, dy + y));
-                    int xVal = 0;
-                    int yVal = 0;
-
                     //if looking out of bounds of reward Maps
                     //having a variable that says the map size would be more ideal
                     float reward;
@@ -370,8 +372,8 @@ namespace HillClimberExample
                       reward = rewardMap[dx + x, dy + y];
                     }
                     rewards.Add(reward);
-
                 }
+
             }
             Tuple<List<float>, List<float>> terrain = new (elevations, rewards);
 
@@ -492,17 +494,15 @@ namespace HillClimberExample
                   y++;
                 }
             }
-            for(y = 0; y < 50; y++){
-              for(x = 0; x < 50; x ++){
-                Console.Write(rewardMap[y, x]);
-              }
-              Console.WriteLine();
+            // for(y = 0; y < 50; y++){
+            //   for(x = 0; x < 50; x ++){
+            //     Console.Write(rewardMap[y, x]);
+            //   }
+            //   Console.WriteLine();
+            // }
             }
-            }
-            System.Environment.Exit(0);
+            //System.Environment.Exit(0);
             return rewardMap;
         }
-
-
     }
 }
