@@ -69,7 +69,7 @@ namespace CognitiveABM.FCM
                     {
                         WriteGenomes("genomes.csv");
                     }
-                    Environment.Exit(0);
+                    // Environment.Exit(0);
                 }
 
                 if (sum == 0)
@@ -134,7 +134,8 @@ namespace CognitiveABM.FCM
                 if (value < sum)
                     return i;
             }
-            throw new Exception("SelectRandomWeightedIndex did not find index.");
+            return weights.Count-1;
+            // throw new Exception("SelectRandomWeightedIndex did not find index.");
         }
 
         /**
