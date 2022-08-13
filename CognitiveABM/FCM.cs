@@ -41,7 +41,7 @@ namespace CognitiveABM.FCM
 
         public abstract List<float> Fitness(List<List<float>> agents);
 
-        public abstract List<List<float>> GenerateOffspring(List<float> agentFitness);
+        public abstract List<List<float>> GenerateOffspring(List<float> agentReproductionPercentages);
 
         /**
          * @param train: says if to train the agents
@@ -70,7 +70,6 @@ namespace CognitiveABM.FCM
                         WriteGenomes("genomes.csv");
                     }
                     ABM.GlobalTargetFitnes = avg;
-                    Environment.Exit(0);
                 }
 
                 if (sum == 0)
@@ -84,16 +83,10 @@ namespace CognitiveABM.FCM
                 List<float> agentReproductionPercentages = CalculateReproductionPercent(agentFitness.ToList());
                 var index = agentFitness.IndexOf(agentFitness.Max());
                 var bestAgent = Agents[index];
+                //Console.WriteLine( " BEST FITNESS {0}", agentFitness[index]);
                 Agents = GenerateOffspring(agentReproductionPercentages);
 
-                //i < 1?
-                //could just agents[0] work?
-                for (int i = 0; i < 1; i++)
-                {
-                    Agents[i] = bestAgent;
-                }
-
-                //Agents[0] = bestAgent;
+                Agents[95] = bestAgent;
 
             }//end if train
 
@@ -109,13 +102,17 @@ namespace CognitiveABM.FCM
         {
             int firstParentIndex = SelectRandomWeightedIndex(agentReproductionProbabilites);
             float temp = agentReproductionProbabilites[firstParentIndex];
+            //Console.WriteLine(firstParentIndex);
+            //System.Environment.Exit(0);
 
             agentReproductionProbabilites[firstParentIndex] = 0; // first parent cannot be picked twice
 
             int secondParentIndex = SelectRandomWeightedIndex(agentReproductionProbabilites);
+            //Console.WriteLine(secondParentIndex);
 
             agentReproductionProbabilites[firstParentIndex] = temp;
-
+            //Console.WriteLine("{0} {1}", agentReproductionProbabilites[firstParentIndex], agentReproductionProbabilites[secondParentIndex]);
+            //System.Environment.Exit(0);
             return Tuple.Create(Agents[firstParentIndex], Agents[secondParentIndex]);
         }
 
@@ -129,14 +126,13 @@ namespace CognitiveABM.FCM
             Random random = new Random();
             float value = (float)random.NextDouble() * weights.Sum();
             float sum = 0;
-            for (int i = 0; i < weights.Count; i++)
-            {
+            for (int i = 0; i < weights.Count; i++){
                 sum += weights.ElementAt(i);
-                if (value < sum)
+                if (value < sum){
                     return i;
+                }
             }
-            // return weights.Count-1;
-            throw new Exception("SelectRandomWeightedIndex did not find index.");
+            return weights.Count-1;
         }
 
         /**
@@ -160,27 +156,27 @@ namespace CognitiveABM.FCM
         {
             List<float> reproductionPercent = new List<float>();
             float sumOfFitnessValues = agentFitness.Sum();
+            if(sumOfFitnessValues < 0){
+                sumOfFitnessValues = 1;
+            }
             float averageFitness = AverageFitness();
 
-            foreach (float fitnessValue in agentFitness)
+            foreach (float fitnessValue in agentFitness) //goes through agent list and calculates their reproduction odds
             {
-                float multiplier = 1;
-                if (fitnessValue > averageFitness)
-                {
-                    multiplier = 1.5f;
+                float agentReproductionPercent;
+                float multiplier = 0.25f;
+                if(fitnessValue > averageFitness){
+                    multiplier = 2.5f;
                 }
-                else
-                {
-                    multiplier = 1f;
+                if(fitnessValue == agentFitness.Max()){ //gives bonus if agent was the highest scoring
+                    multiplier = 5.0f;
                 }
-
-                float agentReproductionPercent = 0.0f;
-                if(sumOfFitnessValues == 0.0f){
-                  agentReproductionPercent = 0.0f;
-                  }
+                if(fitnessValue < 0){
+                    agentReproductionPercent = 0;
+                }
                 else{
-                  agentReproductionPercent = (fitnessValue * multiplier) / sumOfFitnessValues;
-                  }
+                    agentReproductionPercent = (fitnessValue * multiplier) / sumOfFitnessValues;
+                }
                 reproductionPercent.Add(agentReproductionPercent);
             }
 
