@@ -189,11 +189,7 @@ namespace CognitiveABM.QLearning
               if(addedVal >= rFloat){
                 return i;
               }
-            }//end for
-          // }
-          // else{
-          //   return random.Next(8);//randomly pick a direction
-          // }
+            }
               return col; //return -1 so we know that it's this method that causes an error later down the road
         }//end rouletteWheel
                 /**

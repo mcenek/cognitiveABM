@@ -239,7 +239,7 @@ namespace CognitiveABM.Perceptron
                   // }
                   // else{
                     if(weightRow >= 9){
-                    sum += weights[weightRow, i] * inputs[weightRow] * 3.5;
+                    sum += weights[weightRow, i] * inputs[weightRow] * (float)3.5;
                     }
                     else{
                       sum += weights[weightRow, i] * inputs[weightRow];

@@ -58,20 +58,22 @@ namespace HillClimberExample
             return fitnessValues;
         }
 
-        public override List<List<float>> GenerateOffspring(List<float> agentFitnessValues)
+        public override List<List<float>> GenerateOffspring(List<float> agentReproductionPercentages)
         {
-            ConcurrentBag<List<float>> bag = new ConcurrentBag<List<float>>();
+            ConcurrentBag<List<float>> newAgents = new ConcurrentBag<List<float>>();
             Random random = new Random();
 
             Parallel.For(0, Population, index =>
             {
-                Tuple<List<float>, List<float>> parents = PickParents(agentFitnessValues.ToList());
+                Tuple<List<float>, List<float>> parents = PickParents(agentReproductionPercentages.ToList());
                 int splitIndex = random.Next(0, NumberOfValues);
 
                 List<float> child = new List<float>();
 
                 List<float> parent1Genomes = new List<float>(parents.Item1.GetRange(0, splitIndex));
                 List<float> parent2Genomes = new List<float>(parents.Item2.GetRange(splitIndex, parents.Item2.Count - splitIndex));
+                //Console.WriteLine("{0} {1} {2} {3}", parent1Genomes.Count, parent2Genomes.Count, parents.Item2.Count - splitIndex, splitIndex);
+                //System.Environment.Exit(0);
 
                 child.AddRange(parent1Genomes);
                 child.AddRange(parent2Genomes);
@@ -79,7 +81,7 @@ namespace HillClimberExample
                 for (int i = 0; i < 5; i++)
                 {
                     var randomIndex = random.Next(child.Count);
-                    child[randomIndex] += (float)random.NextDouble() - 0.5f;
+                    child[randomIndex] += noiseGen();
                     if (child[randomIndex] > 1)
                         child[randomIndex] = 1;
 
@@ -87,10 +89,18 @@ namespace HillClimberExample
                         child[randomIndex] = 0;
                 }
 
-                bag.Add(child);
+                newAgents.Add(child);
             });
-
-            return bag.ToList();
+            return newAgents.ToList();
         }
+        public float noiseGen(){
+          var random = new Random();
+          float noise = (float)random.NextDouble()/50; //noise between 0 and 0.005
+          int sign = random.Next(1, 3);
+          if(sign == 2){ //noise becomes negative;
+            noise = noise * -1;
+          } //end for
+          return noise;
+        } 
     }
 }
