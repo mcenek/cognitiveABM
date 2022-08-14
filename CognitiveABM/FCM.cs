@@ -70,7 +70,7 @@ namespace CognitiveABM.FCM
                         WriteGenomes("genomes.csv");
                     }
                     ABM.GlobalTargetFitnes = avg;
-                    // Environment.Exit(0);
+                    Environment.Exit(0);
                 }
 
                 if (sum == 0)
@@ -95,7 +95,7 @@ namespace CognitiveABM.FCM
 
                 //Agents[0] = bestAgent;
 
-            }
+            }//end if train
 
             return agentFitness;
         }
@@ -135,8 +135,8 @@ namespace CognitiveABM.FCM
                 if (value < sum)
                     return i;
             }
-            return weights.Count-1;
-            // throw new Exception("SelectRandomWeightedIndex did not find index.");
+            // return weights.Count-1;
+            throw new Exception("SelectRandomWeightedIndex did not find index.");
         }
 
         /**
@@ -171,10 +171,16 @@ namespace CognitiveABM.FCM
                 }
                 else
                 {
-                    multiplier = 1;
+                    multiplier = 1f;
                 }
 
-                float agentReproductionPercent = (fitnessValue * multiplier) / sumOfFitnessValues;
+                float agentReproductionPercent = 0.0f;
+                if(sumOfFitnessValues == 0.0f){
+                  agentReproductionPercent = 0.0f;
+                  }
+                else{
+                  agentReproductionPercent = (fitnessValue * multiplier) / sumOfFitnessValues;
+                  }
                 reproductionPercent.Add(agentReproductionPercent);
             }
 
