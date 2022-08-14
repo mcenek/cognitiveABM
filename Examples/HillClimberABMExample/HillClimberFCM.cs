@@ -78,7 +78,7 @@ namespace HillClimberExample
                 child.AddRange(parent1Genomes);
                 child.AddRange(parent2Genomes);
 
-                for (int i = 0; i < 20; i++)
+                for (int i = 0; i < 1000; i++)
                 {
                     var randomIndex = random.Next(child.Count);
                     child[randomIndex] += noiseGen();
