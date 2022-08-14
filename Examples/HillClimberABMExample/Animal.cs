@@ -143,7 +143,12 @@ namespace HillClimberExample
 
             float[] distantTerrainElevations = null;
             float[] adjacentTerrainElevations = GetAdjacentElevations();
-            float[] rewards = adjacentTerrainTuple.Item2.ToArray();
+            float[] rewards = new float[9];
+
+            for(int i = 0; i < adjacentTerrainTuple.Item2.Count; i++){
+              rewards[i] = adjacentTerrainTuple.Item2[i];
+
+            }
 
             int xPos = (int)Position.X;
             int yPos = (int)Position.Y;
@@ -152,8 +157,21 @@ namespace HillClimberExample
 
             //for if we want to try 18 inputs
             float[] inputs = new float[adjacentTerrainElevations.Length + rewards.Length];
-            Array.Copy(adjacentTerrainElevations, inputs, adjacentTerrainElevations.Length);
-            Array.Copy(rewards, 0, inputs, adjacentTerrainElevations.Length, rewards.Length);
+            // Array.Copy(adjacentTerrainElevations, inputs, adjacentTerrainElevations.Length);
+            // Array.Copy(rewards, 0, inputs, adjacentTerrainElevations.Length, rewards.Length);
+            int counter = 0;
+            for(int i = 0; i < inputs.Length; i++){
+              if(i <= 8){
+                inputs[i] = adjacentTerrainElevations[i];
+              }
+              else{
+                inputs[i] = rewards[counter];
+                counter++;
+              }
+            }
+
+            inputs = tempNormInput(inputs);
+
             // Console.WriteLine(inputs.Length);
             // for(int i = 0; i < inputs.Length; i++){
             //   Console.WriteLine(inputs[i]);
@@ -182,7 +200,7 @@ namespace HillClimberExample
             if(stayPut && onActiveReward){
               //Console.WriteLine("YAY");
               pickUpReward(xPos, yPos);
-              // Console.WriteLine("WOOPICKED Up");
+              Console.WriteLine("WOOPICKED Up");
               // foreach (KeyValuePair<int, List<(int,int)>> agent in rewardMemory){
               //   for(int i = 0; i < agent.Value.Count; i++)
               //   Console.WriteLine("id = {0}, Coords{1}", agent.Key, agent.Value[i]);
@@ -263,6 +281,42 @@ namespace HillClimberExample
             this.tickNum++;
         }
 
+
+        public float[] tempNormInput(float[] input){
+          float min = 0.0f;
+          float max = 0.0f;
+          for(int i = 0; i < input.Length; i++){
+            if(i <= 8){
+              if(min > input[i]){
+                min = input[i];
+              }
+              if(max < input[i]){
+                max = input[i];
+              }
+            }
+            else{
+              break;
+            }
+          }
+
+          float diff = Math.Abs(max - min);
+
+          for(int k = 0; k < input.Length; k++){
+            if(k <= 8){
+              if(diff == 0.0f){
+                input[k] = 0;
+              }
+              else{
+                input[k] = (input[k] - min)/(max-min);
+              }
+            }
+            else{
+              break;
+            }
+          }
+          return input;
+        }
+
         // helper methods
 
         //Checks to see if agent is on a reward that it has already collected
@@ -304,22 +358,22 @@ namespace HillClimberExample
 
           //if staying put on reward
           if(stayPut && onActiveReward){
-            BioEnergy = 10;
+            BioEnergy = 5;
           }
           // else{
           //   BioEnergy = 0;
           // }
           //if staying put on non-reward
           if(stayPut && !onActiveReward){
-            BioEnergy = -1;
+            BioEnergy = 0;
           }
           //if moving on reward
           if(!stayPut && onActiveReward){
-            BioEnergy = -1;
+            BioEnergy = 0;
           }
           //if moving on non-reward
           if(!stayPut && !onActiveReward){
-            BioEnergy = 5;
+            BioEnergy = 1;
           }
 
 
@@ -379,8 +433,12 @@ namespace HillClimberExample
                       reward = 0.0f;
                     }
                     else{
-
-                      reward = rewardMap[dx + x, dy + y];
+                      if(isOnActiveReward(dx + x, dy + y)){
+                        reward = rewardMap[dx + x, dy + y];
+                      }
+                      else{
+                        reward = 0.0f;
+                      }
                     }
                     rewards.Add(reward);
                 }
@@ -492,17 +550,19 @@ namespace HillClimberExample
             height = 50;
             length = 50;
             float[,] rewardMap = new float[50,50];
+            string line = "";
+            string[] values = null;
             if(File.Exists(filePath)){
             using(var reader = new StreamReader(filePath)){//gets dimentions of reward map
                 while(!reader.EndOfStream){
-                  string line = reader.ReadLine();
-                  string[] values = line.Split(',');
-                  for(x = 0; x < 50; x++){
-                    rewardMap[y, x] = float.Parse(values[x]);
+                  line = reader.ReadLine();
+                  values = line.Split(',');
+                  for(y = 0; y < 50; y++){
+                    rewardMap[x, y] = float.Parse(values[x]);
                   }
                   length = values.Length;
                   height = length;
-                  y++;
+                  x++;
                 }
             }
           }

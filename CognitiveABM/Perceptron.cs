@@ -63,18 +63,23 @@ namespace CognitiveABM.Perceptron
          */
         public float[] CalculatePerceptron(float[] genomes, float[] inputs, float[] agentMemory)
         {
-            Boolean reward = false;
-            if(inputs[13] == 1.0f){
-              reward = true;
-            }
+
+            // for(int i = 0; i < inputs.Length; i++){
+            //   if(i == 13){
+            //     if(inputs[i] == 1.0f){
+            //
+            //       Console.Write("yes:" + i);
+            //       // Environment.Exit(0);
+            //     }
+            //   }
+            // }
             Genomes = genomes;
 
-            // float[] outputs = new float[NumberOfOutputs];
 
             // initialize and set currentValues to the inputs, then all zeros (for the backward and self faceing edges)
-            float[] values;
+            float[] values = inputs;
 
-            List<float> temp = new List<float>(inputs);
+            // List<float> temp = new List<float>(inputs);
 
             // temp.AddRange(agentMemory);
             // temp.AddRange(agentMemory);
@@ -82,7 +87,7 @@ namespace CognitiveABM.Perceptron
             //temp.AddRange(new float[] { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0});
 
             //set valuess to an array copy of temp
-            values = temp.ToArray();
+            // values = temp.ToArray();
 
             int previousLayerHeight = NumberOfInputs;
 
@@ -109,7 +114,7 @@ namespace CognitiveABM.Perceptron
                 }
 
                 // calculate the values of the neurons of the current layer
-                values = MatrixMultiply(values, weights); // this
+                values = MatrixMultiply(values, weights, layerNumber); // this
 
 
 
@@ -121,12 +126,15 @@ namespace CognitiveABM.Perceptron
                 previousLayerHeight = currentLayerHeight;
 
             }
-            if(!reward){
-              if(values[0] < values[1]){
-                Console.WriteLine("ok");
-              }
-            // System.Environment.Exit(0);
-            }
+            // if(reward){
+            //   // if(values[0] > values[1]){
+            //     Console.WriteLine(values[0] + " " + values[1]);
+            //     System.Environment.Exit(0);
+            //   // }
+            // }
+            //
+            //
+
             return values;
 
         }
@@ -179,6 +187,7 @@ namespace CognitiveABM.Perceptron
                     _weightIndex++;
                 }
             }
+            // Console.WriteLine(_weightIndex);
             return weights;
         }
 
@@ -188,7 +197,7 @@ namespace CognitiveABM.Perceptron
          * @description: Multiples Matrix
          * @returns: the resulting matrix from multiplication
          */
-        private float[] MatrixMultiply(float[] inputs, float[,] weights)
+        private float[] MatrixMultiply(float[] inputs, float[,] weights, int layerNumber)
         {
             // the resulting array will be the same length as the number of weight columns in the weight matrix
 
@@ -196,23 +205,21 @@ namespace CognitiveABM.Perceptron
             int outputLength = weights.GetLength(0); // should be 9
             float[] result = new float[outputLength];
             if(onOutPut){
-              // System.Environment.Exit(0);
-              // float first = 0.0f;
-              // float second = 0.0f;
-              // for(int i = 0; i < inputs.Length; i++){
-              //   if( i < 9){
-              //     first += inputs[i];
-              //   }
-              //   else{
-              //     second += inputs[i];
-              //   }
-              // }
-              //
-              // inputs[0] = first;
-              // inputs[1] = second;
-              inputs[0] = inputs[4];
-              inputs[1] = inputs[13];
-              // Environment.Exit(0);
+              // // System.Environment.Exit(0);
+              float first = 0.0f;
+              float second = 0.0f;
+              for(int i = 0; i < inputs.Length; i++){
+                if( i < 9){
+                  first += inputs[i];
+                }
+                else{
+                  second += inputs[i];
+                }
+              }
+
+              inputs[0] = first;
+              inputs[1] = second;
+
             }
 
             Parallel.For(0, weights.GetLength(0), weightRow =>
@@ -223,36 +230,18 @@ namespace CognitiveABM.Perceptron
                 // usuage of strassen's algorithm, or one based off of it, would improve run time
                 for (int i = 0; i < weights.GetLength(1); i++)
                 {
-                  // if(onOutPut){
-                    // try{
-                    //
-                    //   sum += weights[weightRow, i] * inputs[indexArr[weightRow]];
-                    // }
-                    // catch{
-                    //   Console.WriteLine(indexArr.Length);
-                    //   Console.WriteLine(weightRow);
-                    //   Console.WriteLine(indexArr[weightRow]);
-                    //   System.Environment.Exit(0);
-                    // }
 
+                  sum += weights[weightRow, i] * inputs[weightRow];
 
-                  // }
-                  // else{
-                    if(weightRow >= 9){
-                    sum += weights[weightRow, i] * inputs[weightRow] * 3.5;
-                    }
-                    else{
-                      sum += weights[weightRow, i] * inputs[weightRow];
-                    }
-
-                  // }
                 }
-
                 result[weightRow] = sum;
             });
 
             // Console.WriteLine("Matrix Muliplication Result");
             return result;
         }
+
+
+
     }
 }

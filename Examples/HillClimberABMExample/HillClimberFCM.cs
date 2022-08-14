@@ -76,7 +76,7 @@ namespace HillClimberExample
                 child.AddRange(parent1Genomes);
                 child.AddRange(parent2Genomes);
 
-                for (int i = 0; i < 5; i++)
+                for (int i = 0; i < 20; i++)
                 {
                     var randomIndex = random.Next(child.Count);
                     child[randomIndex] += (float)random.NextDouble() - 0.5f;
