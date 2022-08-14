@@ -126,6 +126,7 @@ namespace CognitiveABM.FCM
             Random random = new Random();
             float value = (float)random.NextDouble() * weights.Sum();
             float sum = 0;
+            return weights.IndexOf(weights.Max());
             for (int i = 0; i < weights.Count; i++){
                 sum += weights.ElementAt(i);
                 if (value < sum){

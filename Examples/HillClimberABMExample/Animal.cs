@@ -144,9 +144,11 @@ namespace HillClimberExample
             float[] distantTerrainElevations = null;
             float[] adjacentTerrainElevations = GetAdjacentElevations();
             float[] rewards = adjacentTerrainTuple.Item2.ToArray();
+            rewards = agentReward(rewards, adjacentTerrainLocations);
 
             int xPos = (int)Position.X;
             int yPos = (int)Position.Y;
+
 
 
 
@@ -306,22 +308,24 @@ namespace HillClimberExample
 
           //if staying put on reward
           if(stayPut && onActiveReward){
-            BioEnergy = 10;
+            //Console.WriteLine("PICKING UP");
+            BioEnergy = 25;
+            stayPut  = false;
           }
           // else{
           //   BioEnergy = 0;
           // }
           //if staying put on non-reward
           if(stayPut && !onActiveReward){
-            BioEnergy = -50;
+            BioEnergy = -5;
           }
           //if moving on reward
           if(!stayPut && onActiveReward){
-            BioEnergy = -25;
+            BioEnergy = -5;
           }
           //if moving on non-reward
           if(!stayPut && !onActiveReward){
-            BioEnergy = 5;
+            BioEnergy = 1;
           }
 
 
@@ -509,6 +513,26 @@ namespace HillClimberExample
             }
           }
             return rewardMap;
+        }
+        private float[] agentReward(float[] rewards, List<int[]> adjacentTerrainLocations){
+          if(rewardMemory.ContainsKey(this.AnimalId) == false){
+            return rewards;
+          }
+          int i = 0;
+          int j = 0;
+          List<(int, int)> temp = new List<(int, int)>();
+          for(i = 0; i < adjacentTerrainLocations.Count; i++ ){
+              temp.Add((adjacentTerrainLocations[i][0], adjacentTerrainLocations[i][1]));
+          }
+          for(i = 0; i < rewardMemory[this.AnimalId].Count; i++){
+            for(j = 0; j < temp.Count; j++ ){
+              if(temp[j] == rewardMemory[this.AnimalId][i]){
+                rewards[j] = 0;
+              }
+          }
+          }
+          return rewards;
+
         }
     }
 }
