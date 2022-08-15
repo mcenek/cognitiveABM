@@ -316,6 +316,33 @@ namespace HillClimberExample
           return input;
         }
 
+        //Will create a landscape map with reward bonuses added
+        //Changes min and max accordingly
+        public Tuple<float[,],float,float> addRewardToLand(float[,] landScape, float[] rewards, float min, float max){
+          int index = 0;
+          Boolean foundMin = false;
+          Boolean foundMax = true;
+
+          for(int row = 0; row < 3; row++){
+            for(int col = 0; col < 3; col++){
+              if(!foundMin && landScape[row,col] == min){
+                min += 25 * rewards[index];
+                foundMin = true;
+              }
+              if(!foundMax && landScape[row,col] == max){
+                max += 25 * rewards[index];
+                foundMax = true;
+              }
+
+              landScape[row,col] += 25 * rewards[index];
+              index++;
+            }
+          }
+
+          return  new (landScape,min,max);
+
+        }
+
         // helper methods
 
         //Checks to see if agent is on a reward that it has already collected
@@ -357,9 +384,7 @@ namespace HillClimberExample
 
           //if staying put on reward
           if(stayPut && onActiveReward){
-            //Console.WriteLine("PICKING UP");
-            BioEnergy = 25;
-            stayPut  = false;
+            BioEnergy = 10;
           }
           // else{
           //   BioEnergy = 0;
@@ -584,7 +609,7 @@ namespace HillClimberExample
               if(temp[j] == rewardMemory[this.AnimalId][i]){
                 rewards[j] = 0;
               }
-          }
+            }
           }
           return rewards;
 

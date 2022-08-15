@@ -164,16 +164,17 @@ namespace CognitiveABM.FCM
 
             foreach (float fitnessValue in agentFitness) //goes through agent list and calculates their reproduction odds
             {
-                float agentReproductionPercent;
-                float multiplier = 0.25f;
-                if(fitnessValue > averageFitness){
+                float multiplier = 1;
+                if (fitnessValue > averageFitness)
+                {
                     multiplier = 2.5f;
                 }
-                if(fitnessValue == agentFitness.Max()){ //gives bonus if agent was the highest scoring
-                    multiplier = 5.0f;
+                else if(fitnessValue == averageFitness){
+                    multiplier = 1f;
                 }
-                if(fitnessValue < 0){
-                    agentReproductionPercent = 0;
+                else
+                {
+                    multiplier = .5f;
                 }
                 else{
                     agentReproductionPercent = (fitnessValue * multiplier) / sumOfFitnessValues;
