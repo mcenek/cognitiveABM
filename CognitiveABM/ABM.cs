@@ -226,7 +226,7 @@ public class ABM
                 // Console.WriteLine($"Simulation execution finished in {stopWatch.ElapsedMilliseconds / 1000:N2} seconds");
 
                 stopWatch.Restart();
-                var values = fcm.Run(false, 200, true);
+                var values = fcm.Run(false, GlobalTargetFitnes, true);
                 stopWatch.Stop();
                 // Console.WriteLine($"FCM finished in {stopWatch.ElapsedMilliseconds / 100:N2} seconds");
 
@@ -255,7 +255,7 @@ public class ABM
 
         for (int generation = 0; generation < generations; generation++)
         {
-            
+
             // if(generation == 0){
             //   QLearning.useMap = false;
             // }

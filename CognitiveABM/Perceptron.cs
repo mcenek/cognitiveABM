@@ -39,8 +39,6 @@ namespace CognitiveABM.Perceptron
             NumberOfHiddenLayers = numberOfHiddenLayers;
             NeuronsPerHiddenLayer = neuronsPerHiddenLayer;
             _totalLayers = 2 + numberOfHiddenLayers;
-            memory = new float[numberOfInputs];
-            indexArr = new int[] {4,13,22,31,40};
             onOutPut = false;
 
         }

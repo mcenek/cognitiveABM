@@ -338,15 +338,15 @@ namespace HillClimberExample
           for(int row = 0; row < 3; row++){
             for(int col = 0; col < 3; col++){
               if(!foundMin && landScape[row,col] == min){
-                min += 10 * rewards[index];
+                min += 25 * rewards[index];
                 foundMin = true;
               }
               if(!foundMax && landScape[row,col] == max){
-                max += 10 * rewards[index];
+                max += 25 * rewards[index];
                 foundMax = true;
               }
 
-              landScape[row,col] += 10 * rewards[index];
+              landScape[row,col] += 25 * rewards[index];
               index++;
             }
           }
@@ -396,7 +396,7 @@ namespace HillClimberExample
 
           //if staying put on reward
           if(stayPut && onActiveReward){
-            BioEnergy = 7;
+            BioEnergy = 10;
           }
           // else{
           //   BioEnergy = 0;
@@ -411,7 +411,7 @@ namespace HillClimberExample
           }
           //if moving on non-reward
           if(!stayPut && !onActiveReward){
-            BioEnergy = 2;
+            BioEnergy = 1;
           }
 
 
@@ -607,7 +607,6 @@ namespace HillClimberExample
           if(rewardMemory.ContainsKey(this.AnimalId) == false){
             return rewards;
           }
-
           List<(int, int)> temp = new List<(int, int)>();
           for(int i = 0; i < adjacentTerrainLocations.Count; i++ ){
               temp.Add((adjacentTerrainLocations[i][0], adjacentTerrainLocations[i][1]));
@@ -617,7 +616,7 @@ namespace HillClimberExample
               if(temp[j] == rewardMemory[this.AnimalId][i]){
                 rewards[j] = 0;
               }
-          }
+            }
           }
           return rewards;
 
