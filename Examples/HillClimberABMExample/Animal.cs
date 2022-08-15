@@ -150,8 +150,11 @@ namespace HillClimberExample
 
             }
 
+            rewards = agentReward(rewards, adjacentTerrainLocations);
+
             int xPos = (int)Position.X;
             int yPos = (int)Position.Y;
+
 
 
 
@@ -200,7 +203,7 @@ namespace HillClimberExample
             if(stayPut && onActiveReward){
               //Console.WriteLine("YAY");
               pickUpReward(xPos, yPos);
-              Console.WriteLine("WOOPICKED Up");
+              // Console.WriteLine("WOOPICKED Up");
               // foreach (KeyValuePair<int, List<(int,int)>> agent in rewardMemory){
               //   for(int i = 0; i < agent.Value.Count; i++)
               //   Console.WriteLine("id = {0}, Coords{1}", agent.Key, agent.Value[i]);
@@ -247,20 +250,23 @@ namespace HillClimberExample
                       }
                       if(adjacentTerrainElevations[index] > max){
                           max = adjacentTerrainElevations[index];
-                      }
-                      landscapePatch[x, y] = adjacentTerrainElevations[index] + (10 * rewards[index]);
+                        }
+                      landscapePatch[x, y] = adjacentTerrainElevations[index];
                     }
                     index++;
                 }
             }
 
+            Tuple<float[,], float, float> landTuple = addRewardToLand(landscapePatch,rewards,min,max);
+            landscapePatch = landTuple.Item1;
+            min = landTuple.Item2;
+            max = landTuple.Item3;
 
             int direction;
 
             if(stayPut){//don't move cus we on reward
               direction = 4;
               this.qLearn.savePathandExportValues(this.AnimalId,-1,-1,landscapePatch,this.tickNum, Elevation, xPos, yPos);
-
             }
             else{
               direction = this.qLearn.getDirection(landscapePatch, min, max,this.AnimalId, this.tickNum, Elevation, xPos, yPos); //Which dirction we should be moving
@@ -277,11 +283,16 @@ namespace HillClimberExample
             Elevation = Terrain.GetIntegerValue(this.Position.X, this.Position.Y);
 
             BioEnergy += calculateBioEnergy(stayPut, onActiveReward);
-
+            if(BioEnergy < 0){
+              BioEnergy = 0;
+            }
+            stayPut = false;
             this.tickNum++;
         }
 
-
+        //temp normilization method that will normilize the first part of input
+        //This normalizes the elevations and leaves the rewards alone
+        //Rewards currently already normalized so for time sake this is done this way
         public float[] tempNormInput(float[] input){
           float min = 0.0f;
           float max = 0.0f;
@@ -315,6 +326,33 @@ namespace HillClimberExample
             }
           }
           return input;
+        }
+
+        //Will create a landscape map with reward bonuses added
+        //Changes min and max accordingly
+        public Tuple<float[,],float,float> addRewardToLand(float[,] landScape, float[] rewards, float min, float max){
+          int index = 0;
+          Boolean foundMin = false;
+          Boolean foundMax = true;
+
+          for(int row = 0; row < 3; row++){
+            for(int col = 0; col < 3; col++){
+              if(!foundMin && landScape[row,col] == min){
+                min += 10 * rewards[index];
+                foundMin = true;
+              }
+              if(!foundMax && landScape[row,col] == max){
+                max += 10 * rewards[index];
+                foundMax = true;
+              }
+
+              landScape[row,col] += 10 * rewards[index];
+              index++;
+            }
+          }
+
+          return  new (landScape,min,max);
+
         }
 
         // helper methods
@@ -358,22 +396,22 @@ namespace HillClimberExample
 
           //if staying put on reward
           if(stayPut && onActiveReward){
-            BioEnergy = 5;
+            BioEnergy = 7;
           }
           // else{
           //   BioEnergy = 0;
           // }
           //if staying put on non-reward
           if(stayPut && !onActiveReward){
-            BioEnergy = 0;
-          }
+            BioEnergy = -2;
+            }
           //if moving on reward
           if(!stayPut && onActiveReward){
-            BioEnergy = 0;
+            BioEnergy = -2;
           }
           //if moving on non-reward
           if(!stayPut && !onActiveReward){
-            BioEnergy = 1;
+            BioEnergy = 2;
           }
 
 
@@ -433,12 +471,7 @@ namespace HillClimberExample
                       reward = 0.0f;
                     }
                     else{
-                      if(isOnActiveReward(dx + x, dy + y)){
                         reward = rewardMap[dx + x, dy + y];
-                      }
-                      else{
-                        reward = 0.0f;
-                      }
                     }
                     rewards.Add(reward);
                 }
@@ -567,6 +600,27 @@ namespace HillClimberExample
             }
           }
             return rewardMap;
+        }
+
+        //checks if reward on reward map was already collected (already done in different method now)
+        private float[] agentReward(float[] rewards, List<int[]> adjacentTerrainLocations){
+          if(rewardMemory.ContainsKey(this.AnimalId) == false){
+            return rewards;
+          }
+
+          List<(int, int)> temp = new List<(int, int)>();
+          for(int i = 0; i < adjacentTerrainLocations.Count; i++ ){
+              temp.Add((adjacentTerrainLocations[i][0], adjacentTerrainLocations[i][1]));
+          }
+          for(int i = 0; i < rewardMemory[this.AnimalId].Count; i++){
+            for(int j = 0; j < temp.Count; j++ ){
+              if(temp[j] == rewardMemory[this.AnimalId][i]){
+                rewards[j] = 0;
+              }
+          }
+          }
+          return rewards;
+
         }
     }
 }

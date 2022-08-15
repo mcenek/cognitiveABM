@@ -70,7 +70,6 @@ namespace CognitiveABM.FCM
                         WriteGenomes("genomes.csv");
                     }
                     ABM.GlobalTargetFitnes = avg;
-                    Environment.Exit(0);
                 }
 
                 if (sum == 0)
@@ -132,12 +131,13 @@ namespace CognitiveABM.FCM
             for (int i = 0; i < weights.Count; i++)
             {
                 sum += weights.ElementAt(i);
-                if (value < sum)
+                if (value <= sum)
                     return i;
             }
             // return weights.Count-1;
+            Console.WriteLine(sum + " sum<; value> " + value);
             throw new Exception("SelectRandomWeightedIndex did not find index.");
-        }
+          }
 
         /**
          * @param length: length of array to be made
@@ -181,9 +181,8 @@ namespace CognitiveABM.FCM
                 else{
                   agentReproductionPercent = (fitnessValue * multiplier) / sumOfFitnessValues;
                   }
-                reproductionPercent.Add(agentReproductionPercent);
-            }
-
+            reproductionPercent.Add(agentReproductionPercent);
+          }
             return reproductionPercent;
         }
 

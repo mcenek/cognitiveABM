@@ -6,12 +6,12 @@ import csv
 from celluloid import Camera
 import pandas as pandasForSortingCSV
 
-NUM_STEPS = 150
+NUM_STEPS = 250
 TRESHOLD = 47
 
-Data = ['./output/landScape_exportInfo.csv','./output/moatGauss_exportInfo.csv', './output/moatGauss_exportInfo.csv']
-Layer = ['./layers/landScape.csv', './layers/moatGauss.csv', './layers/moatGauss.csv']
-rewardLayer = ['./layers/landScape.csv', './layers/moatGauss_reward.csv', './layers/moatGauss_reward.csv']
+Data = ['./output/landScape_exportInfo.csv','./output/moatGauss_exportInfo.csv', './output/flatTerrain_exportInfo.csv']
+Layer = ['./layers/landScape.csv', './layers/moatGauss.csv', './layers/flatTerrain.csv']
+rewardLayer = ['./layers/landScape.csv', './layers/moatGauss_reward.csv', './layers/flatTerrain_reward.csv']
 terrain_num = 2
 AgentData = Data[terrain_num]
 LayerFile = Layer[terrain_num]

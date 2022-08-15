@@ -105,6 +105,11 @@ namespace CognitiveABM.QLearning
           this.prototypes.Add(protoSE);
           this.prototypes.Add(protoSW);
           this.prototypes.Add(protoNW);
+
+          float[,] flat = new float[,] { { 0f, 0f, 0f }, { 0f, 0f, 0f }, { 0f, 0f, 0f } };
+          this.prototypes.Add(flat);
+
+
         }
 
         //---HELPER FUNCTIONS---//
@@ -118,13 +123,17 @@ namespace CognitiveABM.QLearning
         public int getDirection(float[,] landscapePatch, float min, float max, int animalId, int tickNum, float Elevation, int xPos, int yPos){
           float[,] normallisedLandscapePatch = normalliseLandscapePatch(landscapePatch, min, max);
 
-          float[] MSE = new float[8];
+          float[] MSE = new float[9];
           for(int i = 0; i < this.prototypes.Count; i++){
             MSE[i] = meanSquareError(normallisedLandscapePatch, prototypes.ElementAt(i));
           }
           //returns index of smallest value (Grabbed from: https://stackoverflow.com/questions/4204169/how-would-you-get-the-index-of-the-lowest-value-in-an-int-array)
 
           int minIndex = Enumerable.Range(0, MSE.Length).Aggregate((a, b) => (MSE[a] < MSE[b]) ? a : b);
+          if(minIndex == 8){
+            var random = new Random();
+            minIndex = random.Next(0,8);
+          }
 
           int direction = biasedRouletteWheel(minIndex);
           if(direction < 0 || direction > 7){
@@ -189,11 +198,7 @@ namespace CognitiveABM.QLearning
               if(addedVal >= rFloat){
                 return i;
               }
-            }//end for
-          // }
-          // else{
-          //   return random.Next(8);//randomly pick a direction
-          // }
+            }
               return col; //return -1 so we know that it's this method that causes an error later down the road
         }//end rouletteWheel
                 /**

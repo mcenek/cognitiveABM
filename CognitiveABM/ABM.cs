@@ -22,7 +22,7 @@ public class ABM
     public static int QlearningTotalFittness = 0;
     public QLearningABMAdditional QLABMA = new QLearningABMAdditional();
     public agentInfoHolder agentHolder = new agentInfoHolder();
-    public static float GlobalTargetFitnes = -15.0f;
+    public static float GlobalTargetFitnes = -100.0f;
 
     public ABM(ModelDescription modelDescription)
     {
@@ -255,6 +255,7 @@ public class ABM
 
         for (int generation = 0; generation < generations; generation++)
         {
+            
             // if(generation == 0){
             //   QLearning.useMap = false;
             // }
