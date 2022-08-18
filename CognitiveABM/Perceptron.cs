@@ -62,30 +62,12 @@ namespace CognitiveABM.Perceptron
         public float[] CalculatePerceptron(float[] genomes, float[] inputs, float[] agentMemory)
         {
 
-            // for(int i = 0; i < inputs.Length; i++){
-            //   if(i == 13){
-            //     if(inputs[i] == 1.0f){
-            //
-            //       Console.Write("yes:" + i);
-            //       // Environment.Exit(0);
-            //     }
-            //   }
-            // }
             Genomes = genomes;
 
 
             // initialize and set currentValues to the inputs, then all zeros (for the backward and self faceing edges)
             float[] values = inputs;
 
-            // List<float> temp = new List<float>(inputs);
-
-            // temp.AddRange(agentMemory);
-            // temp.AddRange(agentMemory);
-            // add 18 0's to temp
-            //temp.AddRange(new float[] { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0});
-
-            //set valuess to an array copy of temp
-            // values = temp.ToArray();
 
             int previousLayerHeight = NumberOfInputs;
 
@@ -115,24 +97,10 @@ namespace CognitiveABM.Perceptron
                 values = MatrixMultiply(values, weights, layerNumber); // this
 
 
-
-                // for(int i = 0; i < values.Length; i++){
-                //     Console.WriteLine( values[i] + " ");
-                // }
-
                 // keep track of the hieght of the previous later
                 previousLayerHeight = currentLayerHeight;
 
             }
-            // if(reward){
-            //   // if(values[0] > values[1]){
-            //     Console.WriteLine(values[0] + " " + values[1]);
-            //     System.Environment.Exit(0);
-            //   // }
-            // }
-            //
-            //
-
             return values;
 
         }

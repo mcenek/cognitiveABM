@@ -32,6 +32,7 @@ namespace HillClimberExample
             this.steps = steps;
         }
 
+        //grabs the fitness values from the corresponding csv file (animal.csv)
         public override List<float> Fitness(List<List<float>> agents)
         {
             var fitnessValues = new List<float>();
@@ -58,6 +59,8 @@ namespace HillClimberExample
             return fitnessValues;
         }
 
+        //Splits the chosen parent's genomes and combines them to make a child
+        //The child genomes will then be mutated
         public override List<List<float>> GenerateOffspring(List<float> agentReproductionPercentages)
         {
             ConcurrentBag<List<float>> newAgents = new ConcurrentBag<List<float>>();

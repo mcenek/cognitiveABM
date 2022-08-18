@@ -391,10 +391,6 @@ namespace CognitiveABM.QLearningABMAdditional{
       for(int row = 0; row < qmap.GetLength(0); row++){
         for(int col = 0; col < qmap.GetLength(1); col++){
           qMapRow[col] = qmap[row,col];
-          // if(float.IsNaN(qMapRow[col])){
-          //   Console.WriteLine("NAN" + row + col);
-          //   Environment.Exit(0);
-          // }
         }
         w.Write(String.Join(",", qMapRow) + "\n");
       }

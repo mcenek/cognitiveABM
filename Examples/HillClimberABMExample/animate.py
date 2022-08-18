@@ -9,14 +9,15 @@ import pandas as pandasForSortingCSV
 NUM_STEPS = 250
 TRESHOLD = 47
 
-Data = ['./output/landScape_exportInfo.csv','./output/moatGauss_exportInfo.csv', './output/flatTerrain_exportInfo.csv']
-Layer = ['./layers/landScape.csv', './layers/moatGauss.csv', './layers/flatTerrain.csv']
-rewardLayer = ['./layers/landScape.csv', './layers/moatGauss_reward.csv', './layers/flatTerrain_reward.csv']
-terrain_num = 1
+Data = ['./output/landscape_exportInfo.csv','./output/moatGauss_exportInfo.csv', './output/grid_exportInfo.csv']
+Layer = ['./layers/landscape.csv', './layers/moatGauss.csv', './layers/grid.csv']
+rewardLayer = ['./layers/landscape_reward.csv', './layers/moatGauss_reward.csv', './layers/grid_reward.csv']
+terrain_num = 2
 AgentData = Data[terrain_num]
 LayerFile = Layer[terrain_num]
 rewardFile = rewardLayer[terrain_num]
 
+#rewites file so it goes from ascending order of ticknumber followed by the animal id
 for file in Data:
     csvData = pandasForSortingCSV.read_csv(file)
     sorted_data = csvData.sort_values(by=["TickNum", "AnimalID"],ascending=[True, True])
@@ -26,6 +27,8 @@ for file in Data:
 x = []
 y = []
 fitness = []
+bestAgentNumPoint = 0
+bestFit = 0
 terrain = list(csv.reader(open(LayerFile),
                           quoting=csv.QUOTE_NONNUMERIC))
 
@@ -36,36 +39,52 @@ with open(AgentData, newline='') as csvfile:
         x.append(int(float(row['X Pos'])))
         y.append(int(float(row['Y Pos'])))
         fitness.append(int(float(row['Current Elevation'])))
+        if int(float(row['Total Fitness'])) > bestFit:
+            bestAgentNumPoint = int(float(row['AnimalID']))
+            bestFit = int(float(row['Total Fitness']))
 
 numpoints = 96
 points = np.random.random((2, numpoints))
 colors = cm.rainbow(np.linspace(0, 1, numpoints))
 
 fig = plt.figure("Agents")
-reward_pos = fig.add_subplot(211)
-agent_pos = fig.add_subplot(211)
+agent_pos = fig.add_subplot(221)
+bestAgent_pos = fig.add_subplot(222)
 fitness_map = fig.add_subplot(223)
 heatmap = fig.add_subplot(224)
+reward_pos = fig.add_subplot(224)
 camera = Camera(fig)
 avg_fit = []
 
-fitness_map.set_xlabel('Steps')
-fitness_map.set_ylabel('Average Elevation')
+fitness_map.set_xlabel('Epoch')
+fitness_map.set_ylabel('Fitness')
 
 agent_pos.set_xlabel('X')
 agent_pos.set_ylabel('Y')
 agent_pos.set_title('Agent Position')
+agent_pos.set_aspect('equal', adjustable='box');
+
+
+bestAgent_pos.set_xlabel('X')
+bestAgent_pos.set_ylabel('Y')
+bestAgent_pos.set_title('Best Agent Position')
+bestAgent_pos.set_aspect('equal', adjustable='box');
+bestAgent_pos.axes.set_xlim(0, 50)
+bestAgent_pos.axes.set_ylim(0, 50)
+
 
 #reward_pos.axes.get_xaxis().set_visible(False)
-reward_pos.axes.set_xlim(-2.5, 52.5)
-reward_pos.axes.set_ylim(-2, 52.5)
+# reward_pos.axes.set_xlim(-2.5, 52.5)
+# reward_pos.axes.set_ylim(-2, 52.5)
+reward_pos.set_aspect('equal', adjustable='box')
+heatmap.set_aspect('equal', adjustable='box')
+# reward_pos.set_aspect('equal');
 #reward_pos.axes.get_yaxis().set_visible(False)
-
-heatmap.imshow(terrain[::-1], origin = 'lower')
 maxIndex = 0
 data = list(csv.reader(open(rewardFile)))
 xVals = []
 yVals = []
+
 
 for height in range(50):
         for length in range(50):
@@ -75,7 +94,6 @@ for height in range(50):
 
 
 for i in range(NUM_STEPS):
-    reward_pos.scatter(xVals, yVals, marker='^', color = 'green', s=100)
     fit_val = fitness[i*numpoints: i*numpoints + numpoints]
     avg_fit.append(sum(fitness[i*numpoints: i*numpoints + numpoints])/numpoints)
     norm = [(float(i)/(max(fit_val) + 1)) for i in fit_val]
@@ -90,6 +108,11 @@ for i in range(NUM_STEPS):
     colors = cm.rainbow(norm)
     fitness_map.plot(avg_fit)
     agent_pos.scatter(x[i*numpoints: i*numpoints + numpoints], y[i*numpoints: i*numpoints + numpoints], c=colors, s=100)
+    bestAgent_pos.scatter(x[bestAgentNumPoint + i*numpoints], y[bestAgentNumPoint + i*numpoints], c='red', s=100)
+    heatmap.imshow(terrain[::-1], origin = 'lower')
+    reward_pos.get_xaxis().set_visible(False);
+    reward_pos.get_yaxis().set_visible(False);
+    reward_pos.scatter(xVals, yVals, marker='o', color = 'red', s=25)
     camera.snap()
 anim = camera.animate(blit=True)
 plt.show()
