@@ -1,27 +1,25 @@
 {
   "format": 1,
   "restore": {
-    "D:\\JYR\\Research\\Working\\Examples\\HillClimberABMExample\\HillClimberABMExample.csproj": {}
+    "/mnt/c/Users/austf/Desktop/sumRe/cognitiveABM-main/cognitiveABM-main/Examples/HillClimberABMExample/HillClimberABMExample.csproj": {}
   },
   "projects": {
-    "D:\\JYR\\Research\\Working\\CognitiveABM\\CognitiveABM.csproj": {
+    "/mnt/c/Users/austf/Desktop/sumRe/cognitiveABM-main/cognitiveABM-main/CognitiveABM/CognitiveABM.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "D:\\JYR\\Research\\Working\\CognitiveABM\\CognitiveABM.csproj",
+        "projectUniqueName": "/mnt/c/Users/austf/Desktop/sumRe/cognitiveABM-main/cognitiveABM-main/CognitiveABM/CognitiveABM.csproj",
         "projectName": "CognitiveABM",
-        "projectPath": "D:\\JYR\\Research\\Working\\CognitiveABM\\CognitiveABM.csproj",
-        "packagesPath": "C:\\Users\\17608\\.nuget\\packages\\",
-        "outputPath": "D:\\JYR\\Research\\Working\\CognitiveABM\\obj\\",
+        "projectPath": "/mnt/c/Users/austf/Desktop/sumRe/cognitiveABM-main/cognitiveABM-main/CognitiveABM/CognitiveABM.csproj",
+        "packagesPath": "/home/austen/.nuget/packages/",
+        "outputPath": "/mnt/c/Users/austf/Desktop/sumRe/cognitiveABM-main/cognitiveABM-main/CognitiveABM/obj/",
         "projectStyle": "PackageReference",
         "configFilePaths": [
-          "C:\\Users\\17608\\AppData\\Roaming\\NuGet\\NuGet.Config",
-          "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.Offline.config"
+          "/home/austen/.nuget/NuGet/NuGet.Config"
         ],
         "originalTargetFrameworks": [
           "netcoreapp2.1"
         ],
         "sources": {
-          "C:\\Program Files (x86)\\Microsoft SDKs\\NuGetPackages\\": {},
           "https://api.nuget.org/v3/index.json": {}
         },
         "frameworks": {
@@ -57,40 +55,44 @@
             "net47",
             "net471",
             "net472",
-            "net48"
+            "net48",
+            "net481"
           ],
           "assetTargetFallback": true,
           "warn": true,
-          "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\6.0.101\\RuntimeIdentifierGraph.json"
+          "runtimeIdentifierGraphPath": "/home/austen/.dotnet/sdk/6.0.400/RuntimeIdentifierGraph.json"
+        }
+      },
+      "runtimes": {
+        "linux-x64": {
+          "#import": []
         }
       }
     },
-    "D:\\JYR\\Research\\Working\\Examples\\HillClimberABMExample\\HillClimberABMExample.csproj": {
+    "/mnt/c/Users/austf/Desktop/sumRe/cognitiveABM-main/cognitiveABM-main/Examples/HillClimberABMExample/HillClimberABMExample.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "D:\\JYR\\Research\\Working\\Examples\\HillClimberABMExample\\HillClimberABMExample.csproj",
+        "projectUniqueName": "/mnt/c/Users/austf/Desktop/sumRe/cognitiveABM-main/cognitiveABM-main/Examples/HillClimberABMExample/HillClimberABMExample.csproj",
         "projectName": "HillClimberABMExample",
-        "projectPath": "D:\\JYR\\Research\\Working\\Examples\\HillClimberABMExample\\HillClimberABMExample.csproj",
-        "packagesPath": "C:\\Users\\17608\\.nuget\\packages\\",
-        "outputPath": "D:\\JYR\\Research\\Working\\Examples\\HillClimberABMExample\\obj\\",
+        "projectPath": "/mnt/c/Users/austf/Desktop/sumRe/cognitiveABM-main/cognitiveABM-main/Examples/HillClimberABMExample/HillClimberABMExample.csproj",
+        "packagesPath": "/home/austen/.nuget/packages/",
+        "outputPath": "/mnt/c/Users/austf/Desktop/sumRe/cognitiveABM-main/cognitiveABM-main/Examples/HillClimberABMExample/obj/",
         "projectStyle": "PackageReference",
         "configFilePaths": [
-          "C:\\Users\\17608\\AppData\\Roaming\\NuGet\\NuGet.Config",
-          "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.Offline.config"
+          "/home/austen/.nuget/NuGet/NuGet.Config"
         ],
         "originalTargetFrameworks": [
           "netcoreapp2.1"
         ],
         "sources": {
-          "C:\\Program Files (x86)\\Microsoft SDKs\\NuGetPackages\\": {},
           "https://api.nuget.org/v3/index.json": {}
         },
         "frameworks": {
           "netcoreapp2.1": {
             "targetAlias": "netcoreapp2.1",
             "projectReferences": {
-              "D:\\JYR\\Research\\Working\\CognitiveABM\\CognitiveABM.csproj": {
-                "projectPath": "D:\\JYR\\Research\\Working\\CognitiveABM\\CognitiveABM.csproj"
+              "/mnt/c/Users/austf/Desktop/sumRe/cognitiveABM-main/cognitiveABM-main/CognitiveABM/CognitiveABM.csproj": {
+                "projectPath": "/mnt/c/Users/austf/Desktop/sumRe/cognitiveABM-main/cognitiveABM-main/CognitiveABM/CognitiveABM.csproj"
               }
             }
           }
@@ -112,7 +114,7 @@
             "Microsoft.NETCore.App": {
               "suppressParent": "All",
               "target": "Package",
-              "version": "[2.1.0, )",
+              "version": "[2.1.30, )",
               "autoReferenced": true
             },
             "Nito.AsyncEx": {
@@ -130,11 +132,17 @@
             "net47",
             "net471",
             "net472",
-            "net48"
+            "net48",
+            "net481"
           ],
           "assetTargetFallback": true,
           "warn": true,
-          "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\6.0.101\\RuntimeIdentifierGraph.json"
+          "runtimeIdentifierGraphPath": "/home/austen/.dotnet/sdk/6.0.400/RuntimeIdentifierGraph.json"
+        }
+      },
+      "runtimes": {
+        "linux-x64": {
+          "#import": []
         }
       }
     }

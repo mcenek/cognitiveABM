@@ -69,7 +69,7 @@ namespace CognitiveABM.FCM
                     {
                         WriteGenomes("genomes.csv");
                     }
-                    ABM.GlobalTargetFitnes = avg;
+                    ABM.GlobalTargetFitnes = avg + 1 - 1;
                 }
 
                 if (sum == 0)

@@ -14,7 +14,7 @@ public static class Program
 
     public static void Main(string[] args)
     {
-        terrainFilePaths = new string[] { "./layers/moatGauss.csv" };
+        terrainFilePaths = new string[] { "./layers/flatTerrain.csv" };
         // terrainFilePaths = new string[] { "./layers/landscape.csv", "./layers/moatGauss.csv", "./layers/grid.csv" };
         var fitnessVals = new List<List<float>>();
 
@@ -33,7 +33,7 @@ public static class Program
             ABM abm = new ABM(modelDescription: GetModelDescription());
             //abm.Train(10, terrainFilePath, args);
 
-            abm.Train(fcm, 20, 0, true, terrainFilePath, args);
+            abm.Train(fcm, 50, 0, true, terrainFilePath, args);
 
             // QLearning.usePerfectQMap = 0;
 

@@ -98,7 +98,7 @@ namespace HillClimberExample
         //creates noise that will be used to change the genomes
         public float noiseGen(){
           var random = new Random();
-          float noise = (float)random.NextDouble()/50; //noise between 0 and 0.005
+          float noise = (float)random.NextDouble()/2000; //noise between 0 and 0.005
           int sign = random.Next(1, 3);
           if(sign == 2){ //noise becomes negative;
             noise = noise * -1;

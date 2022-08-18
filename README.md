@@ -28,6 +28,25 @@ FCM - manages reproduction between generations
 Perceptron - uses an agent's genomes as values in a perceptron matrix and is used to make decisions.
 
 QLearning - Uses QLearning maps, found in `Examples/HillClimberABMExample/layers`, to train agents. To start, the generated qmap is not included in the files and will be created when the QLearning module is run for the first time.
+### How to install on linux
+Download dotnet
+    wget  https://dot.net/v1/dotnet-install.sh
+Run the bash script
+    chmod +x dotnet-install.sh
+    ./dotnet-install.sh
+Save the dotnet path
+    export DOTNET_ROOT=$HOME/.dotnet
+    export PATH=$PATH:$HOME/.dotnet:$HOME/.dotnet/tools
+Ensure dotnet is installed
+    dotnet
+    OUTPUT: usage dotnet [options] ...
+Traverse to the first cognativeAVM directory then install 
+the MARS framework 
+    dotnet add package Mars.Life.Simulations --version 4.2.3
+Ensure that the package was installed properly
+    dotnet list package
+Ensure youre in the 
+
 
 ### What needs re-coding
 

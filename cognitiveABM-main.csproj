@@ -8,4 +8,8 @@
     <Nullable>enable</Nullable>
   </PropertyGroup>
 
+  <ItemGroup>
+    <PackageReference Include="Mars.Life.Simulations" Version="4.2.3" />
+  </ItemGroup>
+
 </Project>
