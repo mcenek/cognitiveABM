@@ -133,54 +133,40 @@ namespace HillClimberExample
         public void Tick()
         {
 
-            List<int[]> distantTerrainLocations = null;
+            List<int[]> distantTerrainLocations = GetDistantTerrainPositions();
             List<int[]> adjacentTerrainLocations = GetAdjacentTerrainPositions();
 
             Tuple<List<float>, List<float>> adjacentTerrainTuple = GetAdjacentTerrainInfo();
+            Tuple<List<float>, List<float>> distantTerrainTuple = GetDistantTerrainInfo();
 
             Boolean onActiveReward = false;
             Boolean stayPut = false;
 
-            float[] distantTerrainElevations = null;
-            float[] adjacentTerrainElevations = GetAdjacentElevations();
-            float[] rewards = adjacentTerrainTuple.Item2.ToArray();
-            rewards = agentReward(rewards, adjacentTerrainLocations);
+            float[] distantTerrainElevations = distantTerrainTuple.Item1.ToArray();
+            float[] adjacentTerrainElevations = adjacentTerrainTuple.Item1.ToArray();
+            float[] rewards = new float[9];
 
             int xPos = (int)Position.X;
             int yPos = (int)Position.Y;
+            float[] inputs = null;
 
-
-
-
-            //for if we want to try 18 inputs
-            float[] inputs = new float[adjacentTerrainElevations.Length + rewards.Length];
-            // Array.Copy(adjacentTerrainElevations, inputs, adjacentTerrainElevations.Length);
-            // Array.Copy(rewards, 0, inputs, adjacentTerrainElevations.Length, rewards.Length);
-            int counter = 0;
-            for(int i = 0; i < inputs.Length; i++){
-              if(i <= 8){
-                inputs[i] = adjacentTerrainElevations[i];
-              }
-              else{
-                inputs[i] = rewards[counter];
-                counter++;
-              }
+            if(useDistantView){
+              rewards = distantTerrainTuple.Item2.ToArray();
+              rewards = agentReward(rewards, distantTerrainLocations);
+              inputs = new float[distantTerrainElevations.Length + rewards.Length];
+              NormInput(distantTerrainElevations).CopyTo(inputs,0);
+              NormInput(rewards).CopyTo(inputs,distantTerrainElevations.Length);
+            }
+            else{
+              rewards = adjacentTerrainTuple.Item2.ToArray();
+              rewards = agentReward(rewards, adjacentTerrainLocations);
+              inputs = new float[adjacentTerrainElevations.Length + rewards.Length];
+              NormInput(adjacentTerrainElevations).CopyTo(inputs,0);
+              NormInput(rewards).CopyTo(inputs,adjacentTerrainElevations.Length);
             }
 
-            inputs = tempNormInput(inputs);
-
-            // Console.WriteLine(inputs.Length);
-            // for(int i = 0; i < inputs.Length; i++){
-            //   Console.WriteLine(inputs[i]);
-            // }
 
 
-            // Array.Copy(adjacentTerrainElevations, 0, inputs, rewards.Length, adjacentTerrainElevations.Length);
-
-            // //try normalizing elevations
-            // float[] inputs = new float[adjacentTerrainElevations.Length + rewards.Length];
-            // Array.Copy(rewards, inputs, rewards.Length);
-            // Array.Copy(rewards, 0, inputs, rewards.Length, rewards.Length);
             //try one hidden layer 18 inputs
             PerceptronFactory perceptron = new PerceptronFactory(18, 2, 1, 18);
             float[] outputs = perceptron.CalculatePerceptronFromId(AnimalId, inputs, AgentMemory);
@@ -189,86 +175,46 @@ namespace HillClimberExample
               stayPut = true;
             }
             if(rewards[4] != 0.0f){
-              // Console.WriteLine("checkingOnActive");
-              //Console.WriteLine(rewards[4]);
               onActiveReward = isOnActiveReward(xPos, yPos);
-
             }
             if(stayPut && onActiveReward){
-              Console.WriteLine("YAY");
               pickUpReward(xPos, yPos);
-              Console.WriteLine("WOOPICKED Up");
-              // foreach (KeyValuePair<int, List<(int,int)>> agent in rewardMemory){
-              //   for(int i = 0; i < agent.Value.Count; i++)
-              //   Console.WriteLine("id = {0}, Coords{1}", agent.Key, agent.Value[i]);
-
-              //   }
             }
-
-            //want to know if my current spot is an active reward spot
-
-            // outputs.CopyTo(AgentMemory, 0);
-            // outputs.CopyTo(AgentMemory, outputs.Length);
 
             //change terrainElevations into a matrix
             //adjacentTerrainElevations contains 9 elements, so we need 3x3 matrix
-            int index = 0;
             float[,] landscapePatch = new float[3, 3];
+            float min = adjacentTerrainElevations[0];
+            float max = adjacentTerrainElevations[0];
+            Tuple<float[,],float,float> tupleItem = null;
 
-            float min = adjacentTerrainElevations[index];
-            float max = adjacentTerrainElevations[index];
-
-            if(useDistantView == true){ //agent uses distant view
-              distantTerrainLocations = GetDistantTerrainPositions();
-              distantTerrainElevations = GetDistantTerrainElevations();
-              min = distantTerrainElevations[index];
-              max = distantTerrainElevations[index];
+            if(useDistantView){ //agent uses distant view
+              min = distantTerrainElevations[0];
+              max = distantTerrainElevations[0];
+              tupleItem = setLandscapeMinMax(landscapePatch, min, max, distantTerrainElevations);
+            }
+            else{
+              tupleItem = setLandscapeMinMax(landscapePatch, min, max, adjacentTerrainElevations);
             }
 
-            for (int x = 0; x < 3; x++) //Getting patch values and turning it into a matrix
-            {
-                for (int y = 0; y < 3; y++)
-                {
-                    if(useDistantView){//set landscape to distantTerrainElevations + 10*rewards
-                      if(distantTerrainElevations[index] < min){
-                         min = distantTerrainElevations[index];
-                        }
-                        if(distantTerrainElevations[index] > max){
-                        max = distantTerrainElevations[index];
-                        }
-                      landscapePatch[x, y] = distantTerrainElevations[index]  + (50/distantTerrainElevations[index] * rewards[index]);
-                    }
-                    else{//set landscape to adjacentTerrainElevations + 10*rewards
-                      if(adjacentTerrainElevations[index] < min){
-                          min = adjacentTerrainElevations[index];
-                      }
-                      if(adjacentTerrainElevations[index] > max){
-                          max = adjacentTerrainElevations[index];
-                      }
-                      landscapePatch[x, y] = adjacentTerrainElevations[index] + (10 * rewards[index]);
-                    }
-                    index++;
-                }
-            }
+            landscapePatch = tupleItem.Item1;
+            min = tupleItem.Item2;
+            max = tupleItem.Item3;
+
 
 
             int direction;
 
             if(stayPut){//don't move cus we on reward
               direction = 4;
-              this.qLearn.savePathandExportValues(this.AnimalId,-1,-1,landscapePatch,this.tickNum, Elevation, xPos, yPos);
-
+              this.qLearn.savePathandExportValues(this.AnimalId,-1,-1,landscapePatch,this.tickNum, Elevation + (25 * rewards[4]), xPos, yPos);
             }
             else{
-              direction = this.qLearn.getDirection(landscapePatch, min, max,this.AnimalId, this.tickNum, Elevation, xPos, yPos); //Which dirction we should be moving
+              direction = this.qLearn.getDirection(landscapePatch, min, max,this.AnimalId, this.tickNum, Elevation + (25 * rewards[4]), xPos, yPos); //Which dirction we should be moving
             }
 
-            int[] newLocation = adjacentTerrainLocations[direction]; //direction = 4
-
-            //add location to memory
-
-
-            //MoveTo (animal object, location, traveling distance)
+            int[] newLocation = null;
+            newLocation = adjacentTerrainLocations[direction];
 
             Terrain._AnimalEnvironment.MoveTo(this, newLocation[0], newLocation[1], 1, predicate: null);
             Elevation = Terrain.GetIntegerValue(this.Position.X, this.Position.Y);
@@ -281,36 +227,61 @@ namespace HillClimberExample
         }
 
 
-        public float[] tempNormInput(float[] input){
+        public Tuple<float[,],float,float> setLandscapeMinMax(float[,] landscapePatch, float min, float max, float[] elevationArr){
+          int index = 0;
+          for (int x = 0; x < 3; x++) //Getting patch values and turning it into a matrix
+          {
+              for (int y = 0; y < 3; y++)
+              {
+                  if(useDistantView){//set landscape to distantTerrainElevations + 10*rewards
+                    if(elevationArr[index] < min){
+                       min = elevationArr[index];
+                      }
+                      if(elevationArr[index] > max){
+                      max = elevationArr[index];
+                      }
+                    landscapePatch[x, y] = elevationArr[index];
+                  }
+                  else{//set landscape to adjacentTerrainElevations + 10*rewards
+                    if(elevationArr[index] < min){
+                        min = elevationArr[index];
+                    }
+                    if(elevationArr[index] > max){
+                        max = elevationArr[index];
+                      }
+                    landscapePatch[x, y] = elevationArr[index];
+                  }
+                  index++;
+              }
+          }
+
+          return new (landscapePatch,min,max);
+
+        }
+
+        //temp normilization method that will normilize the first part of input
+        //This normalizes the elevations and leaves the rewards alone
+        //Rewards currently already normalized so for time sake this is done this way
+        public float[] NormInput(float[] input){
           float min = 0.0f;
           float max = 0.0f;
           for(int i = 0; i < input.Length; i++){
-            if(i <= 8){
-              if(min > input[i]){
-                min = input[i];
-              }
-              if(max < input[i]){
-                max = input[i];
-              }
+            if(min > input[i]){
+              min = input[i];
             }
-            else{
-              break;
+            if(max < input[i]){
+              max = input[i];
             }
           }
 
           float diff = Math.Abs(max - min);
 
           for(int k = 0; k < input.Length; k++){
-            if(k <= 8){
-              if(diff == 0.0f){
-                input[k] = 0;
-              }
-              else{
-                input[k] = (input[k] - min)/(max-min);
-              }
+            if(diff == 0.0f){
+              input[k] = 0;
             }
             else{
-              break;
+              input[k] = (input[k] - min)/(max-min);
             }
           }
           return input;
@@ -385,6 +356,7 @@ namespace HillClimberExample
           //if staying put on reward
           if(stayPut && onActiveReward){
             BioEnergy = 10;
+            ABM.pickUpStat[0]++;
           }
           // else{
           //   BioEnergy = 0;
@@ -395,7 +367,8 @@ namespace HillClimberExample
           }
           //if moving on reward
           if(!stayPut && onActiveReward){
-            BioEnergy = -5;
+            BioEnergy = -2;
+            ABM.pickUpStat[1]++;
           }
           //if moving on non-reward
           if(!stayPut && !onActiveReward){
@@ -474,6 +447,46 @@ namespace HillClimberExample
 
             return terrain;
         }
+
+        private Tuple<List<float>, List<float>> GetDistantTerrainInfo()
+        {
+            List<float> elevations = new List<float>();
+            List<float> rewards = new List<float>();
+            int x = (int)Position.X;
+            int y = (int)Position.Y;
+
+            for (int dy = 1; dy >= -1; --dy)
+            {
+                for (int dx = -1; dx <= 1; ++dx)
+                {
+                    int newX = 7*dx + x;
+                    int newY = 7*dy + y;
+                    //need check for newX < 0
+                    if(newX >= length || newX < 0){ //if the newX value is out of bounds use adjacent view
+                        newX = dx + x;
+                    }
+                    if(newY >= height || newY < 0){
+                        newY = dy + y;
+                    }
+                    elevations.Add((float)Terrain.GetRealValue(newX, newY));
+                    //if looking out of bounds of reward Maps
+                    //having a variable that says the map size would be more ideal
+                    float reward;
+                    if(newX >= length || newY >= height || newX < 0 || newY < 0){
+                      reward = 0.0f;
+                    }
+                    else{
+                        reward = rewardMap[newX, newY];
+                    }
+                    rewards.Add(reward);
+                }
+
+            }
+            Tuple<List<float>, List<float>> terrain = new (elevations, rewards);
+
+            return terrain;
+        }
+
         private float[] GetAdjacentElevations(){
             List<float> elevations = new List<float>();
             int x = (int)Position.X;

@@ -167,14 +167,11 @@ namespace CognitiveABM.FCM
                 float multiplier = 1;
                 if (fitnessValue > averageFitness)
                 {
-                    multiplier = 2.5f;
-                }
-                else if(fitnessValue == averageFitness){
-                    multiplier = 1f;
+                    multiplier = 1.5f;
                 }
                 else
                 {
-                    multiplier = .5f;
+                    multiplier = 1f;
                 }
                 else{
                     agentReproductionPercent = (fitnessValue * multiplier) / sumOfFitnessValues;

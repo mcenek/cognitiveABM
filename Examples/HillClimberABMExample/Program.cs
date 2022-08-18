@@ -14,8 +14,8 @@ public static class Program
 
     public static void Main(string[] args)
     {
-        terrainFilePaths = new string[] { "./layers/moatGauss.csv" };
-        // terrainFilePaths = new string[] { "./layers/landscape.csv", "./layers/moatGauss.csv", "./layers/grid.csv" };
+        // terrainFilePaths = new string[] { "./layers/moatGauss.csv" };
+        terrainFilePaths = new string[] { "./layers/landscape.csv", "./layers/moatGauss.csv", "./layers/grid.csv" };
         var fitnessVals = new List<List<float>>();
 
         foreach (string filePath in terrainFilePaths)
@@ -24,7 +24,7 @@ public static class Program
             FileUtils.ChangeTerrainFilePath(terrainFilePath);
 
 
-            QLearning.usePerfectQMap = 1;
+            QLearning.usePerfectQMap = 0;
             List<List<float>> trainGenomes = null;
             if (terrainFilePath != terrainFilePaths[0]) {
                 trainGenomes = FileUtils.ReadGenomesFromFile(".\\output\\genomes.csv");
@@ -33,7 +33,7 @@ public static class Program
             ABM abm = new ABM(modelDescription: GetModelDescription());
             //abm.Train(10, terrainFilePath, args);
 
-            abm.Train(fcm, 20, 0, true, terrainFilePath, args);
+            abm.Train(fcm, 8500, 0, true, terrainFilePath, args);
 
             // QLearning.usePerfectQMap = 0;
 
