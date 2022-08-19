@@ -55,9 +55,9 @@ namespace CognitiveABM.QLearning
         public void setQlearnMap(){
           //var filePath = @"..\HillClimberABMExample\layers\LandScapeSlopeHard.csv";
           float[,] data = new float[8,8]; //4x4 qmap matrix hard coded
-          string qMapFile = @"..\HillClimberABMExample\layers\qMapPerfect8x8.csv";
+          string qMapFile = @"../HillClimberABMExample/layers/qMapPerfect8x8.csv";
           if(usePerfectQMap == 0){
-            qMapFile = @"..\HillClimberABMExample\layers\qMapGenerated8x8.csv";
+            qMapFile = @"../HillClimberABMExample/layers/qMapGenerated8x8.csv";
           }
           using(var reader = new StreamReader(qMapFile))
          {
