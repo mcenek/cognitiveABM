@@ -206,7 +206,7 @@ namespace CognitiveABM.FCM
          */
         public void WriteGenomes(string filename)
         {
-            string path = ".\\output\\" + filename;
+            string path = ".//output//" + filename;
             var writer = new StreamWriter(path: path);
             for (int i = 0; i < Population; i++)
             {
