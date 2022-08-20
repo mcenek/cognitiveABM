@@ -9,9 +9,9 @@ import pandas as pandasForSortingCSV
 NUM_STEPS = 150
 TRESHOLD = 47
 
-Data = ['./output/landscape_exportInfo.csv','./output/moatGauss_exportInfo.csv', './output/grid_exportInfo.csv']
-Layer = ['./layers/landscape.csv', './layers/moatGauss.csv', './layers/grid.csv']
-rewardLayer = ['./layers/landscape_reward.csv', './layers/moatGauss_reward.csv', './layers/grid_reward.csv']
+Data = ['./output/landscape_exportInfo.csv','./output/moatGauss_exportInfo.csv', '.\output\grid_exportInfo.csv']
+Layer = ['./layers/landscape.csv', './layers/moatGauss.csv', '.\layers\grid.csv']
+rewardLayer = ['./layers/landscape_reward.csv', './layers/moatGauss_reward.csv', '.\layers\grid_reward.csv']
 terrain_num = 2
 AgentData = Data[terrain_num]
 LayerFile = Layer[terrain_num]
@@ -27,7 +27,9 @@ for file in Data:
 x = []
 y = []
 fitness = []
-bestAgentNumPoint = 0
+bestAgentID = 0
+bestAgentXPos = []
+bestAgentYPos = []
 bestFit = 0
 terrain = list(csv.reader(open(LayerFile),
                           quoting=csv.QUOTE_NONNUMERIC))
@@ -39,9 +41,19 @@ with open(AgentData, newline='') as csvfile:
         x.append(int(float(row['X Pos'])))
         y.append(int(float(row['Y Pos'])))
         fitness.append(int(float(row['Current Elevation'])))
-        if int(float(row['Total Fitness'])) > bestFit:
-            bestAgentNumPoint = int(float(row['AnimalID']))
+        if int(float(row['TickNum'])) == 249 and int(float(row['Total Fitness'])) > bestFit:
+            bestAgentID = int(float(row['AnimalID']))
             bestFit = int(float(row['Total Fitness']))
+
+
+with open(AgentData, newline='') as csvfile:
+    reader = csv.DictReader(csvfile)
+
+    for row in reader:
+        if int(float(row['AnimalID'])) == bestAgentID:
+            bestAgentXPos.append(int(float(row['X Pos'])))
+            bestAgentYPos.append(int(float(row['Y Pos'])))
+
 
 numpoints = 96
 points = np.random.random((2, numpoints))
@@ -108,7 +120,7 @@ for i in range(NUM_STEPS):
     colors = cm.rainbow(norm)
     fitness_map.plot(avg_fit)
     agent_pos.scatter(x[i*numpoints: i*numpoints + numpoints], y[i*numpoints: i*numpoints + numpoints], c=colors, s=100)
-    bestAgent_pos.scatter(x[bestAgentNumPoint + i*numpoints], y[bestAgentNumPoint + i*numpoints], c='red', s=100)
+    bestAgent_pos.scatter(bestAgentXPos[i], bestAgentYPos[i], c='red', s=100)
     heatmap.imshow(terrain[::-1], origin = 'lower')
     reward_pos.get_xaxis().set_visible(False);
     reward_pos.get_yaxis().set_visible(False);
