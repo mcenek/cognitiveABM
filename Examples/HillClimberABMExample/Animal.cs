@@ -47,7 +47,7 @@ namespace HillClimberExample
 
         public QLearning qLearn = new QLearning();
 
-        public int[,] rewardMap;
+        public float[,] rewardMap;
 
         public static ConcurrentDictionary<int, List<(int,int)>> rewardMemory = new ConcurrentDictionary<int, List<(int,int)>>();
 
@@ -580,7 +580,7 @@ namespace HillClimberExample
             return locations;
         }
 
-         private int[,] readRewards(){
+         private float[,] readRewards(){
             string path = Program.terrainFilePath;
             string filePath = path.Replace(".csv", "_reward.csv");
             int counter = 0;
