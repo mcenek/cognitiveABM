@@ -33,7 +33,7 @@ public static class Program
             ABM abm = new ABM(modelDescription: GetModelDescription());
             //abm.Train(10, terrainFilePath, args);
 
-            abm.Train(fcm, 8500, 0, true, terrainFilePath, args);
+            abm.Train(fcm, 100, 0, true, terrainFilePath, args);
 
             // QLearning.usePerfectQMap = 0;
 
