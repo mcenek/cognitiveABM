@@ -392,11 +392,15 @@ namespace HillClimberExample
             //make all agents start at same spot
             var random = new Random(); //seed
 
+            // Completely random in initial postion
+            return new Tuple<int, int>(random.Next(Terrain.DimensionX()), random.Next(Terrain.DimensionY()));
+
             //Puts agents on border of map
             //Case 0: Along Y axis (left)
             //Case 1: Along X axis (bottom)
             //Case 2: Along opposite Y axis (right)
             //Case 3: Along opposite X axis (top)
+            /**
             switch (random.Next(4)){
               case 0:
                 return new Tuple<int, int>(0, random.Next(Terrain.DimensionY()));
@@ -415,6 +419,7 @@ namespace HillClimberExample
                 Console.Write("Default Position");
                 break;
             }
+            */
 
         }
 

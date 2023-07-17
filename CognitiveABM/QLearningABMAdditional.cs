@@ -56,7 +56,7 @@ namespace CognitiveABM.QLearningABMAdditional{
       scoreValue = temp;
       scoreValue = setScoreValue(scoreValue);
 
-      maxSteps = getStepsToMax(agentHolder);
+      maxSteps = getStepsToMin(agentHolder);
       scoreValue = calculateAgentScore(scoreValue, maxSteps, lambda, agentHolder);
       return scoreValue;
     }//end getAgentScore
@@ -107,6 +107,35 @@ namespace CognitiveABM.QLearningABMAdditional{
         AME = 0.0f;
         foreach (float[] array in patchList){
          if(AME < array[11]){ //finds max elevation an agent reached
+           AME = array[11];
+           maxStep = (int)array[1];
+         }
+        }//end for each float[] array
+        maxSteps.Add(entry.Key,maxStep);
+      }//end for each id
+
+      return maxSteps;
+    }//end getStepsToMax
+
+    /**
+     * @param patchDict: dictionary containing the patches an agent has traversed
+     * @param animalIdList: list of all animal ids
+     * @return: dictionary containing how many steps it took an agent to reach min elevation
+     * @description: finds how many steps it took for an agent to reach its min elevation
+     */
+    public Dictionary<int,int> getStepsToMin(agentInfoHolder agentHolder){
+      Dictionary<int,int> maxSteps = new Dictionary<int,int>();
+      List<float[]> patchList = new List<float[]>();
+
+      float AME = float.MaxValue;
+      int maxStep = 0;
+
+      //finds the max steps it took an agent to reach it's peak elevation
+      foreach (KeyValuePair<int, (List<float[]>, List<(int,int)>)> entry in agentHolder.getInfo()){
+        patchList = entry.Value.Item1;
+        AME = 0.0f;
+        foreach (float[] array in patchList){
+         if(AME > array[11]){ //finds min elevation an agent reached
            AME = array[11];
            maxStep = (int)array[1];
          }
