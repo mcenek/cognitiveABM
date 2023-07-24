@@ -150,6 +150,33 @@ namespace HillClimberExample
             int yPos = (int)Position.Y;
             float[] inputs = null;
 
+
+            // -------------------------------------Hill Descender Reward manipulation-----------------------------------------------//
+            float centralElevation = adjacentTerrainElevations[4]; // central elevation 3x3 patch
+            float[] elevationDifferences = new float[9];
+            for (int i = 0; i < 9; i++)
+            {
+                elevationDifferences[i] = centralElevation - adjacentTerrainElevations[i];
+            }
+            // reassign rewards
+            if(useDistantView){
+               rewards = distantTerrainTuple.Item2.ToArray();
+            } else {
+               rewards = adjacentTerrainTuple.Item2.ToArray();
+            }
+            for (int i = 0; i < 9; i++)
+            {
+                if (elevationDifferences[i] > 0)
+                {
+                    rewards[i] = -1.0f; // up bad
+                }
+                else if (elevationDifferences[i] < 0)
+                {
+                    rewards[i] = 1.0f; // down good
+                }
+            }
+            // ----------------------------------------------------------------------------------------------------------------------//
+
             if(useDistantView){
               rewards = distantTerrainTuple.Item2.ToArray();
               rewards = agentReward(rewards, distantTerrainLocations);
@@ -164,9 +191,7 @@ namespace HillClimberExample
               NormInput(adjacentTerrainElevations).CopyTo(inputs,0);
               NormInput(rewards).CopyTo(inputs,adjacentTerrainElevations.Length);
             }
-
-
-
+            
             //try one hidden layer 18 inputs
             PerceptronFactory perceptron = new PerceptronFactory(18, 2, 1, 18);
             float[] outputs = perceptron.CalculatePerceptronFromId(AnimalId, inputs, AgentMemory);
