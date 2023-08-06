@@ -53,7 +53,13 @@ namespace CognitiveABM.agentInformationHolder
         List<float[]> tempList = agentInfo[id].Item1;
         float[] temp = exportVals.Last();
         temp[12] = (tempList.Last())[11];
+        // calculate the altitude by getting the differences 
         temp[13] = temp[11] - temp[12];
+        // hill descending -> flips the values (3 5 7 8 4 4 1 -> differences -> 2 2 2 1 -4 0 -3)
+        temp[13] = -1*temp[13];
+        Console.WriteLine("Temp11: "+ temp[11]);
+        Console.WriteLine("Temp12: "+ temp[12]);
+        Console.WriteLine("Temp13: "+ temp[13]);
         float[] avgMax = getAverageandTotal(tempList, temp[13]);
         temp[14] = avgMax[0];
         temp[15] = avgMax[1];
