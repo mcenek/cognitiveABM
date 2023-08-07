@@ -55,9 +55,9 @@ namespace CognitiveABM.QLearning
         public void setQlearnMap(){
           //var filePath = @"..\HillClimberABMExample\layers\LandScapeSlopeHard.csv";
           float[,] data = new float[8,8]; //4x4 qmap matrix hard coded
-          string qMapFile = @"..\HillClimberABMExample\layers\qMapPerfect8x8.csv";
+          string qMapFile = @"../HillClimberABMExample/layers/qMapPerfect8x8.csv";
           if(usePerfectQMap == 0){
-            qMapFile = @"..\HillClimberABMExample\layers\qMapGenerated8x8.csv";
+            qMapFile = @"../HillClimberABMExample/layers/qMapGenerated8x8.csv";
           }
           using(var reader = new StreamReader(qMapFile))
          {
@@ -117,16 +117,17 @@ namespace CognitiveABM.QLearning
          */
         public int getDirection(float[,] landscapePatch, float min, float max, int animalId, int tickNum, float Elevation, int xPos, int yPos){
           float[,] normallisedLandscapePatch = normalliseLandscapePatch(landscapePatch, min, max);
+
           float[] MSE = new float[8];
           for(int i = 0; i < this.prototypes.Count; i++){
             MSE[i] = meanSquareError(normallisedLandscapePatch, prototypes.ElementAt(i));
           }
           //returns index of smallest value (Grabbed from: https://stackoverflow.com/questions/4204169/how-would-you-get-the-index-of-the-lowest-value-in-an-int-array)
+
           int minIndex = Enumerable.Range(0, MSE.Length).Aggregate((a, b) => (MSE[a] < MSE[b]) ? a : b);
 
           int direction = biasedRouletteWheel(minIndex);
           if(direction < 0 || direction > 7){
-
             Console.WriteLine(direction);
           }
 
@@ -152,15 +153,17 @@ namespace CognitiveABM.QLearning
          */
         public float[,] normalliseLandscapePatch(float[,] landscapePatch, float min, float max){
               float[,] normallizedLandscape = new float[landscapePatch.GetLength(0), landscapePatch.GetLength(1)];
-              float total = max - min;
-              if(total == 0.0f){
-                total = 1.0f;
-              }
+              float difference = Math.Abs(max - min);
               for (int row = 0; row < landscapePatch.GetLength(0); row += 1)
               {
                   for (int col = 0; col < landscapePatch.GetLength(1); col += 1)
                   {
-                      normallizedLandscape[row, col] = (landscapePatch[row, col] - min) / (Math.Abs(total));
+                      if(difference == 0.0f){
+                        normallizedLandscape[row, col] = 0.0f;
+                      }
+                      else{
+                        normallizedLandscape[row, col] = (landscapePatch[row, col] - min) / difference;
+                      }
                   }
               }
 
@@ -182,16 +185,11 @@ namespace CognitiveABM.QLearning
           // if(useMap){
             for(int i = 0; i < 8; i++){
               addedVal += qMap[i,col];
-              //addedVal += noiseGen();
+              addedVal += noiseGen();
               if(addedVal >= rFloat){
                 return i;
               }
-            }//end for
-          // }
-          // else{
-          //   return random.Next(8);//randomly pick a direction
-          // }
-              Console.WriteLine(addedVal + "ERROR");
+            }
               return col; //return -1 so we know that it's this method that causes an error later down the road
         }//end rouletteWheel
                 /**

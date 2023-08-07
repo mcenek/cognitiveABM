@@ -24,6 +24,11 @@ namespace CognitiveABM.Perceptron
 
         Boolean useMemory = false;
 
+        Boolean onOutPut = false;
+
+
+        protected int[] indexArr { get; }
+
         /**
          * Constructor
          */
@@ -34,7 +39,8 @@ namespace CognitiveABM.Perceptron
             NumberOfHiddenLayers = numberOfHiddenLayers;
             NeuronsPerHiddenLayer = neuronsPerHiddenLayer;
             _totalLayers = 2 + numberOfHiddenLayers;
-            memory = new float[numberOfInputs];
+            onOutPut = false;
+
         }
 
         /**
@@ -56,27 +62,17 @@ namespace CognitiveABM.Perceptron
         public float[] CalculatePerceptron(float[] genomes, float[] inputs, float[] agentMemory)
         {
 
-
             Genomes = genomes;
-            // float[] outputs = new float[NumberOfOutputs];
+
 
             // initialize and set currentValues to the inputs, then all zeros (for the backward and self faceing edges)
-            float[] values;
+            float[] values = inputs;
 
-            List<float> temp = new List<float>(inputs);
-
-            // temp.AddRange(agentMemory);
-            // temp.AddRange(agentMemory);
-            // add 18 0's to temp
-            temp.AddRange(new float[] { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 });
-
-            //set valuess to an array copy of temp
-            values = temp.ToArray();
 
             int previousLayerHeight = NumberOfInputs;
 
             // should only run twice
-            for (int layerNumber = 0; layerNumber < _totalLayers - 1; layerNumber++)
+            for (int layerNumber = 0; layerNumber < _totalLayers; layerNumber++)
             {
 
                 // get how many nuerons are in the current layer
@@ -86,15 +82,20 @@ namespace CognitiveABM.Perceptron
 
                 // matrix width = 3 * NumberOfInputs based on the fact that we have forwards, self, and backwards leading edges
                 int weightMatrixWidth = NumberOfInputs * 3 - (previousLayerHeight - currentLayerHeight); // should be 27
-                int weightMatrixHeight = currentLayerHeight; // should be 9
+                //27 * 2
+                int weightMatrixHeight = currentLayerHeight; //18,18,2 for a 18,2,1,18
 
-                // should need 243 weights (genomes) per matrix (per layer)
 
                 // get a matrix of weights
                 float[,] weights = CreateWeightMatrix(weightMatrixWidth, weightMatrixHeight);
 
+                if(layerNumber == _totalLayers - 1){
+                  onOutPut = true;
+                }
+
                 // calculate the values of the neurons of the current layer
-                values = MatrixMultiply(values, weights); // this
+                values = MatrixMultiply(values, weights, layerNumber); // this
+
 
                 // keep track of the hieght of the previous later
                 previousLayerHeight = currentLayerHeight;
@@ -111,17 +112,18 @@ namespace CognitiveABM.Perceptron
          */
         private int CalculateLayerHeight(int layer)
         {
+          //for 18 2 1 18
             if (layer == 0) // input layer
             {
-                return NumberOfInputs;
+                return NumberOfInputs;//18
             }
             else if (layer != _totalLayers - 1) // hidden layer
             {
-                return NeuronsPerHiddenLayer;
+                return NeuronsPerHiddenLayer;//18
             }
             else // output layer
             {
-                return NumberOfOutputs;
+                return NumberOfOutputs;//2
             }
         }
 
@@ -139,10 +141,19 @@ namespace CognitiveABM.Perceptron
             {
                 for (int j = 0; j < weights.GetLength(1); j++)
                 {
+                  try{
+
                     weights[i, j] = Genomes[_weightIndex];
+                  }
+                  catch{
+                    Console.WriteLine(Genomes.Length);
+
+                    System.Environment.Exit(0);
+                  }
                     _weightIndex++;
                 }
             }
+            // Console.WriteLine(_weightIndex);
             return weights;
         }
 
@@ -152,15 +163,32 @@ namespace CognitiveABM.Perceptron
          * @description: Multiples Matrix
          * @returns: the resulting matrix from multiplication
          */
-        private float[] MatrixMultiply(float[] inputs, float[,] weights)
+        private float[] MatrixMultiply(float[] inputs, float[,] weights, int layerNumber)
         {
             // the resulting array will be the same length as the number of weight columns in the weight matrix
 
             // ouput vector length
             int outputLength = weights.GetLength(0); // should be 9
             float[] result = new float[outputLength];
+            if(onOutPut){
+              // // System.Environment.Exit(0);
+              float first = 0.0f;
+              float second = 0.0f;
+              for(int i = 0; i < inputs.Length; i++){
+                if( i < 9){
+                  first += inputs[i];
+                }
+                else{
+                  second += inputs[i];
+                }
+              }
 
-            Parallel.For(0, weights.GetLength(0) - 1, weightRow =>
+              inputs[0] = first;
+              inputs[1] = second;
+
+            }
+
+            Parallel.For(0, weights.GetLength(0), weightRow =>
             {
                 float sum = 0;
 
@@ -168,7 +196,19 @@ namespace CognitiveABM.Perceptron
                 // usuage of strassen's algorithm, or one based off of it, would improve run time
                 for (int i = 0; i < weights.GetLength(1); i++)
                 {
-                    sum += weights[weightRow, i] * inputs[weightRow];
+
+                  sum += weights[weightRow, i] * inputs[weightRow];
+
+                  // }
+                  // else{
+                    if(weightRow >= 9){
+                    sum += weights[weightRow, i] * inputs[weightRow] * (float)3.5;
+                    }
+                    else{
+                      sum += weights[weightRow, i] * inputs[weightRow];
+                    }
+
+                  // }
                 }
                 result[weightRow] = sum;
             });
@@ -176,5 +216,8 @@ namespace CognitiveABM.Perceptron
             // Console.WriteLine("Matrix Muliplication Result");
             return result;
         }
+
+
+
     }
 }

@@ -2,10 +2,10 @@
  * HillClimberFCM.cs
  * Alex Weininger
  * Daniel Borg
- * 
- * This class implements the abstract FCM class from the CognitiveABM package. 
+ *
+ * This class implements the abstract FCM class from the CognitiveABM package.
  * This will control the genetic algorithm for the HillClimber agents.
- * 
+ *
  */
 
 using System;
@@ -25,13 +25,14 @@ namespace HillClimberExample
         private readonly string fitnessFileName;
         private readonly string fitnessColumnName;
 
-        public HillClimberFCM(int population, int numberOfValues, int steps, string fitnessFileName, string fitnessColumnName, List<List<float>> genomes = null) : base(population, numberOfValues, genomes)
+        public HillClimberFCM(int population, int numberOfValues, int steps, string fitnessFileName, string fitnessColumnName, List<List<float>> genomes) : base(population, numberOfValues, genomes)
         {
             this.fitnessFileName = fitnessFileName;
             this.fitnessColumnName = fitnessColumnName;
             this.steps = steps;
         }
 
+        //grabs the fitness values from the corresponding csv file (animal.csv)
         public override List<float> Fitness(List<List<float>> agents)
         {
             var fitnessValues = new List<float>();
@@ -58,28 +59,32 @@ namespace HillClimberExample
             return fitnessValues;
         }
 
-        public override List<List<float>> GenerateOffspring(List<float> agentFitnessValues)
+        //Splits the chosen parent's genomes and combines them to make a child
+        //The child genomes will then be mutated
+        public override List<List<float>> GenerateOffspring(List<float> agentReproductionPercentages)
         {
-            ConcurrentBag<List<float>> bag = new ConcurrentBag<List<float>>();
+            ConcurrentBag<List<float>> newAgents = new ConcurrentBag<List<float>>();
             Random random = new Random();
 
             Parallel.For(0, Population, index =>
             {
-                Tuple<List<float>, List<float>> parents = PickParents(agentFitnessValues.ToList());
+                Tuple<List<float>, List<float>> parents = PickParents(agentReproductionPercentages.ToList());
                 int splitIndex = random.Next(0, NumberOfValues);
 
                 List<float> child = new List<float>();
 
                 List<float> parent1Genomes = new List<float>(parents.Item1.GetRange(0, splitIndex));
                 List<float> parent2Genomes = new List<float>(parents.Item2.GetRange(splitIndex, parents.Item2.Count - splitIndex));
+                //Console.WriteLine("{0} {1} {2} {3}", parent1Genomes.Count, parent2Genomes.Count, parents.Item2.Count - splitIndex, splitIndex);
+                //System.Environment.Exit(0);
 
                 child.AddRange(parent1Genomes);
                 child.AddRange(parent2Genomes);
 
-                for (int i = 0; i < 5; i++)
+                for (int i = 0; i < 1000; i++)
                 {
                     var randomIndex = random.Next(child.Count);
-                    child[randomIndex] += (float)random.NextDouble() - 0.5f;
+                    child[randomIndex] += noiseGen();
                     if (child[randomIndex] > 1)
                         child[randomIndex] = 1;
 
@@ -87,10 +92,18 @@ namespace HillClimberExample
                         child[randomIndex] = 0;
                 }
 
-                bag.Add(child);
+                newAgents.Add(child);
             });
-
-            return bag.ToList();
+            return newAgents.ToList();
         }
+        public float noiseGen(){
+          var random = new Random();
+          float noise = (float)random.NextDouble()/50; //noise between 0 and 0.005
+          int sign = random.Next(1, 3);
+          if(sign == 2){ //noise becomes negative;
+            noise = noise * -1;
+          } //end for
+          return noise;
+        } 
     }
 }

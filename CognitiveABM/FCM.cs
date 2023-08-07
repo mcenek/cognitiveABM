@@ -21,7 +21,7 @@ namespace CognitiveABM.FCM
          * @param genomes: 2d list of float values representing the genomes of agents
          * @description: creates the agents
          */
-        public FCM(int population, int numberOfValues, List<List<float>> genomes = null)
+        public FCM(int population, int numberOfValues, List<List<float>> genomes)
         {
             Population = population;
             NumberOfValues = numberOfValues;
@@ -50,7 +50,7 @@ namespace CognitiveABM.FCM
          * @description: This will train the agents. If already at target fitness it may print genomes
          * @return: agentFitness
          */
-        public List<float> Run(Boolean train, float fitnessTarget = 200, Boolean writeGenomes = false)
+        public List<float> Run(Boolean train, float fitnessTarget, Boolean writeGenomes)
         {
             List<float> agentFitness = Fitness(Agents);
 
@@ -67,9 +67,9 @@ namespace CognitiveABM.FCM
                     Console.WriteLine("FitnessTarget met.");
                     if (writeGenomes)
                     {
-                        WriteGenomes("genomes");
+                        WriteGenomes("genomes.csv");
                     }
-                    Environment.Exit(0);
+                    ABM.GlobalTargetFitnes = avg;
                 }
 
                 if (sum == 0)
@@ -94,7 +94,7 @@ namespace CognitiveABM.FCM
 
                 //Agents[0] = bestAgent;
 
-            }
+            }//end if train
 
             return agentFitness;
         }
@@ -131,11 +131,13 @@ namespace CognitiveABM.FCM
             for (int i = 0; i < weights.Count; i++)
             {
                 sum += weights.ElementAt(i);
-                if (value < sum)
+                if (value <= sum)
                     return i;
             }
+            // return weights.Count-1;
+            Console.WriteLine(sum + " sum<; value> " + value);
             throw new Exception("SelectRandomWeightedIndex did not find index.");
-        }
+          }
 
         /**
          * @param length: length of array to be made
@@ -169,13 +171,18 @@ namespace CognitiveABM.FCM
                 }
                 else
                 {
-                    multiplier = 1;
+                    multiplier = 1f;
                 }
 
-                float agentReproductionPercent = (fitnessValue * multiplier) / sumOfFitnessValues;
-                reproductionPercent.Add(agentReproductionPercent);
-            }
-
+                float agentReproductionPercent = 0.0f;
+                if(sumOfFitnessValues == 0.0f){
+                  agentReproductionPercent = 0.0f;
+                  }
+                else{
+                  agentReproductionPercent = (fitnessValue * multiplier) / sumOfFitnessValues;
+                  }
+            reproductionPercent.Add(agentReproductionPercent);
+          }
             return reproductionPercent;
         }
 
@@ -199,8 +206,8 @@ namespace CognitiveABM.FCM
          */
         public void WriteGenomes(string filename)
         {
-            string path = ".\\output\\" + filename;
-            var writer = new StreamWriter(path: path, append: true);
+            string path = ".//output//" + filename;
+            var writer = new StreamWriter(path: path);
             for (int i = 0; i < Population; i++)
             {
                 writer.Write(string.Join(",", Agents[i]) + "\n");

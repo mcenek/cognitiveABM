@@ -10,7 +10,13 @@
   "layers": [
     {
       "name": "Terrain",
-      "file": "./layers/grid.csv",
+      "file": "./layers/landscape.csv",
+      "dimensionx": 50,
+      "dimensiony": 50
+    },
+    {
+      "name": "Reward",
+      "file": "./layers/rewardTest.csv",
       "dimensionx": 50,
       "dimensiony": 50
     }
