@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using HillClimberExample;
 using CognitiveABM.QLearning;
@@ -14,9 +15,10 @@ public static class Program
 
     public static void Main(string[] args)
     {
-        // terrainFilePaths = new string[] { "./layers/moatGauss.csv" };
         terrainFilePaths = new string[] { "./layers/landscape.csv", "./layers/moatGauss.csv", "./layers/grid.csv" };
         var fitnessVals = new List<List<float>>();
+        var random = new Random();
+        int numTrain;
 
         foreach (string filePath in terrainFilePaths)
         {
@@ -31,21 +33,14 @@ public static class Program
             }
             HillClimberFCM fcm = new HillClimberFCM(population: 96, numberOfValues: 2020, STEPS, OUTPUT_FILENAME, FITNESS_COLUMNNAME, trainGenomes);
             ABM abm = new ABM(modelDescription: GetModelDescription());
-            //abm.Train(10, terrainFilePath, args);
+            
+            // randomized amount of trained agents for each terrain [50-100]
+            numTrain = random.Next(50,101);
+            abm.Train(fcm, numTrain, 0, true, terrainFilePath, args);
 
-            abm.Train(fcm, 100, 0, true, terrainFilePath, args);
-
-            // QLearning.usePerfectQMap = 0;
-
-            //  var genomes = FileUtils.ReadGenomesFromFile(".\\output\\good.csv");
             fcm = new HillClimberFCM(population: 96, numberOfValues: 2020, STEPS, OUTPUT_FILENAME, FITNESS_COLUMNNAME, trainGenomes);
 
             fitnessVals.Add(abm.Test(fcm, 1, terrainFilePath, args));
-
-            // fitnessVals.Add(abm.Test(1, STEPS, FITNESS_COLUMNNAME,OUTPUT_FILENAME,terrainFilePath, args));
-            //abm.Train(fcm, 10, 200, true, args);
-
-            //fitnessVals.Add(abm.Test(fcm, 1, args));
         }
     }
 
