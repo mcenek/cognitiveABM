@@ -9,9 +9,9 @@ import pandas as pandasForSortingCSV
 NUM_STEPS = 250
 TRESHOLD = 47
 
-Data = ['./output/landscape_exportInfo.csv','./output/moatGauss_exportInfo.csv', '.\output\grid_exportInfo.csv']
-Layer = ['./layers/landscape.csv', './layers/moatGauss.csv', '.\layers\grid.csv']
-rewardLayer = ['./layers/landscape_reward.csv', './layers/moatGauss_reward.csv', '.\layers\grid_reward.csv']
+Data = ['./output/landscape_exportInfo.csv','./output/moatGauss_exportInfo.csv', './output/grid_exportInfo.csv']
+Layer = ['./layers/landscape.csv', './layers/moatGauss.csv', './layers/grid.csv']
+rewardLayer = ['./layers/landscape_reward.csv', './layers/moatGauss_reward.csv', './layers/grid_reward.csv']
 terrain_num = 2
 AgentData = Data[terrain_num]
 LayerFile = Layer[terrain_num]

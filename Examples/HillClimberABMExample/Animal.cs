@@ -587,7 +587,7 @@ namespace HillClimberExample
 
          private float[,] readRewards(){
             string path = Program.terrainFilePath;
-            string filePath = path.Replace(".csv", "_reward.csv");
+            string filePath = path.Replace(".csv", "_reward.csv"); // TODO is it actually reading from the right file? (landscape_reward.csv)
             int counter = 0;
             int x = 0;
             int y = 0;
