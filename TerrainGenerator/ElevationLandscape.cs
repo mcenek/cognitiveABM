@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Text;
+using System.IO;
 
 namespace TerrainGenerator
 {
@@ -46,12 +47,12 @@ namespace TerrainGenerator
             for(int i = 0; i < this.numberOfPeaks; i++)
             {
                 elevation = random.Next(this.maximumElevation / 2) + this.maximumElevation / 2;
-                //this.map[peakCells[i] / this.map.GetLength(1), peakCells[i] % this.map.GetLength(0)] = elevation;
+                elevation = elevation*-1;
+                this.map[peakCells[i] / this.map.GetLength(1), peakCells[i] % this.map.GetLength(0)] = elevation;
                 /**
                  * Invert terrain, flip x, and y cords for peaks by map-x,map-y
                  */
                 //this.map[this.map.GetLength(1) - (peakCells[i] / this.map.GetLength(1)), this.map.GetLength(0) - (peakCells[i] % this.map.GetLength(0))] = elevation;
-                this.map[this.map.GetLength(1), this.map.GetLength(0)] = elevation; // TODO its not even running?
             }
 
             for(int i = 0; i < this.smoothingLevel; i++)
@@ -165,5 +166,53 @@ namespace TerrainGenerator
             }
             return result;
         }
+
+        /**
+         * Convert txt file created to csv file
+         */
+        public void TxtToCsv(string inputFilePath, string outputFilePath){
+            try
+            {
+                string[] lines = File.ReadAllLines(inputFilePath);
+                // Make sure it got 1. X dimen, 2. Y dimen, 3. values
+                if (lines.Length < 3)
+                {
+                    Console.WriteLine("Input file does not contain enough data.");
+                    return;
+                }
+                // dimensions
+                int rows = int.Parse(lines[0]);
+                int cols = int.Parse(lines[1]);
+                int[,] data = new int[rows, cols];
+                string[] values = lines[2].Split(' ');
+                int dataIndex = 0;
+
+                for (int i = 0; i < rows; i++){
+                    for (int j = 0; j < cols; j++){
+                        if (dataIndex < values.Length){
+                            data[i, j] = int.Parse(values[dataIndex]);
+                            dataIndex++;
+                        } // if
+                    } // for j
+                } // for i
+
+                // --> CSV
+                using (StreamWriter writer = new StreamWriter(outputFilePath)){
+                    for (int i = 0; i < rows; i++){
+                        for (int j = 0; j < cols; j++){
+                            writer.Write(data[i, j]);
+                            if (j < cols - 1){
+                                writer.Write(",");
+                            }
+                        }
+                        writer.WriteLine(); // next row
+                    }
+                    writer.Close();
+                }
+            }
+            catch (Exception ex){
+                Console.WriteLine($"An error occurred: {ex.Message}");
+            }
+        } // TxtToCsv
     }
 }

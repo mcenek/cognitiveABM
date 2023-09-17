@@ -12,7 +12,12 @@ namespace TerrainGenerator
             landscape.Initialize();
             landscape.printMap();
 
-            StreamWriter writer = new StreamWriter("..\\..\\..\\landscape.txt");
+            string txtFile = "./landscapeInvert.txt";
+            string csvFile = "./landscapeInvert.csv";
+
+            //StreamWriter writer = new StreamWriter("..//..//..//landscape.txt");
+            StreamWriter writer = new StreamWriter(txtFile);
+            //StreamWriter writer = new StreamWriter("../Examples/HillClimberABMExample/layers/landscape.csv");
             writer.WriteLine(landscape.Width);
             writer.WriteLine(landscape.Height);
 
@@ -21,8 +26,11 @@ namespace TerrainGenerator
                 for (int j = 0; j < landscape.map.GetLength(1); j++)
                     writer.Write(landscape.map[i,j] + " ");
             }
-            Console.WriteLine("Wrote to file.");
+            // Change from txt format to csv format (bandage)
             writer.Close();
+            landscape.TxtToCsv(txtFile,csvFile);
+            
+            Console.WriteLine("Wrote to file.");
         }
     }
 }

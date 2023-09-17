@@ -28,7 +28,7 @@ public static class Program
 
             QLearning.usePerfectQMap = 0;
             List<List<float>> trainGenomes = null;
-            if (terrainFilePath != terrainFilePaths[0]) {
+            if (terrainFilePath != terrainFilePaths[0]) { // if not landscape, then take from train
                 trainGenomes = FileUtils.ReadGenomesFromFile("./output/genomes.csv");
             }
             HillClimberFCM fcm = new HillClimberFCM(population: 96, numberOfValues: 2020, STEPS, OUTPUT_FILENAME, FITNESS_COLUMNNAME, trainGenomes);
