@@ -61,13 +61,13 @@ namespace CognitiveABM.agentInformationHolder
         holdInfo[13] = holdInfo[11] - holdInfo[12];
         // =============================================================================================== //
         // 1. hill descending -> flips the values (3 5 7 8 4 4 1 -> differences -> 2 2 2 1 -4 0 -3)
-        holdInfo[13] = -1*holdInfo[13];
+        /*holdInfo[13] = -1*holdInfo[13];*/
 
         // 2. both ascend/descend (favor the bigger gap? or smaller)
-        holdInfo[13] = holdInfo[11] - holdInfo[12];
+        /*holdInfo[13] = holdInfo[11] - holdInfo[12];
         if((holdInfo[12] - holdInfo[11]) > (holdInfo[11] - holdInfo[12])){ // if descending is bigger gap, then descend
           holdInfo[13] = -1*holdInfo[13];
-        }
+        }*/
 
         // 3. maybe if the hill is too high, then don't climb
         holdInfo[13] = holdInfo[11] - holdInfo[12];

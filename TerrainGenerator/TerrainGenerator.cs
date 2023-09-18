@@ -13,7 +13,7 @@ namespace TerrainGenerator
             landscape.printMap();
 
             string txtFile = "./landscapeInvert.txt";
-            string csvFile = "./landscapeInvert.csv";
+            string csvFile = "../Examples/HillClimberABMExample/layers/landscapeInvert.csv";
 
             //StreamWriter writer = new StreamWriter("..//..//..//landscape.txt");
             StreamWriter writer = new StreamWriter(txtFile);

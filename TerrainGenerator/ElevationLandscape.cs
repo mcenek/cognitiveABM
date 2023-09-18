@@ -40,19 +40,23 @@ namespace TerrainGenerator
 
             createPeaks(peakCells, random);
         }
+        /**
+         * ===================================================================================================================================== 
+         * ===================================================== Different landscape peaks ===================================================== 
+         * =====================================================================================================================================
+         */
 
-        private void createPeaks(List<int> peakCells, Random random)
+         // ========================================================= Normal Peaks ========================================================= 
+        private void createPeaksOrig(List<int> peakCells, Random random)
         {
             int elevation = 0;
             for(int i = 0; i < this.numberOfPeaks; i++)
             {
                 elevation = random.Next(this.maximumElevation / 2) + this.maximumElevation / 2;
-                elevation = elevation*-1;
                 this.map[peakCells[i] / this.map.GetLength(1), peakCells[i] % this.map.GetLength(0)] = elevation;
                 /**
                  * Invert terrain, flip x, and y cords for peaks by map-x,map-y
                  */
-                //this.map[this.map.GetLength(1) - (peakCells[i] / this.map.GetLength(1)), this.map.GetLength(0) - (peakCells[i] % this.map.GetLength(0))] = elevation;
             }
 
             for(int i = 0; i < this.smoothingLevel; i++)
@@ -60,6 +64,66 @@ namespace TerrainGenerator
                 diffuseElevation(peakCells, random);
             }
         }
+
+        // ===================================================== Inverted on creation ===================================================== 
+        private void createPeaks2(List<int> peakCells, Random random){
+            int elevation = 0;
+            for (int i = 0; i < this.numberOfPeaks; i++){
+                elevation = random.Next(this.maximumElevation / 2) + this.maximumElevation / 2;
+                int cellIndex = peakCells[i];
+                int x = cellIndex % this.map.GetLength(0);
+                int y = cellIndex / this.map.GetLength(0);
+
+                // invert
+                elevation = this.maximumElevation - elevation;
+                this.map[y, x] = elevation;
+            }
+
+            for (int i = 0; i < this.smoothingLevel; i++){
+                diffuseElevation(peakCells, random);
+            }
+        }
+        // ===================================================== Inverted after creation ===================================================== 
+        private void createPeaks(List<int> peakCells, Random random){
+            int elevation = 0;
+
+            for (int i = 0; i < this.numberOfPeaks; i++){
+                elevation = random.Next(this.maximumElevation / 2) + this.maximumElevation / 2;
+                int cellIndex = peakCells[i];
+                int y = cellIndex % this.map.GetLength(0);
+                int x = cellIndex / this.map.GetLength(1);
+
+                // store value of peaks
+                int[,] peak = new int[this.map.GetLength(0), this.map.GetLength(1)];
+                peak[y, x] = elevation;
+                this.map[y, x] = elevation;
+            } // for i 
+
+            for (int i = 0; i < this.smoothingLevel; i++){
+                diffuseElevation(peakCells, random);
+            } // for i
+            invertPeaks();
+        }
+        private void invertPeaks(){
+            for (int y = 0; y < this.map.GetLength(0); y++){
+                for (int x = 0; x < this.map.GetLength(1); x++){
+                    if (this.map[y, x] > 0){
+                        this.map[y, x] = this.maximumElevation - this.map[y, x];
+                        // since max - val, peaks are in 900s, must scale down
+                        this.map[y, x] = this.map[y, x] - (int)(this.maximumElevation*.93);
+                        if(this.map[y,x] < 0){
+                            this.map[y,x] = 0;
+                        }
+                    } // if
+                } // for x
+            } // for y
+        } // invert peaks
+
+        /**
+         * ===================================================================================================================================== 
+         * ===================================================================================================================================== 
+         * =====================================================================================================================================
+         */
 
         private void diffuseElevation(List<int> peakCells, Random random)
         {

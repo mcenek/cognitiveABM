@@ -1,0 +1,11 @@
+To adjust the terrain using different generators, change the desired
+createPeaks function in ElevationLandscape.cs to createPeaks and store the
+previous one as a different, reasonable, name.
+
+This will change the file in TerrainGenerator.cs in "string csvFile"
+if you would like to store it in another csv file, change the csvFile to the 
+desired filepath. [Important] You have to change terrainFilePaths[2] in Program.cs
+for the new file to be used.
+
+* note: in order to see the changes in animate.py you have to also change the the layer[2]
+in animate.py to the new filepath.

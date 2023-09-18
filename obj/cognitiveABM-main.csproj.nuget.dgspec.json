@@ -1,23 +1,23 @@
 {
   "format": 1,
   "restore": {
-    "C:\\Users\\austf\\Desktop\\sumRe\\cognitiveABM-main\\cognitiveABM-main\\cognitiveABM-main.csproj": {}
+    "C:\\Users\\Matthew Tran\\Documents\\cognitiveABM\\cognitiveABM-main.csproj": {}
   },
   "projects": {
-    "C:\\Users\\austf\\Desktop\\sumRe\\cognitiveABM-main\\cognitiveABM-main\\cognitiveABM-main.csproj": {
+    "C:\\Users\\Matthew Tran\\Documents\\cognitiveABM\\cognitiveABM-main.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "C:\\Users\\austf\\Desktop\\sumRe\\cognitiveABM-main\\cognitiveABM-main\\cognitiveABM-main.csproj",
+        "projectUniqueName": "C:\\Users\\Matthew Tran\\Documents\\cognitiveABM\\cognitiveABM-main.csproj",
         "projectName": "cognitiveABM-main",
-        "projectPath": "C:\\Users\\austf\\Desktop\\sumRe\\cognitiveABM-main\\cognitiveABM-main\\cognitiveABM-main.csproj",
-        "packagesPath": "C:\\Users\\austf\\.nuget\\packages\\",
-        "outputPath": "C:\\Users\\austf\\Desktop\\sumRe\\cognitiveABM-main\\cognitiveABM-main\\obj\\",
+        "projectPath": "C:\\Users\\Matthew Tran\\Documents\\cognitiveABM\\cognitiveABM-main.csproj",
+        "packagesPath": "C:\\Users\\Matthew Tran\\.nuget\\packages\\",
+        "outputPath": "C:\\Users\\Matthew Tran\\Documents\\cognitiveABM\\obj\\",
         "projectStyle": "PackageReference",
         "fallbackFolders": [
           "C:\\Program Files (x86)\\Microsoft Visual Studio\\Shared\\NuGetPackages"
         ],
         "configFilePaths": [
-          "C:\\Users\\austf\\AppData\\Roaming\\NuGet\\NuGet.Config",
+          "C:\\Users\\Matthew Tran\\AppData\\Roaming\\NuGet\\NuGet.Config",
           "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.FallbackLocation.config",
           "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.Offline.config"
         ],
@@ -26,6 +26,7 @@
         ],
         "sources": {
           "C:\\Program Files (x86)\\Microsoft SDKs\\NuGetPackages\\": {},
+          "C:\\Program Files\\dotnet\\library-packs": {},
           "https://api.nuget.org/v3/index.json": {}
         },
         "frameworks": {
@@ -49,7 +50,8 @@
             "net47",
             "net471",
             "net472",
-            "net48"
+            "net48",
+            "net481"
           ],
           "assetTargetFallback": true,
           "warn": true,
@@ -58,7 +60,7 @@
               "privateAssets": "all"
             }
           },
-          "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\6.0.300\\RuntimeIdentifierGraph.json"
+          "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\7.0.306\\RuntimeIdentifierGraph.json"
         }
       }
     }

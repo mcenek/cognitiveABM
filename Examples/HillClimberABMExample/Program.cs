@@ -15,7 +15,7 @@ public static class Program
 
     public static void Main(string[] args)
     {
-        terrainFilePaths = new string[] { "./layers/landscape.csv", "./layers/moatGauss.csv", "./layers/grid.csv" };
+        terrainFilePaths = new string[] { "./layers/landscape.csv", "./layers/moatGauss.csv", "./layers/landscapeInvert.csv" }; // ./layers/grid.csv
         var fitnessVals = new List<List<float>>();
         var random = new Random();
         int numTrain;
