@@ -9,3 +9,6 @@ for the new file to be used.
 
 * note: in order to see the changes in animate.py you have to also change the the layer[2]
 in animate.py to the new filepath.
+
+TODO
+Peaks only on perimeter

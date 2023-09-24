@@ -59,8 +59,7 @@ namespace TerrainGenerator
                  */
             }
 
-            for(int i = 0; i < this.smoothingLevel; i++)
-            {
+            for(int i = 0; i < this.smoothingLevel; i++){
                 diffuseElevation(peakCells, random);
             }
         }
@@ -84,7 +83,7 @@ namespace TerrainGenerator
             }
         }
         // ===================================================== Inverted after creation ===================================================== 
-        private void createPeaks(List<int> peakCells, Random random){
+        private void createPeaks3(List<int> peakCells, Random random){
             int elevation = 0;
 
             for (int i = 0; i < this.numberOfPeaks; i++){
@@ -118,6 +117,32 @@ namespace TerrainGenerator
                 } // for x
             } // for y
         } // invert peaks
+        
+        // ===================================================== createPerimeterPeaks ===================================================== 
+        private void createPeaks(List<int> peakCells, Random random){
+            int maxElevation = this.maximumElevation;
+            int elevation = 0;
+
+            for (int i = 0; i < this.numberOfPeaks; i++){
+                elevation = random.Next(this.maximumElevation / 2) + this.maximumElevation / 2;
+                int cellIndex = peakCells[i];
+                int y = cellIndex % this.map.GetLength(0);
+                int x = cellIndex / this.map.GetLength(1);
+
+                int nearPerimeterAmount = 5; // how close to perimeter?
+                bool nearPerimeter = (x < nearPerimeterAmount || y < nearPerimeterAmount || x >= this.map.GetLength(1) - nearPerimeterAmount || y >= this.map.GetLength(0) - nearPerimeterAmount);
+
+                if (nearPerimeter){
+                    this.map[y, x] = elevation;
+                } else {
+                    this.map[y, x] = 0;
+                }
+            } // for
+
+            for (int i = 0; i < this.smoothingLevel; i++){
+                diffuseElevation(peakCells, random);
+            }
+        } // perimeter peaks
 
         /**
          * ===================================================================================================================================== 
