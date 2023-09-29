@@ -8,7 +8,7 @@ namespace TerrainGenerator
     {
         static void Main(string[] args)
         {
-            ElevationLandscape landscape = new ElevationLandscape(100, 100, 30, 1000, 9);
+            ElevationLandscape landscape = new ElevationLandscape(50, 50, 30, 1000, 9);
             landscape.Initialize();
             landscape.printMap();
 
