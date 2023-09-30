@@ -54,9 +54,6 @@ namespace TerrainGenerator
             {
                 elevation = random.Next(this.maximumElevation / 2) + this.maximumElevation / 2;
                 this.map[peakCells[i] / this.map.GetLength(1), peakCells[i] % this.map.GetLength(0)] = elevation;
-                /**
-                 * Invert terrain, flip x, and y cords for peaks by map-x,map-y
-                 */
             }
 
             for(int i = 0; i < this.smoothingLevel; i++){

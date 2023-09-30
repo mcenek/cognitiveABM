@@ -30,7 +30,7 @@ namespace TerrainGenerator
             writer.Close();
             landscape.TxtToCsv(txtFile,csvFile);
             
-            Console.WriteLine("Wrote to file.");
+            Console.WriteLine("Wrote to terrain file.");
         }
     }
 }

@@ -11,6 +11,7 @@ TRESHOLD = 47
 
 Data = ['./output/landscape_exportInfo.csv','./output/moatGauss_exportInfo.csv', './output/grid_exportInfo.csv']
 Layer = ['./layers/landscape.csv', './layers/moatGauss.csv', './layers/landscapeInvert.csv'] # ./layers/grid.csv
+# grid_reward, is specifically the own draw onto the plot
 rewardLayer = ['./layers/landscape_reward.csv', './layers/moatGauss_reward.csv', './layers/grid_reward.csv']
 terrain_num = 2
 AgentData = Data[terrain_num]
