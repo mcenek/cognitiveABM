@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using HillClimberExample;
 using CognitiveABM.QLearning;
 using Mars.Core.ModelContainer.Entities;
+using TerrainGenerator;
 
 public static class Program
 {
@@ -12,9 +13,12 @@ public static class Program
     public static string terrainFilePath;
     public const int STEPS = 250;
 
-
     public static void Main(string[] args)
     {
+        // Dynamic Generation of Terrain 
+        TerrainGenerator.TerrainGenerator terrainGenerator = new TerrainGenerator.TerrainGenerator();
+        terrainGenerator.Main(args);
+
         terrainFilePaths = new string[] { "./layers/landscape.csv", "./layers/moatGauss.csv", "./layers/landscapeInvert.csv" }; // ./layers/grid.csv
         var fitnessVals = new List<List<float>>();
         var random = new Random();
