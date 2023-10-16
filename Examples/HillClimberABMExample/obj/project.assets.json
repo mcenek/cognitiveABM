@@ -2979,6 +2979,26 @@
         "runtime": {
           "bin/placeholder/CognitiveABM.dll": {}
         }
+      },
+      "RewardGenerator/1.0.0": {
+        "type": "project",
+        "framework": ".NETCoreApp,Version=v7.0",
+        "compile": {
+          "bin/placeholder/RewardGenerator.dll": {}
+        },
+        "runtime": {
+          "bin/placeholder/RewardGenerator.dll": {}
+        }
+      },
+      "TerrainGenerator/1.0.0": {
+        "type": "project",
+        "framework": ".NETCoreApp,Version=v7.0",
+        "compile": {
+          "bin/placeholder/TerrainGenerator.dll": {}
+        },
+        "runtime": {
+          "bin/placeholder/TerrainGenerator.dll": {}
+        }
       }
     }
   },
@@ -8953,6 +8973,16 @@
       "type": "project",
       "path": "../../CognitiveABM/CognitiveABM.csproj",
       "msbuildProject": "../../CognitiveABM/CognitiveABM.csproj"
+    },
+    "RewardGenerator/1.0.0": {
+      "type": "project",
+      "path": "../../RewardGenerator/RewardGenerator.csproj",
+      "msbuildProject": "../../RewardGenerator/RewardGenerator.csproj"
+    },
+    "TerrainGenerator/1.0.0": {
+      "type": "project",
+      "path": "../../TerrainGenerator/TerrainGenerator.csproj",
+      "msbuildProject": "../../TerrainGenerator/TerrainGenerator.csproj"
     }
   },
   "projectFileDependencyGroups": {
@@ -8960,7 +8990,9 @@
       "CognitiveABM >= 1.0.0",
       "Mars.Life.Simulations >= 4.1.*",
       "Nito.AsyncEx >= 5.0.0",
-      "ScottPlot >= 4.0.28"
+      "RewardGenerator >= 1.0.0",
+      "ScottPlot >= 4.0.28",
+      "TerrainGenerator >= 1.0.0"
     ]
   },
   "packageFolders": {
@@ -8998,6 +9030,12 @@
           "projectReferences": {
             "C:\\Users\\Matthew Tran\\Documents\\cognitiveABM\\CognitiveABM\\CognitiveABM.csproj": {
               "projectPath": "C:\\Users\\Matthew Tran\\Documents\\cognitiveABM\\CognitiveABM\\CognitiveABM.csproj"
+            },
+            "C:\\Users\\Matthew Tran\\Documents\\cognitiveABM\\RewardGenerator\\RewardGenerator.csproj": {
+              "projectPath": "C:\\Users\\Matthew Tran\\Documents\\cognitiveABM\\RewardGenerator\\RewardGenerator.csproj"
+            },
+            "C:\\Users\\Matthew Tran\\Documents\\cognitiveABM\\TerrainGenerator\\TerrainGenerator.csproj": {
+              "projectPath": "C:\\Users\\Matthew Tran\\Documents\\cognitiveABM\\TerrainGenerator\\TerrainGenerator.csproj"
             }
           }
         }

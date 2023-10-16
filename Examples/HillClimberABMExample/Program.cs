@@ -4,6 +4,7 @@ using HillClimberExample;
 using CognitiveABM.QLearning;
 using Mars.Core.ModelContainer.Entities;
 using TerrainGenerator;
+using RewardGenerator;
 
 public static class Program
 {
@@ -16,9 +17,10 @@ public static class Program
     public static void Main(string[] args)
     {
         // Dynamic Generation of Terrain 
-        TerrainGenerator.TerrainGenerator terrainGenerator = new TerrainGenerator.TerrainGenerator();
-        terrainGenerator.Main(args);
-
+        TerrainGenerator.TerrainGenerator.Main(args);
+        // Dynamic Reward Generation
+        RewardGenerator.RewardGenerator.Main(args);
+        
         terrainFilePaths = new string[] { "./layers/landscape.csv", "./layers/moatGauss.csv", "./layers/landscapeInvert.csv" }; // ./layers/grid.csv
         var fitnessVals = new List<List<float>>();
         var random = new Random();

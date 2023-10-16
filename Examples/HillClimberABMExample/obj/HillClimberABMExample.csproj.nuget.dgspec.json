@@ -101,6 +101,12 @@
             "projectReferences": {
               "C:\\Users\\Matthew Tran\\Documents\\cognitiveABM\\CognitiveABM\\CognitiveABM.csproj": {
                 "projectPath": "C:\\Users\\Matthew Tran\\Documents\\cognitiveABM\\CognitiveABM\\CognitiveABM.csproj"
+              },
+              "C:\\Users\\Matthew Tran\\Documents\\cognitiveABM\\RewardGenerator\\RewardGenerator.csproj": {
+                "projectPath": "C:\\Users\\Matthew Tran\\Documents\\cognitiveABM\\RewardGenerator\\RewardGenerator.csproj"
+              },
+              "C:\\Users\\Matthew Tran\\Documents\\cognitiveABM\\TerrainGenerator\\TerrainGenerator.csproj": {
+                "projectPath": "C:\\Users\\Matthew Tran\\Documents\\cognitiveABM\\TerrainGenerator\\TerrainGenerator.csproj"
               }
             }
           }
@@ -128,6 +134,126 @@
               "version": "[4.0.28, )"
             }
           },
+          "imports": [
+            "net461",
+            "net462",
+            "net47",
+            "net471",
+            "net472",
+            "net48",
+            "net481"
+          ],
+          "assetTargetFallback": true,
+          "warn": true,
+          "frameworkReferences": {
+            "Microsoft.NETCore.App": {
+              "privateAssets": "all"
+            }
+          },
+          "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\7.0.306\\RuntimeIdentifierGraph.json"
+        }
+      }
+    },
+    "C:\\Users\\Matthew Tran\\Documents\\cognitiveABM\\RewardGenerator\\RewardGenerator.csproj": {
+      "version": "1.0.0",
+      "restore": {
+        "projectUniqueName": "C:\\Users\\Matthew Tran\\Documents\\cognitiveABM\\RewardGenerator\\RewardGenerator.csproj",
+        "projectName": "RewardGenerator",
+        "projectPath": "C:\\Users\\Matthew Tran\\Documents\\cognitiveABM\\RewardGenerator\\RewardGenerator.csproj",
+        "packagesPath": "C:\\Users\\Matthew Tran\\.nuget\\packages\\",
+        "outputPath": "C:\\Users\\Matthew Tran\\Documents\\cognitiveABM\\RewardGenerator\\obj\\",
+        "projectStyle": "PackageReference",
+        "fallbackFolders": [
+          "C:\\Program Files (x86)\\Microsoft Visual Studio\\Shared\\NuGetPackages"
+        ],
+        "configFilePaths": [
+          "C:\\Users\\Matthew Tran\\AppData\\Roaming\\NuGet\\NuGet.Config",
+          "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.FallbackLocation.config",
+          "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.Offline.config"
+        ],
+        "originalTargetFrameworks": [
+          "net7.0"
+        ],
+        "sources": {
+          "C:\\Program Files (x86)\\Microsoft SDKs\\NuGetPackages\\": {},
+          "C:\\Program Files\\dotnet\\library-packs": {},
+          "https://api.nuget.org/v3/index.json": {}
+        },
+        "frameworks": {
+          "net7.0": {
+            "targetAlias": "net7.0",
+            "projectReferences": {}
+          }
+        },
+        "warningProperties": {
+          "warnAsError": [
+            "NU1605"
+          ]
+        }
+      },
+      "frameworks": {
+        "net7.0": {
+          "targetAlias": "net7.0",
+          "imports": [
+            "net461",
+            "net462",
+            "net47",
+            "net471",
+            "net472",
+            "net48",
+            "net481"
+          ],
+          "assetTargetFallback": true,
+          "warn": true,
+          "frameworkReferences": {
+            "Microsoft.NETCore.App": {
+              "privateAssets": "all"
+            }
+          },
+          "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\7.0.306\\RuntimeIdentifierGraph.json"
+        }
+      }
+    },
+    "C:\\Users\\Matthew Tran\\Documents\\cognitiveABM\\TerrainGenerator\\TerrainGenerator.csproj": {
+      "version": "1.0.0",
+      "restore": {
+        "projectUniqueName": "C:\\Users\\Matthew Tran\\Documents\\cognitiveABM\\TerrainGenerator\\TerrainGenerator.csproj",
+        "projectName": "TerrainGenerator",
+        "projectPath": "C:\\Users\\Matthew Tran\\Documents\\cognitiveABM\\TerrainGenerator\\TerrainGenerator.csproj",
+        "packagesPath": "C:\\Users\\Matthew Tran\\.nuget\\packages\\",
+        "outputPath": "C:\\Users\\Matthew Tran\\Documents\\cognitiveABM\\TerrainGenerator\\obj\\",
+        "projectStyle": "PackageReference",
+        "fallbackFolders": [
+          "C:\\Program Files (x86)\\Microsoft Visual Studio\\Shared\\NuGetPackages"
+        ],
+        "configFilePaths": [
+          "C:\\Users\\Matthew Tran\\AppData\\Roaming\\NuGet\\NuGet.Config",
+          "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.FallbackLocation.config",
+          "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.Offline.config"
+        ],
+        "originalTargetFrameworks": [
+          "net7.0"
+        ],
+        "sources": {
+          "C:\\Program Files (x86)\\Microsoft SDKs\\NuGetPackages\\": {},
+          "C:\\Program Files\\dotnet\\library-packs": {},
+          "https://api.nuget.org/v3/index.json": {}
+        },
+        "frameworks": {
+          "net7.0": {
+            "targetAlias": "net7.0",
+            "projectReferences": {}
+          }
+        },
+        "warningProperties": {
+          "warnAsError": [
+            "NU1605"
+          ]
+        }
+      },
+      "frameworks": {
+        "net7.0": {
+          "targetAlias": "net7.0",
           "imports": [
             "net461",
             "net462",

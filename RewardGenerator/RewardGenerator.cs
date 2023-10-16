@@ -4,12 +4,16 @@ using System.Text;
 
 namespace RewardGenerator
 {
-    class RewardGenerator{
-        static void Main(string[] args)
+    public class RewardGenerator{
+        public static void Main(string[] args)
         {
-            //string csvFile = "../Examples/HillClimberABMExample/layers/grid_reward3.csv";
-            string csvFile = "./grid_reward3.csv";
-            RewardMap rewardmap = new RewardMap(50 /*width*/, 50/*height*/, 100/*num rewards*/,csvFile/*csv file path*/);
+
+            // to run from Program.cs
+            string baseDirectory = AppDomain.CurrentDomain.BaseDirectory;
+            string csvFile = Path.Combine(baseDirectory, "..", "..", "..", "layers", "grid_reward.csv");
+            //string csvFile = "../Example/HillClimberABMExample/layers/grid_reward.csv";
+
+            RewardMap rewardmap = new RewardMap(50 /*width*/, 50/*height*/, 25/*num rewards*/,csvFile/*csv file path*/);
             rewardmap.Initialize();
             rewardmap.PrintRewardMap();
 

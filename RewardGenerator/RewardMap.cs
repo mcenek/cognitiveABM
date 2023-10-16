@@ -4,7 +4,7 @@ using System.IO;
 
 namespace RewardGenerator
 {
-    class RewardMap
+    public class RewardMap
     {
         private int Width;
         private int Height;
@@ -25,7 +25,8 @@ namespace RewardGenerator
                 return;
             }
             Random random = new Random();
-            List<int> rewardCellIndices = GenerateRandomRewardIndices(Width, Height, NumberOfRewards, random);
+            //List<int> rewardCellIndices = GenerateRandomRewardIndices(Width, Height, NumberOfRewards, random);
+            List<int> rewardCellIndices = GenerateRandomRewards(Width, Height, NumberOfRewards, random);
             int[,] rewardMap = new int[Width, Height];
 
             foreach (int index in rewardCellIndices){
@@ -36,7 +37,17 @@ namespace RewardGenerator
             // write to csv
             WriteRewardMapToCSV(rewardMap, this.RewardFilePath);
         }
-
+        private static List<int> GenerateRandomRewards(int width, int height, int numberOfRewards, Random random){
+            List<int> rewardCellIndices = new List<int>();
+            for (int i = 0; i < numberOfRewards; i++){
+                int x = random.Next(width);
+                int y = random.Next(height);
+                int index = x + y * width;
+                rewardCellIndices.Add(index);
+                //Console.WriteLine(index);
+            }
+            return rewardCellIndices;
+        }
         private static List<int> GenerateRandomRewardIndices(int width, int height, int numberOfRewards, Random random){
             List<int> rewardCellIndices = new List<int>();
 

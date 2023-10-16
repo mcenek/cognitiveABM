@@ -4,20 +4,21 @@ using System.Text;
 
 namespace TerrainGenerator
 {
-    class TerrainGenerator
+    public class TerrainGenerator
     {
-        static void Main(string[] args)
+        public static void Main(string[] args)
         {
             ElevationLandscape landscape = new ElevationLandscape(50, 50, 30, 1000, 9);
             landscape.Initialize();
             landscape.printMap();
 
-            string txtFile = "./landscapeInvert.txt";
-            string csvFile = "../Examples/HillClimberABMExample/layers/landscapeInvert.csv";
+            // Made specifically to run from Examples/HillClimberABMExample/Program.cs
+            string baseDirectory = AppDomain.CurrentDomain.BaseDirectory;
+            string txtFile = Path.Combine(baseDirectory, "..", "..", "..", "layers", "landscapeInvert.txt");
+            string csvFile = Path.Combine(baseDirectory, "..", "..", "..", "layers", "landscapeInvert.csv");
 
-            //StreamWriter writer = new StreamWriter("..//..//..//landscape.txt");
             StreamWriter writer = new StreamWriter(txtFile);
-            //StreamWriter writer = new StreamWriter("../Examples/HillClimberABMExample/layers/landscape.csv");
+            
             writer.WriteLine(landscape.Width);
             writer.WriteLine(landscape.Height);
 
