@@ -12,7 +12,8 @@
 		<PackageReference Include="ScottPlot" Version="4.0.28" />
 	</ItemGroup>
 	<ItemGroup>
-	  <ProjectReference Include="..\..\CognitiveABM\CognitiveABM.csproj" />
+	  	<ProjectReference Include="..\..\CognitiveABM\CognitiveABM.csproj" />
+		<ProjectReference Include="..\..\TerrainGenerator\TerrainGenerator.csproj" />
 	</ItemGroup>
 	<ProjectExtensions><VisualStudio><UserProperties /></VisualStudio></ProjectExtensions>
 </Project>

@@ -4,15 +4,21 @@ using System.Text;
 
 namespace TerrainGenerator
 {
-    class TerrainGenerator
+    public class TerrainGenerator
     {
-        static void Main(string[] args)
+        public static void Main(string[] args)
         {
-            ElevationLandscape landscape = new ElevationLandscape(100, 100, 30, 1000, 9);
+            ElevationLandscape landscape = new ElevationLandscape(50, 50, 30, 1000, 9);
             landscape.Initialize();
             landscape.printMap();
 
-            StreamWriter writer = new StreamWriter("..\\..\\..\\landscape.txt");
+            // Made specifically to run from Examples/HillClimberABMExample/Program.cs
+            string baseDirectory = AppDomain.CurrentDomain.BaseDirectory;
+            string txtFile = Path.Combine(baseDirectory, "..", "..", "..", "layers", "landscapeInvert.txt");
+            string csvFile = Path.Combine(baseDirectory, "..", "..", "..", "layers", "grid.csv");
+
+            StreamWriter writer = new StreamWriter(txtFile);
+            
             writer.WriteLine(landscape.Width);
             writer.WriteLine(landscape.Height);
 
@@ -21,8 +27,11 @@ namespace TerrainGenerator
                 for (int j = 0; j < landscape.map.GetLength(1); j++)
                     writer.Write(landscape.map[i,j] + " ");
             }
-            Console.WriteLine("Wrote to file.");
+            // Change from txt format to csv format (bandage)
             writer.Close();
+            landscape.TxtToCsv(txtFile,csvFile);
+            
+            Console.WriteLine("Wrote to terrain file.");
         }
     }
 }
