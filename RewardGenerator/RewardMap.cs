@@ -96,7 +96,9 @@ namespace RewardGenerator
                 for (int y = 0; y < rewardMap.GetLength(1); y++){
                     for (int x = 0; x < rewardMap.GetLength(0); x++){
                         writer.Write(rewardMap[y, x]);
-                        writer.Write(",");
+                        if (x < rewardMap.GetLength(0) - 1){ // make sure not to end with comma for each row
+                            writer.Write(",");
+                        }
                     } // for x
                     writer.WriteLine();
                 } // for y

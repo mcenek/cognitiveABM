@@ -3,6 +3,7 @@ using HillClimberExample;
 using CognitiveABM.QLearning;
 using Mars.Core.ModelContainer.Entities;
 using TerrainGenerator;
+using RewardGenerator;
 public static class Program
 {
     public const string OUTPUT_FILENAME = "Animal.csv";
@@ -16,7 +17,8 @@ public static class Program
     {
         //Dynamic Terrain Generation
         TerrainGenerator.TerrainGenerator.Main(args);
-
+        //Dynamic Reward Generation
+        RewardGenerator.RewardGenerator.Main(args);
 
         // terrainFilePaths = new string[] { "./layers/moatGauss.csv" };
         terrainFilePaths = new string[] { "./layers/landscape.csv", "./layers/moatGauss.csv", "./layers/grid.csv" };
