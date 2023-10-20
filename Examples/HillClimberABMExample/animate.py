@@ -59,7 +59,7 @@ numpoints = 96
 points = np.random.random((2, numpoints))
 colors = cm.rainbow(np.linspace(0, 1, numpoints))
 
-fig = plt.figure("Agents")
+fig = plt.figure("Agents", figsize=(12,8))
 agent_pos = fig.add_subplot(221)
 fitness_map = fig.add_subplot(223)
 heatmap = fig.add_subplot(224)

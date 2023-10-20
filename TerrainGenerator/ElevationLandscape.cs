@@ -47,7 +47,7 @@ namespace TerrainGenerator
          */
 
          // ========================================================= Normal Peaks ========================================================= 
-        private void createPeaksOrig(List<int> peakCells, Random random)
+        private void createPeaks(List<int> peakCells, Random random)
         {
             int elevation = 0;
             for(int i = 0; i < this.numberOfPeaks; i++)
@@ -116,7 +116,7 @@ namespace TerrainGenerator
         } // invert peaks
         
         // ===================================================== createPerimeterPeaks ===================================================== 
-        private void createPeaks(List<int> peakCells, Random random){
+        private void createPerimeterPeaks(List<int> peakCells, Random random){
             int maxElevation = this.maximumElevation;
             int elevation = 0;
 
