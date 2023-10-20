@@ -61,7 +61,6 @@ colors = cm.rainbow(np.linspace(0, 1, numpoints))
 
 fig = plt.figure("Agents")
 agent_pos = fig.add_subplot(221)
-bestAgent_pos = fig.add_subplot(222)
 fitness_map = fig.add_subplot(223)
 heatmap = fig.add_subplot(224)
 reward_pos = fig.add_subplot(224)
@@ -76,7 +75,7 @@ agent_pos.set_ylabel('Y')
 agent_pos.set_title('Agent Position')
 agent_pos.set_aspect('equal', adjustable='box');
 
-
+bestAgent_pos = fig.add_subplot(222)
 bestAgent_pos.set_xlabel('X')
 bestAgent_pos.set_ylabel('Y')
 bestAgent_pos.set_title('Best Agent Position')
@@ -84,10 +83,6 @@ bestAgent_pos.set_aspect('equal', adjustable='box');
 bestAgent_pos.axes.set_xlim(0, 50)
 bestAgent_pos.axes.set_ylim(0, 50)
 
-
-#reward_pos.axes.get_xaxis().set_visible(False)
-# reward_pos.axes.set_xlim(-2.5, 52.5)
-# reward_pos.axes.set_ylim(-2, 52.5)
 reward_pos.set_aspect('equal', adjustable='box')
 heatmap.set_aspect('equal', adjustable='box')
 # reward_pos.set_aspect('equal');
@@ -104,11 +99,19 @@ for height in range(50):
                 xVals.append(height)
                 yVals.append(length)
 
+# store previous steps
+prev_positions = {agent_id: {'x': [], 'y': []} for agent_id in range(numpoints)}
+prev_best_agent_position = {'x': [], 'y': []}
+agent_colors = {agent_id: colors[agent_id] for agent_id in range(numpoints)}
 
 for i in range(NUM_STEPS):
     fit_val = fitness[i*numpoints: i*numpoints + numpoints]
     avg_fit.append(sum(fitness[i*numpoints: i*numpoints + numpoints])/numpoints)
     norm = [(float(i)/(max(fit_val) + 1)) for i in fit_val]
+    bestAgent_pos.plot(prev_best_agent_position['x'], prev_best_agent_position['y'], color='blue', alpha=0.5)
+    for agent_id in prev_positions:
+         agent_pos.plot(prev_positions[agent_id]['x'], prev_positions[agent_id]['y'], color=agent_colors[agent_id], alpha=0.5)
+    
     for index in range(len(avg_fit)):
         if(avg_fit[index]) >= TRESHOLD:
             maxIndex = index
@@ -117,14 +120,32 @@ for i in range(NUM_STEPS):
         fitness_map.plot([maxIndex, maxIndex], [0, 50],color='black')
         fitness_map.plot(maxIndex, TRESHOLD, marker='o', color='r')
         fitness_map.text(maxIndex, TRESHOLD, str(maxIndex), horizontalalignment='right')
+    
+    # save current positions to the prev dict
+    for agent_id in range(len(x[i * numpoints: i * numpoints + numpoints])):
+        agent_x = x[i * numpoints + agent_id]
+        agent_y = y[i * numpoints + agent_id]
+        if agent_id not in prev_positions:
+            prev_positions[agent_id] = {'x': [agent_x], 'y': [agent_y]}
+        else:
+            prev_positions[agent_id]['x'].append(agent_x)
+            prev_positions[agent_id]['y'].append(agent_y)
+    best_agent_x = bestAgentXPos[i]
+    best_agent_y = bestAgentYPos[i]
+    prev_best_agent_position['x'].append(best_agent_x)
+    prev_best_agent_position['y'].append(best_agent_y)
+
     colors = cm.rainbow(norm)
-    fitness_map.plot(avg_fit)
-    agent_pos.scatter(x[i*numpoints: i*numpoints + numpoints], y[i*numpoints: i*numpoints + numpoints], c=colors, s=100)
-    bestAgent_pos.scatter(bestAgentXPos[i], bestAgentYPos[i], c='red', s=100)
+    fitness_map.plot(avg_fit, color='blue')
+    agent_pos.scatter(x[i * numpoints: i * numpoints + numpoints], y[i * numpoints: i * numpoints + numpoints],
+                      c=[agent_colors[agent_id] for agent_id in range(numpoints)], s=100)
+    #agent_pos.scatter(x[i*numpoints: i*numpoints + numpoints], y[i*numpoints: i*numpoints + numpoints], c=colors, s=100)
+    #bestAgent_pos.scatter(bestAgentXPos[i], bestAgentYPos[i], c='red', s=100)
+    bestAgent_pos.scatter(best_agent_x, best_agent_y, c='blue', s=100)
     heatmap.imshow(terrain[::-1], origin = 'lower')
     reward_pos.get_xaxis().set_visible(False);
     reward_pos.get_yaxis().set_visible(False);
     reward_pos.scatter(xVals, yVals, marker='o', color = 'red', s=25)
     camera.snap()
-anim = camera.animate(blit=True)
+anim = camera.animate(blit=True, repeat=False)
 plt.show()
