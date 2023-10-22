@@ -13,6 +13,8 @@
 	</ItemGroup>
 	<ItemGroup>
 	  <ProjectReference Include="..\..\CognitiveABM\CognitiveABM.csproj" />
+	  <ProjectReference Include="..\..\TerrainGenerator\TerrainGenerator.csproj" />
+	  <ProjectReference Include="..\..\RewardGenerator\RewardGenerator.csproj" />
 	</ItemGroup>
 	<ProjectExtensions><VisualStudio><UserProperties /></VisualStudio></ProjectExtensions>
 </Project>
