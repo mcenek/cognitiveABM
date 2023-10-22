@@ -56,7 +56,7 @@ namespace CognitiveABM.agentInformationHolder
         temp[13] = temp[11] - temp[12];
         
         // Hill Descending
-        temp[13] = -1*temp[13];
+        //temp[13] = -1*temp[13];
 
         float[] avgMax = getAverageandTotal(tempList, temp[13]);
         temp[14] = avgMax[0];

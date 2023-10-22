@@ -10,13 +10,16 @@ namespace RewardGenerator
         private int Height;
         private int NumberOfRewards;
         private string RewardFilePath;
-
-        public RewardMap(int width, int height, int numberOfRewards, string rewardFilePath)
+        private string GaussFilePath;
+        private string Landscape_rewardFile;
+        public RewardMap(int width, int height, int numberOfRewards, string rewardFilePath, string gaussFilePath, string landscape_rewardFile)
         {
             this.Width = width;
             this.Height = height;
             this.NumberOfRewards = numberOfRewards;
             this.RewardFilePath = rewardFilePath;
+            this.GaussFilePath = gaussFilePath;
+            this.Landscape_rewardFile = landscape_rewardFile;
         }
 
         public void Initialize(){
@@ -36,6 +39,8 @@ namespace RewardGenerator
             }
             // write to csv
             WriteRewardMapToCSV(rewardMap, this.RewardFilePath);
+            WriteRewardMapToCSV(rewardMap, this.GaussFilePath);
+            WriteRewardMapToCSV(rewardMap, this.Landscape_rewardFile);
         }
         private static List<int> GenerateRandomRewards(int width, int height, int numberOfRewards, Random random){
             List<int> rewardCellIndices = new List<int>();

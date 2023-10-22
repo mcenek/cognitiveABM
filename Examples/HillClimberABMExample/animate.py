@@ -78,7 +78,7 @@ agent_pos.set_aspect('equal', adjustable='box');
 bestAgent_pos = fig.add_subplot(222)
 bestAgent_pos.set_xlabel('X')
 bestAgent_pos.set_ylabel('Y')
-bestAgent_pos.set_title('Best Agent Position')
+#bestAgent_pos.set_title('Best Agent Position')
 bestAgent_pos.set_aspect('equal', adjustable='box');
 bestAgent_pos.axes.set_xlim(0, 50)
 bestAgent_pos.axes.set_ylim(0, 50)

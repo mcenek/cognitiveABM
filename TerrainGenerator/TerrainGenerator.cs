@@ -16,6 +16,8 @@ namespace TerrainGenerator
             string baseDirectory = AppDomain.CurrentDomain.BaseDirectory;
             string txtFile = Path.Combine(baseDirectory, "..", "..", "..", "layers", "landscapeInvert.txt");
             string csvFile = Path.Combine(baseDirectory, "..", "..", "..", "layers", "grid.csv");
+            string guassFile = Path.Combine(baseDirectory, "..", "..", "..", "layers", "moatGauss.csv");
+            string landscapeFile = Path.Combine(baseDirectory, "..", "..", "..", "layers", "landscape.csv");
 
             StreamWriter writer = new StreamWriter(txtFile);
             
@@ -30,7 +32,8 @@ namespace TerrainGenerator
             // Change from txt format to csv format (bandage)
             writer.Close();
             landscape.TxtToCsv(txtFile,csvFile);
-            
+            landscape.TxtToCsv(txtFile,guassFile);
+            landscape.TxtToCsv(txtFile,landscapeFile);
             Console.WriteLine("Wrote to terrain file.");
         }
     }
