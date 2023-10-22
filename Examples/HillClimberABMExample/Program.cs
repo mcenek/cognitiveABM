@@ -22,6 +22,9 @@ public static class Program
         // terrainFilePaths = new string[] { "./layers/moatGauss.csv" };
         terrainFilePaths = new string[] { "./layers/landscape.csv", "./layers/moatGauss.csv", "./layers/grid.csv" };
         var fitnessVals = new List<List<float>>();
+        var random = new Random();
+        int numTrain;
+
 
         foreach (string filePath in terrainFilePaths)
         {
@@ -38,7 +41,8 @@ public static class Program
             ABM abm = new ABM(modelDescription: GetModelDescription());
             //abm.Train(10, terrainFilePath, args);
 
-            abm.Train(fcm, 100, 0, true, terrainFilePath, args);
+            numTrain = random.next(250,350);
+            abm.Train(fcm, numTrain, 0, true, terrainFilePath, args);
 
             // QLearning.usePerfectQMap = 0;
 
