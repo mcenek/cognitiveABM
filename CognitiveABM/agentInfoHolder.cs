@@ -54,6 +54,10 @@ namespace CognitiveABM.agentInformationHolder
         float[] temp = exportVals.Last();
         temp[12] = (tempList.Last())[11];
         temp[13] = temp[11] - temp[12];
+        
+        // Hill Descending
+        temp[13] = -1*temp[13];
+
         float[] avgMax = getAverageandTotal(tempList, temp[13]);
         temp[14] = avgMax[0];
         temp[15] = avgMax[1];
