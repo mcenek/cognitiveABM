@@ -53,12 +53,23 @@ namespace CognitiveABM.agentInformationHolder
         List<float[]> tempList = agentInfo[id].Item1;
         float[] temp = exportVals.Last();
         temp[12] = (tempList.Last())[11];
+         /* 
+          calculate the altitude by getting the differences 
+          from the path that the agent took: temp[11] (initial val) temp[12] compared value
+          stored into temp[13] which is the difference between the two altitudes
+        */
         temp[13] = temp[11] - temp[12];
+        // Avoid cliffs
+        bool onCliff = false;
+        if (temp[13] > 10 ) {
+          onCliff = true;
+        }
+        float[] avgMax = getAverageandTotal(tempList, temp[13], onCliff);
         
         // Hill Descending
         //temp[13] = -1*temp[13];
 
-        float[] avgMax = getAverageandTotal(tempList, temp[13]);
+        //float[] avgMax = getAverageandTotal(tempList, temp[13]); //? If not avoiding cliffs, uncomment this
         temp[14] = avgMax[0];
         temp[15] = avgMax[1];
         //fitness.Add(temp[13]);
@@ -79,6 +90,39 @@ namespace CognitiveABM.agentInformationHolder
         float[] returnVals = {0.0f, 0.0f};
 
         if(currentFit > 0){
+          avgCurrentFit = currentFit;
+          counter = 1;
+        }
+        else{
+          avgCurrentFit = 0.0f;
+          counter = 0;
+        }
+
+        foreach(float[] array in tempList){
+          if(array[13] > 0){
+            avgCurrentFit += array[13];
+            currentFit += array[13];
+            counter++;
+          }
+        }
+
+        if(counter != 0){
+          returnVals[0] = avgCurrentFit/counter;
+          returnVals[1] = currentFit;
+        }
+        return returnVals;
+      }//end getAverage
+
+      public float[] getAverageandTotal(List<float[]> tempList, float currentFit, bool onCliff){
+        int counter;
+        float avgCurrentFit;
+        float[] returnVals = {0.0f, 0.0f};
+
+        if (onCliff){
+          avgCurrentFit = -1000.0f;
+          counter = 0;
+        }
+        else if(currentFit > 0){
           avgCurrentFit = currentFit;
           counter = 1;
         }

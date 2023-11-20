@@ -114,7 +114,6 @@ namespace TerrainGenerator
                 } // for x
             } // for y
         } // invert peaks
-        
         // ===================================================== createPerimeterPeaks ===================================================== 
         private void createPeaks4(List<int> peakCells, Random random){
             int maxElevation = this.maximumElevation;
@@ -140,7 +139,18 @@ namespace TerrainGenerator
                 diffuseElevation(peakCells, random);
             }
         } // perimeter peaks
+        private void createCliffs (List<int> peakCells, Random random){
+            int elevation = 0;
+            for(int i = 0; i < this.numberOfPeaks; i++)
+            {
+                elevation = this.maximumElevation;
+                this.map[peakCells[i] / this.map.GetLength(1), peakCells[i] % this.map.GetLength(0)] = elevation;
+            }
 
+            for(int i = 0; i < this.smoothingLevel; i++){
+                diffuseElevation(peakCells, random);
+            }
+        }
         /**
          * ===================================================================================================================================== 
          * ===================================================================================================================================== 
