@@ -47,7 +47,7 @@ namespace TerrainGenerator
          */
 
          // ========================================================= Normal Peaks ========================================================= 
-        private void createPeaks(List<int> peakCells, Random random)
+        private void createPeaks1(List<int> peakCells, Random random)
         {
             int elevation = 0;
             for(int i = 0; i < this.numberOfPeaks; i++)
@@ -139,18 +139,91 @@ namespace TerrainGenerator
                 diffuseElevation(peakCells, random);
             }
         } // perimeter peaks
-        private void createCliffs (List<int> peakCells, Random random){
-            int elevation = 0;
-            for(int i = 0; i < this.numberOfPeaks; i++)
-            {
-                elevation = this.maximumElevation;
-                this.map[peakCells[i] / this.map.GetLength(1), peakCells[i] % this.map.GetLength(0)] = elevation;
-            }
+        // ===================================================== createPerimeterPeaks ===================================================== 
+        private void createPeaks (List<int> peakCells, Random random){
+            /**
+                1. Set everything to maximum elevation.
+                2. [initialize] Set canyon width and select random edge
+                3. [initialize] select random spot on edge for first cliff and random +- for second cliff
+                4. [loop] add to width -2 // -1 // 0 // 1 // 2, get random point next to connected cliff start then start1= -width/2, end1 = width/2
+            */
 
-            for(int i = 0; i < this.smoothingLevel; i++){
-                diffuseElevation(peakCells, random);
-            }
-        }
+            // 1.
+            for (int row = 0; row < this.map.GetLength(0); row++){
+                    for (int col = 0; col < this.map.GetLength(1); col++)
+                    {
+                        this.map[row, col] = this.maximumElevation;
+                    }
+                }
+            // 2.
+            int width = random.Next(this.map.GetLength(0) / 2);
+            int side = random.Next(4);
+            int canyonElevation = 0;
+            // 3.
+            int firstCliff = random.Next(width,this.map.GetLength(0))-width;
+            switch (side){
+                case 0: // Top
+                    for(int i = 0; i < this.map.GetLength(1); i++){
+                        width = width + random.Next(-1, 2);
+                        if (width == 0){width = 1;}
+                        firstCliff = firstCliff + random.Next(-Math.Abs(width) + 1,Math.Abs(width) - 1);
+                        if (firstCliff < 0){firstCliff = 0;}
+                        for(int conn = 0; conn < width; conn++){
+                            if(firstCliff+conn < this.map.GetLength(1)){
+                                this.map[i, firstCliff+conn] = canyonElevation;
+                            }
+                        }
+                        Console.WriteLine(canyonElevation);
+                        canyonElevation += 10;
+                    }
+                    break;
+                case 1: // Bottom 
+                    for(int i = 0; i < this.map.GetLength(1); i++){
+                        width = width + random.Next(-1, 2);
+                        if (width == 0){width = 1;}
+                        firstCliff = firstCliff + random.Next(-Math.Abs(width),Math.Abs(width));
+                        if (firstCliff < 0){firstCliff = 0;}
+                        for(int conn = 0; conn < width; conn++){
+                            if(firstCliff+conn < this.map.GetLength(1)){
+                                this.map[this.map.GetLength(1) - i, firstCliff+conn] = canyonElevation;
+                            }
+                        }
+                        Console.WriteLine(canyonElevation);
+                        canyonElevation += 10;
+                    }
+                    break;
+                case 2: // Left 
+                    for(int i = 0; i < this.map.GetLength(0); i++){
+                        width = width + random.Next(-1, 2);
+                        if (width == 0){width = 1;}
+                        firstCliff = firstCliff + random.Next(-Math.Abs(width),Math.Abs(width));
+                        if (firstCliff < 0){firstCliff = 0;}
+                        for(int conn = 0; conn < width; conn++){
+                            if(firstCliff+conn < this.map.GetLength(0)){
+                                this.map[firstCliff+conn, i] = canyonElevation;
+                            }
+                        }
+                        Console.WriteLine(canyonElevation);
+                        canyonElevation += 10;
+                    }
+                    break;
+                case 3: // Right
+                    for(int i = 0; i < this.map.GetLength(0); i++){
+                        width = width + random.Next(-1, 2);
+                        if (width == 0){width = 1;}
+                        firstCliff = firstCliff + random.Next(-Math.Abs(width),Math.Abs(width));
+                        if (firstCliff < 0){firstCliff = 0;}
+                        for(int conn = 0; conn < width; conn++){
+                            if(firstCliff+conn < this.map.GetLength(0)){
+                                this.map[conn+firstCliff, this.map.GetLength(0) - i] = canyonElevation;
+                            }
+                        }
+                        Console.WriteLine(canyonElevation);
+                        canyonElevation += 10;
+                    }
+                    break;}
+                }
+            
         /**
          * ===================================================================================================================================== 
          * ===================================================================================================================================== 

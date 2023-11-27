@@ -61,7 +61,7 @@ namespace CognitiveABM.agentInformationHolder
         temp[13] = temp[11] - temp[12];
         // Avoid cliffs
         bool onCliff = false;
-        if (temp[13] > 10 ) {
+        if (temp[13] > 400 ) {
           onCliff = true;
         }
         float[] avgMax = getAverageandTotal(tempList, temp[13], onCliff);
