@@ -229,11 +229,25 @@ namespace TerrainGenerator
             int middleX = this.map.GetLength(0) / 2;
             int middleY = this.map.GetLength(1) / 2;
             this.map[middleX, middleY] = this.maximumElevation/5;
+
+            int radius = this.map.GetLength(0) / 2;
+            // hill
+            for (int i = 0; i < this.map.GetLength(0); i++)
+            {
+                for (int j = 0; j < this.map.GetLength(1); j++)
+                {
+                    double distance = Math.Sqrt((i - middleX) * (i - middleX) + (j - middleY) * (j - middleY));
+                    if (distance <= radius)
+                    {
+                        int fadeElevation = (int)Math.Round(this.maximumElevation * (1.0 - distance / radius));
+                        this.map[i, j] = fadeElevation;
+                    }
+                }
+            }
+
             int arrowTipX = middleX + random.Next(-this.map.GetLength(0) / 4, this.map.GetLength(0) / 4);
             int arrowTipY = middleY + random.Next(-this.map.GetLength(1) / 4, this.map.GetLength(1) / 4);
             this.map[arrowTipX, arrowTipY] = this.maximumElevation;
-            
-
             // direction vector from the arrow tip to the center.
             int directionX = middleX - arrowTipX;
             int directionY = middleY - arrowTipY;
@@ -251,22 +265,6 @@ namespace TerrainGenerator
             this.map[arrowTipX - directionY, arrowTipY + directionX] = this.maximumElevation;
             this.map[arrowTipX - 2 * directionY, arrowTipY + 2 * directionX] = this.maximumElevation;
             this.map[arrowTipX - 3 * directionY, arrowTipY + 3 * directionX] = this.maximumElevation;
-
-            int radius = this.map.GetLength(0) / 2;
-
-            // hill
-            for (int i = 0; i < this.map.GetLength(0); i++)
-            {
-                for (int j = 0; j < this.map.GetLength(1); j++)
-                {
-                    double distance = Math.Sqrt((i - middleX) * (i - middleX) + (j - middleY) * (j - middleY));
-                    if (distance <= radius)
-                    {
-                        int fadeElevation = (int)Math.Round(this.maximumElevation * (1.0 - distance / radius));
-                        this.map[i, j] = fadeElevation;
-                    }
-                }
-            }
         }
         /**
          * ===================================================================================================================================== 
