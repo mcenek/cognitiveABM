@@ -228,7 +228,7 @@ namespace TerrainGenerator
         {
             int middleX = this.map.GetLength(0) / 2;
             int middleY = this.map.GetLength(1) / 2;
-            this.map[middleX, middleY] = this.maximumElevation/5;
+            this.map[middleX, middleY] = this.maximumElevation;
 
             int radius = this.map.GetLength(0) / 2;
             // hill
@@ -247,7 +247,7 @@ namespace TerrainGenerator
 
             int arrowTipX = middleX + random.Next(-this.map.GetLength(0) / 4, this.map.GetLength(0) / 4);
             int arrowTipY = middleY + random.Next(-this.map.GetLength(1) / 4, this.map.GetLength(1) / 4);
-            this.map[arrowTipX, arrowTipY] = this.maximumElevation;
+            this.map[arrowTipX, arrowTipY] = 0;
             // direction vector from the arrow tip to the center.
             int directionX = middleX - arrowTipX;
             int directionY = middleY - arrowTipY;
@@ -258,13 +258,13 @@ namespace TerrainGenerator
             directionY = (int)Math.Round(directionY / magnitude);
 
             //arrow values on the map.
-            this.map[arrowTipX + directionX, arrowTipY + directionY] = this.maximumElevation;
-            this.map[arrowTipX + 2 * directionX, arrowTipY + 2 * directionY] = this.maximumElevation;
-            this.map[arrowTipX + 3 * directionX, arrowTipY + 3 * directionY] = this.maximumElevation;
+            this.map[arrowTipX + directionX, arrowTipY + directionY] = 0;
+            this.map[arrowTipX + 2 * directionX, arrowTipY + 2 * directionY] = 0;
+            this.map[arrowTipX + 3 * directionX, arrowTipY + 3 * directionY] = 0;
 
-            this.map[arrowTipX - directionY, arrowTipY + directionX] = this.maximumElevation;
-            this.map[arrowTipX - 2 * directionY, arrowTipY + 2 * directionX] = this.maximumElevation;
-            this.map[arrowTipX - 3 * directionY, arrowTipY + 3 * directionX] = this.maximumElevation;
+            this.map[arrowTipX - directionY, arrowTipY + directionX] = 0;
+            this.map[arrowTipX - 2 * directionY, arrowTipY + 2 * directionX] = 0;
+            this.map[arrowTipX - 3 * directionY, arrowTipY + 3 * directionX] = 0;
         }
         /**
          * ===================================================================================================================================== 
