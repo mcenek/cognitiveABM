@@ -18,11 +18,12 @@ namespace TerrainGenerator
                 Console.WriteLine("3. Inverted after Creation");
                 Console.WriteLine("4. Only create Peaks around Perimeter");
                 Console.WriteLine("5. Hill with blocker");
+                Console.WriteLine("6. Canyon");
                 Console.WriteLine("--------------------------------------------------------------------");
                 // int?
                 if (int.TryParse(Console.ReadLine(), out userInput)){
                     // in range
-                    if (userInput >= 1 && userInput <= 5){
+                    if (userInput >= 1 && userInput <= 6){
                         break; // Valid input, exit the loop
                     } else {
                         Console.WriteLine("Invalid input. Please enter a number between 1 and 5.");

@@ -56,6 +56,9 @@ namespace TerrainGenerator
                 case 5:
                     createPeaks5(peakCells, random);
                     break;
+                case 6:
+                    createPeaks6(peakCells, random);
+                    break;
                 default:
                     Console.WriteLine("Invalid option selected. Defaulting to 1");
                     createPeaks1(peakCells, random);
@@ -205,8 +208,111 @@ namespace TerrainGenerator
             this.map[arrowTipX - 2 * directionY, arrowTipY + 2 * directionX] = this.maximumElevation;
             this.map[arrowTipX - 3 * directionY, arrowTipY + 3 * directionX] = this.maximumElevation;
         }
+        // ===================================================== canyon v1 ==================================================
+        private void createPeaks6(List<int> peakCells, Random random)
+        {
+            // 1. Set everything to maximum elevation.
+            for (int row = 0; row < this.map.GetLength(0); row++)
+            {
+                for (int col = 0; col < this.map.GetLength(1); col++)
+                {
+                    this.map[row, col] = this.maximumElevation;
+                }
+            }
+
+            // 2. [initialize] Set canyon width and select random edge
+            // 3. [initialize] select random spot on edge for first cliff and random +- for second cliff
+            // 4. [loop] add to width -2 // -1 // 0 // 1 // 2, get random point next to connected cliff start then start1= -width/2, end1 = width/2
+
+            // 2. [initialize]
+            int width = random.Next(this.map.GetLength(0) / 2);
+            int side = random.Next(4);
+            int canyonElevation = 0;
+
+            // 3. [initialize]
+            int firstCliff = random.Next(width, this.map.GetLength(0)) - width;
+
+            // Ensure width is at least 1
+            width = Math.Max(1, width);
+
+            switch (side)
+            {
+                case 0: // Top
+                    for (int i = 0; i < this.map.GetLength(1); i++)
+                    {
+                        width = width + random.Next(-1, 2);
+                        if (width == 0) { width = 1; }
+                        firstCliff = firstCliff + random.Next(-Math.Abs(width) + 1, Math.Abs(width) - 1);
+                        if (firstCliff < 0) { firstCliff = 0; }
+                        for (int conn = 0; conn < width; conn++)
+                        {
+                            if (firstCliff + conn < this.map.GetLength(1))
+                            {
+                                this.map[i, firstCliff + conn] = canyonElevation;
+                            }
+                        }
+                        Console.WriteLine(canyonElevation);
+                        canyonElevation += 10;
+                    }
+                    break;
+                case 1: // Bottom 
+                    for (int i = 0; i < this.map.GetLength(1); i++)
+                    {
+                        width = width + random.Next(-1, 2);
+                        if (width == 0) { width = 1; }
+                        firstCliff = firstCliff + random.Next(-Math.Abs(width), Math.Abs(width));
+                        if (firstCliff < 0) { firstCliff = 0; }
+                        for (int conn = 0; conn < width; conn++)
+                        {
+                            if (firstCliff + conn < this.map.GetLength(1))
+                            {
+                                this.map[this.map.GetLength(0) - i - 1, firstCliff + conn] = canyonElevation;
+                            }
+                        }
+                        Console.WriteLine(canyonElevation);
+                        canyonElevation += 10;
+                    }
+                    break;
+                case 2: // Left 
+                    for (int i = 0; i < this.map.GetLength(0); i++)
+                    {
+                        width = width + random.Next(-1, 2);
+                        if (width == 0) { width = 1; }
+                        firstCliff = firstCliff + random.Next(-Math.Abs(width), Math.Abs(width));
+                        if (firstCliff < 0) { firstCliff = 0; }
+                        for (int conn = 0; conn < width; conn++)
+                        {
+                            if (firstCliff + conn < this.map.GetLength(0))
+                            {
+                                this.map[firstCliff + conn, i] = canyonElevation;
+                            }
+                        }
+                        Console.WriteLine(canyonElevation);
+                        canyonElevation += 10;
+                    }
+                    break;
+                case 3: // Right
+                    for (int i = 0; i < this.map.GetLength(0); i++)
+                    {
+                        width = width + random.Next(-1, 2);
+                        if (width == 0) { width = 1; }
+                        firstCliff = firstCliff + random.Next(-Math.Abs(width), Math.Abs(width));
+                        if (firstCliff < 0) { firstCliff = 0; }
+                        for (int conn = 0; conn < width; conn++)
+                        {
+                            if (firstCliff + conn < this.map.GetLength(0))
+                            {
+                                this.map[conn + firstCliff, this.map.GetLength(0) - i] = canyonElevation;
+                            }
+                        }
+                        Console.WriteLine(canyonElevation);
+                        canyonElevation += 10;
+                    }
+                    break;
+            }
+        }
         // ===================================================== Canyon ===================================================== 
-        private void createPeaks6(List<int> peakCells, Random random){
+        private void createPeaks7(List<int> peakCells, Random random){
             /**
                 1. Set everything to maximum elevation.
                 2. [initialize] Set canyon width and select random edge

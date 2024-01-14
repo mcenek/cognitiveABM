@@ -203,7 +203,7 @@ namespace HillClimberExample
 
 
 
-            int direction;
+            int direction = 4;
 
             if(stayPut){//don't move cus we on reward
               direction = 4;
@@ -211,12 +211,19 @@ namespace HillClimberExample
             }
             else{
               direction = this.qLearn.getDirection(landscapePatch, min, max,this.AnimalId, this.tickNum, Elevation + (25 * rewards[4]), xPos, yPos); //Which dirction we should be moving
+              int[] newL= adjacentTerrainLocations[direction];
             }
 
             int[] newLocation = null;
             newLocation = adjacentTerrainLocations[direction];
 
-            Terrain._AnimalEnvironment.MoveTo(this, newLocation[0], newLocation[1], 1, predicate: null);
+            float newElevation = (float)Terrain.GetRealValue(newLocation[0], newLocation[1]);
+            // avoid max elevations (currently set to 1500)
+            if (newElevation >= 1500) {
+              Terrain._AnimalEnvironment.MoveTo(this, (int)Position.X, (int)Position.Y, 1, predicate: null);
+            } else {
+              Terrain._AnimalEnvironment.MoveTo(this, newLocation[0], newLocation[1], 1, predicate: null);
+            }
             Elevation = Terrain.GetIntegerValue(this.Position.X, this.Position.Y);
 
             BioEnergy += calculateBioEnergy(stayPut, onActiveReward);
@@ -237,7 +244,7 @@ namespace HillClimberExample
                     if(elevationArr[index] < min){
                        min = elevationArr[index];
                       }
-                      if(elevationArr[index] > max){
+                    if(elevationArr[index] > max){
                       max = elevationArr[index];
                       }
                     landscapePatch[x, y] = elevationArr[index];
