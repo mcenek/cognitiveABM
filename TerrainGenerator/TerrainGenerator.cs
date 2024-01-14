@@ -8,7 +8,31 @@ namespace TerrainGenerator
     {
         public static void Main(string[] args)
         {
-            ElevationLandscape landscape = new ElevationLandscape(50, 50, 30, 1500, 9);
+            // Ask user for specific map --
+            int userInput = 1;
+            do {
+                Console.WriteLine("--------------------------------------------------------------------");
+                Console.WriteLine(" Select a terrain - ");
+                Console.WriteLine("1. Normal peaks");
+                Console.WriteLine("2. Inverted on Creation");
+                Console.WriteLine("3. Inverted after Creation");
+                Console.WriteLine("4. Only create Peaks around Perimeter");
+                Console.WriteLine("5. Hill with blocker");
+                Console.WriteLine("--------------------------------------------------------------------");
+                // int?
+                if (int.TryParse(Console.ReadLine(), out userInput)){
+                    // in range
+                    if (userInput >= 1 && userInput <= 5){
+                        break; // Valid input, exit the loop
+                    } else {
+                        Console.WriteLine("Invalid input. Please enter a number between 1 and 5.");
+                    }
+                } else {
+                    Console.WriteLine("Invalid input. Please enter a valid number.");
+                }
+            } while (true);
+
+            ElevationLandscape landscape = new ElevationLandscape(50, 50, 30, 1500, 9, userInput);
             landscape.Initialize();
             landscape.printMap();
 

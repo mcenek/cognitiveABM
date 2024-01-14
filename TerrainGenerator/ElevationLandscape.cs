@@ -11,12 +11,14 @@ namespace TerrainGenerator
         int numberOfPeaks;
         int maximumElevation;
         int smoothingLevel;
+        int whichTerrain;
 
-        public ElevationLandscape(int width, int height, int numberOfPeaks, int maximumElevation, int smothingLevel) : base(width, height)
+        public ElevationLandscape(int width, int height, int numberOfPeaks, int maximumElevation, int smothingLevel, int whichTerrain) : base(width, height)
         {
             this.numberOfPeaks = numberOfPeaks;
             this.maximumElevation = maximumElevation;
             this.smoothingLevel = smothingLevel;
+            this.whichTerrain = whichTerrain;
         }
 
         public override void Initialize()
@@ -38,8 +40,27 @@ namespace TerrainGenerator
                 if (!peakCells.Contains(randomValue))
                     peakCells.Add(randomValue);
             }
-
-            createPeaks(peakCells, random);
+            switch (this.whichTerrain){
+                case 1:
+                    createPeaks1(peakCells, random);
+                    break;
+                case 2:
+                    createPeaks2(peakCells, random);
+                    break;
+                case 3:
+                    createPeaks3(peakCells, random);
+                    break;
+                case 4:
+                    createPeaks4(peakCells, random);
+                    break;
+                case 5:
+                    createPeaks5(peakCells, random);
+                    break;
+                default:
+                    Console.WriteLine("Invalid option selected. Defaulting to 1");
+                    createPeaks1(peakCells, random);
+                    break;
+            }
         }
         /**
          * ===================================================================================================================================== 
@@ -140,8 +161,52 @@ namespace TerrainGenerator
                 diffuseElevation(peakCells, random);
             }
         } // perimeter peaks
-        // ===================================================== createPerimeterPeaks ===================================================== 
-        private void createPeaksk (List<int> peakCells, Random random){
+        // ===================================================== Hill with blocker ===================================================== 
+        private void createPeaks5(List<int> peakCells, Random random)
+        {
+            int middleX = this.map.GetLength(0) / 2;
+            int middleY = this.map.GetLength(1) / 2;
+            int hillPeak = this.maximumElevation - 600;
+            this.map[middleX, middleY] = hillPeak;
+
+            int radius = this.map.GetLength(0) / 2;
+            // hill
+            for (int i = 0; i < this.map.GetLength(0); i++)
+            {
+                for (int j = 0; j < this.map.GetLength(1); j++)
+                {
+                    double distance = Math.Sqrt((i - middleX) * (i - middleX) + (j - middleY) * (j - middleY));
+                    if (distance <= radius)
+                    {
+                        int fadeElevation = (int)Math.Round(hillPeak * (1.0 - distance / radius));
+                        this.map[i, j] = fadeElevation;
+                    }
+                }
+            }
+
+            int arrowTipX = middleX + random.Next(-this.map.GetLength(0) / 4, this.map.GetLength(0) / 4);
+            int arrowTipY = middleY + random.Next(-this.map.GetLength(1) / 4, this.map.GetLength(1) / 4);
+            this.map[arrowTipX, arrowTipY] = this.maximumElevation;
+            // direction vector from the arrow tip to the center.
+            int directionX = middleX - arrowTipX;
+            int directionY = middleY - arrowTipY;
+
+            // Normalize the direction vector.
+            double magnitude = Math.Sqrt(directionX*directionX + directionY*directionY);
+            directionX = (int)Math.Round(directionX / magnitude);
+            directionY = (int)Math.Round(directionY / magnitude);
+
+            //arrow values on the map.
+            this.map[arrowTipX + directionX, arrowTipY + directionY] = this.maximumElevation;
+            this.map[arrowTipX + 2 * directionX, arrowTipY + 2 * directionY] = this.maximumElevation;
+            this.map[arrowTipX + 3 * directionX, arrowTipY + 3 * directionY] = this.maximumElevation;
+
+            this.map[arrowTipX - directionY, arrowTipY + directionX] = this.maximumElevation;
+            this.map[arrowTipX - 2 * directionY, arrowTipY + 2 * directionX] = this.maximumElevation;
+            this.map[arrowTipX - 3 * directionY, arrowTipY + 3 * directionX] = this.maximumElevation;
+        }
+        // ===================================================== Canyon ===================================================== 
+        private void createPeaks6(List<int> peakCells, Random random){
             /**
                 1. Set everything to maximum elevation.
                 2. [initialize] Set canyon width and select random edge
@@ -224,49 +289,6 @@ namespace TerrainGenerator
                     }
                     break;}
                 }
-        private void createPeaks(List<int> peakCells, Random random)
-        {
-            int middleX = this.map.GetLength(0) / 2;
-            int middleY = this.map.GetLength(1) / 2;
-            int hillPeak = this.maximumElevation - 600;
-            this.map[middleX, middleY] = hillPeak;
-
-            int radius = this.map.GetLength(0) / 2;
-            // hill
-            for (int i = 0; i < this.map.GetLength(0); i++)
-            {
-                for (int j = 0; j < this.map.GetLength(1); j++)
-                {
-                    double distance = Math.Sqrt((i - middleX) * (i - middleX) + (j - middleY) * (j - middleY));
-                    if (distance <= radius)
-                    {
-                        int fadeElevation = (int)Math.Round(hillPeak * (1.0 - distance / radius));
-                        this.map[i, j] = fadeElevation;
-                    }
-                }
-            }
-
-            int arrowTipX = middleX + random.Next(-this.map.GetLength(0) / 4, this.map.GetLength(0) / 4);
-            int arrowTipY = middleY + random.Next(-this.map.GetLength(1) / 4, this.map.GetLength(1) / 4);
-            this.map[arrowTipX, arrowTipY] = this.maximumElevation;
-            // direction vector from the arrow tip to the center.
-            int directionX = middleX - arrowTipX;
-            int directionY = middleY - arrowTipY;
-
-            // Normalize the direction vector.
-            double magnitude = Math.Sqrt(directionX*directionX + directionY*directionY);
-            directionX = (int)Math.Round(directionX / magnitude);
-            directionY = (int)Math.Round(directionY / magnitude);
-
-            //arrow values on the map.
-            this.map[arrowTipX + directionX, arrowTipY + directionY] = this.maximumElevation;
-            this.map[arrowTipX + 2 * directionX, arrowTipY + 2 * directionY] = this.maximumElevation;
-            this.map[arrowTipX + 3 * directionX, arrowTipY + 3 * directionY] = this.maximumElevation;
-
-            this.map[arrowTipX - directionY, arrowTipY + directionX] = this.maximumElevation;
-            this.map[arrowTipX - 2 * directionY, arrowTipY + 2 * directionX] = this.maximumElevation;
-            this.map[arrowTipX - 3 * directionY, arrowTipY + 3 * directionX] = this.maximumElevation;
-        }
         /**
          * ===================================================================================================================================== 
          * ===================================================================================================================================== 
