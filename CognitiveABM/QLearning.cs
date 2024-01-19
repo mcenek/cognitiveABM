@@ -129,7 +129,7 @@ namespace CognitiveABM.QLearning
           int direction = biasedRouletteWheel(minIndex);
           if(direction < 0 || direction > 7){
             Console.WriteLine(direction);
-          }
+          } // ? TODO why is this here
 
 
           //recordPath(animalId, direction, minIndex);

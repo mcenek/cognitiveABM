@@ -201,29 +201,33 @@ namespace HillClimberExample
             min = tupleItem.Item2;
             max = tupleItem.Item3;
 
-
-
             int direction = 4;
-
+            int[] newLocation = null;
+            bool hitWall = false;
+            
             if(stayPut){//don't move cus we on reward
               direction = 4;
               this.qLearn.savePathandExportValues(this.AnimalId,-1,-1,landscapePatch,this.tickNum, Elevation + (25 * rewards[4]), xPos, yPos);
             }
             else{
-              direction = this.qLearn.getDirection(landscapePatch, min, max,this.AnimalId, this.tickNum, Elevation + (25 * rewards[4]), xPos, yPos); //Which dirction we should be moving
-              int[] newL= adjacentTerrainLocations[direction];
+              bool toPrint = false;
+              direction = this.qLearn.getDirection(landscapePatch, min, max, this.AnimalId, this.tickNum, Elevation + (25 * rewards[4]), xPos, yPos);                  
+              //new elevation nand check its validity
+              newLocation = adjacentTerrainLocations[direction];
+
+              if ((float)Terrain.GetRealValue(newLocation[0], newLocation[1]) >= 1500){
+                  hitWall = true;
+              } // if
             }
 
-            int[] newLocation = null;
             newLocation = adjacentTerrainLocations[direction];
-
-            float newElevation = (float)Terrain.GetRealValue(newLocation[0], newLocation[1]);
-            // avoid max elevations (currently set to 1500)
-            if (newElevation >= 1500) {
-              Terrain._AnimalEnvironment.MoveTo(this, (int)Position.X, (int)Position.Y, 1, predicate: null);
-            } else {
+            
+            if (hitWall){
+              Terrain._AnimalEnvironment.MoveTo(this, xPos, yPos, 1, predicate: null);  
+            } else{
               Terrain._AnimalEnvironment.MoveTo(this, newLocation[0], newLocation[1], 1, predicate: null);
             }
+
             Elevation = Terrain.GetIntegerValue(this.Position.X, this.Position.Y);
 
             BioEnergy += calculateBioEnergy(stayPut, onActiveReward);
