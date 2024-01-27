@@ -59,6 +59,9 @@ namespace TerrainGenerator
                 case 6:
                     createPeaks6(peakCells, random);
                     break;
+                case 7:
+                    createPeaks7(peakCells, random);
+                    break;
                 default:
                     Console.WriteLine("Invalid option selected. Defaulting to 1");
                     createPeaks1(peakCells, random);
@@ -309,6 +312,55 @@ namespace TerrainGenerator
                         canyonElevation += 10;
                     }
                     break;
+            }
+        }
+        // ===================================================== Hill with perimeter opening ===================================================== 
+        private void createPeaks7(List<int> peakCells, Random random)
+        {
+            int middleX = this.map.GetLength(0) / 2;
+            int middleY = this.map.GetLength(1) / 2;
+            int hillPeak = this.maximumElevation - 600;
+            int hillRadius = this.map.GetLength(0) / 2; // Hill radius
+            int ringInnerRadius = hillRadius; // Inner radius of the ring
+            int ringOuterRadius = hillRadius + 1; // Outer radius of the ring (initially same as hill radius)
+            int gapWidth = 1; // Initial gap width
+
+            // Create the hill
+            for (int i = 0; i < this.map.GetLength(0); i++)
+            {
+                for (int j = 0; j < this.map.GetLength(1); j++)
+                {
+                    double distance = Math.Sqrt((i - middleX) * (i - middleX) + (j - middleY) * (j - middleY));
+                    if (distance <= hillRadius)
+                    {
+                        int fadeElevation = (int)Math.Round(hillPeak * (1.0 - distance / hillRadius));
+                        this.map[i, j] = fadeElevation;
+                    }
+                }
+            }
+
+            // Decrease the ring radius and set the gap width
+            ringInnerRadius = (int) (hillRadius / 1.8); // Smaller inner radius of the ring
+            ringOuterRadius = ringInnerRadius + 2; // Outer radius of the ring (inner radius + width of the ring)
+            gapWidth = 1; // Smaller gap width
+
+            // Create the circular ring on top of the hill with a smaller gap
+            for (int i = 0; i < this.map.GetLength(0); i++)
+            {
+                for (int j = 0; j < this.map.GetLength(1); j++)
+                {
+                    double distance = Math.Sqrt((i - middleX) * (i - middleX) + (j - middleY) * (j - middleY));
+                    if (distance > ringInnerRadius && distance <= ringOuterRadius) // Check if the point lies within the ring
+                    {
+                        // Ensure there's a gap in the ring
+                        double angle = Math.Atan2(j - middleY, i - middleX);
+                        double angleDegrees = angle * (180 / Math.PI);
+                        if (angleDegrees < 45 - gapWidth || angleDegrees > 75 + gapWidth)
+                        {
+                            this.map[i, j] = this.maximumElevation; // Set the elevation to maximum for the ring
+                        }
+                    }
+                }
             }
         }
         /**
