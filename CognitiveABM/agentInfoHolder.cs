@@ -61,7 +61,7 @@ namespace CognitiveABM.agentInformationHolder
         temp[13] = temp[11] - temp[12];
         // Avoid cliffs
         if (temp[13] > 500 || temp[13] < 0) {
-          temp[13] = -100;
+          temp[13] = -999;
         }
 
         float[] avgMax = getAverageandTotal(tempList, temp[13]); //? If not avoiding cliffs, uncomment this
@@ -85,39 +85,6 @@ namespace CognitiveABM.agentInformationHolder
         float[] returnVals = {0.0f, 0.0f};
 
         if(currentFit > 0){
-          avgCurrentFit = currentFit;
-          counter = 1;
-        }
-        else{
-          avgCurrentFit = 0.0f;
-          counter = 0;
-        }
-
-        foreach(float[] array in tempList){
-          if(array[13] > 0){
-            avgCurrentFit += array[13];
-            currentFit += array[13];
-            counter++;
-          }
-        }
-
-        if(counter != 0){
-          returnVals[0] = avgCurrentFit/counter;
-          returnVals[1] = currentFit;
-        }
-        return returnVals;
-      }//end getAverage
-
-      public float[] getAverageandTotal(List<float[]> tempList, float currentFit, bool onCliff){
-        int counter;
-        float avgCurrentFit;
-        float[] returnVals = {0.0f, 0.0f};
-
-        if (onCliff){
-          avgCurrentFit = -1000.0f;
-          counter = 0;
-        }
-        else if(currentFit > 0){
           avgCurrentFit = currentFit;
           counter = 1;
         }

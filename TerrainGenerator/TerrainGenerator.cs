@@ -58,7 +58,7 @@ namespace TerrainGenerator
             // Change from txt format to csv format (bandage)
             writer.Close();
             landscape.TxtToCsv(txtFile,csvFile);
-            //landscape.TxtToCsv(txtFile,guassFile);
+            landscape.TxtToCsv(txtFile,guassFile);
             landscape.TxtToCsv(txtFile,landscapeFile);
             Console.WriteLine("Wrote to terrain file.");
         }

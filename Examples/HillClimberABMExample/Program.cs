@@ -32,7 +32,6 @@ public static class Program
             terrainFilePath = filePath;
             FileUtils.ChangeTerrainFilePath(terrainFilePath);
 
-
             QLearning.usePerfectQMap = 0;
             List<List<float>> trainGenomes = null;
             if (terrainFilePath != terrainFilePaths[0]) {

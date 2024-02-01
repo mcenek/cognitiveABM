@@ -22,7 +22,7 @@ public class ABM
     public static int QlearningTotalFittness = 0;
     public QLearningABMAdditional QLABMA = new QLearningABMAdditional();
     public agentInfoHolder agentHolder = new agentInfoHolder();
-    public static float GlobalTargetFitnes = -100.0f;
+    public static float GlobalTargetFitnes = 100.0f;
     public static int[] pickUpStat = new int[] {0,0};
 
     public ABM(ModelDescription modelDescription)
@@ -101,7 +101,7 @@ public class ABM
             else{
               QLearning.useMap = true;
             }
-            Console.WriteLine("\nGeneration: {0} of {1}", generation, generations);
+            Console.WriteLine("\nTrain Generation: {0} of {1}", generation, generations);
 
             LoggerFactory.SetLogLevel(LogLevel.Warning);
             LoggerFactory.DeactivateConsoleLogging();
