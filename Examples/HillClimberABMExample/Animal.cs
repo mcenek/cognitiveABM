@@ -210,7 +210,6 @@ namespace HillClimberExample
               this.qLearn.savePathandExportValues(this.AnimalId,-1,-1,landscapePatch,this.tickNum, Elevation + (25 * rewards[4]), xPos, yPos);
             }
             else{
-              bool toPrint = false;
               direction = this.qLearn.getDirection(landscapePatch, min, max, this.AnimalId, this.tickNum, Elevation + (25 * rewards[4]), xPos, yPos);                  
               //new elevation nand check its validity
               newLocation = adjacentTerrainLocations[direction];
