@@ -92,8 +92,15 @@ namespace CognitiveABM.agentInformationHolder
           avgCurrentFit = 0.0f;
           counter = 0;
         }
+        // First iteration checks direction
+        // Based on that value, the rest of its fitness score is based on first iteration
+        // If negative, call different condition when elevation difference is negative then add absolute value of the difference to the current fit
+        // If the following iteration is positive, then substract that absolute value from the current fit
+       
+        // If the first iteration is positive then add regardless
 
-        foreach(float[] array in tempList){
+
+        foreach(float[] array in tempList){  // Array [11] is previous elevation, Array [12] is at current elevation, Array[13] is difference between the two
           if(array[13] > 0){
             avgCurrentFit += array[13];
             currentFit += array[13];
