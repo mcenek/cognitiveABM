@@ -62,6 +62,9 @@ namespace TerrainGenerator
                 case 7:
                     createPeaks7(peakCells, random);
                     break;
+                case 8:
+                    createPeaks8(peakCells, random);
+                    break;
                 default:
                     Console.WriteLine("Invalid option selected. Defaulting to 1");
                     createPeaks1(peakCells, random);
@@ -361,6 +364,21 @@ namespace TerrainGenerator
                         }
                     }
                 }
+            }
+        }
+
+        // Terrain that will be going from top left to bottom right
+        private void createPeaks8(List<int> peakCells, Random random) {
+            for (int i = 0; i < this.map.GetLength(0); i++) {
+
+                for (int j = 0; j < this.map.GetLength(1); j++) {
+                    
+            // Calculate the normalized distance based on the column index
+            double normalizedDistance = (double) j / (this.map.GetLength(1) - 1);
+
+            // Set the elevation based on the normalized distance
+            this.map[i, j] = (int)(normalizedDistance * this.maximumElevation);
+         }
             }
         }
         /**
