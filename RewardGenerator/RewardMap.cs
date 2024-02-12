@@ -12,7 +12,9 @@ namespace RewardGenerator
         private string RewardFilePath;
         private string GaussFilePath;
         private string Landscape_rewardFile;
-        public RewardMap(int width, int height, int numberOfRewards, string rewardFilePath, string gaussFilePath, string landscape_rewardFile)
+        private string rewardTest_File;
+        private int rewardMapType;
+        public RewardMap(int width, int height, int numberOfRewards, string rewardFilePath, string gaussFilePath, string landscape_rewardFile, string rewardTest_File, int rewardMapType)
         {
             this.Width = width;
             this.Height = height;
@@ -20,6 +22,8 @@ namespace RewardGenerator
             this.RewardFilePath = rewardFilePath;
             this.GaussFilePath = gaussFilePath;
             this.Landscape_rewardFile = landscape_rewardFile;
+            this.rewardTest_File = rewardTest_File;
+            this.rewardMapType = rewardMapType;
         }
 
         public void Initialize(){
@@ -28,8 +32,24 @@ namespace RewardGenerator
                 return;
             }
             Random random = new Random();
-            //List<int> rewardCellIndices = GenerateRandomRewardIndices(Width, Height, NumberOfRewards, random);
-            List<int> rewardCellIndices = GenerateRandomRewards(Width, Height, NumberOfRewards, random);
+            List<int> rewardCellIndices = null;
+            switch (this.rewardMapType){
+                case 1:
+                    rewardCellIndices = GenerateRandomRewards(Width, Height, NumberOfRewards, random);
+                    break;
+                case 2:
+                    rewardCellIndices = GenerateRewardMiddle(Width, Height, NumberOfRewards, random, 3); // current radius 1/10th of width
+                    break;
+                default:
+                    Console.WriteLine("Invalid option selected. Defaulting reward to 1");
+                    rewardCellIndices = GenerateRandomRewards(Width, Height, NumberOfRewards, random);
+                    break;
+            }
+            // Just in case
+            if(rewardCellIndices == null){
+                rewardCellIndices = GenerateRandomRewards(Width, Height, NumberOfRewards, random);
+            }
+
             int[,] rewardMap = new int[Width, Height];
 
             foreach (int index in rewardCellIndices){
@@ -41,15 +61,31 @@ namespace RewardGenerator
             WriteRewardMapToCSV(rewardMap, this.RewardFilePath);
             WriteRewardMapToCSV(rewardMap, this.GaussFilePath);
             WriteRewardMapToCSV(rewardMap, this.Landscape_rewardFile);
+            WriteRewardMapToCSV(rewardMap, this.rewardTest_File);
         }
         private static List<int> GenerateRandomRewards(int width, int height, int numberOfRewards, Random random){
             List<int> rewardCellIndices = new List<int>();
             for (int i = 0; i < numberOfRewards; i++){
                 int x = random.Next(width);
                 int y = random.Next(height);
-                int index = x + y * width;
+                int index = x + y*width;
                 rewardCellIndices.Add(index);
                 //Console.WriteLine(index);
+            }
+            return rewardCellIndices;
+        }
+        private static List<int> GenerateRewardMiddle(int width, int height, int numberOfRewards, Random random, int radius){
+            int centerX = (int)(width/2);
+            int centerY = (int)(height/2);
+            List<int> rewardCellIndices = new List<int>();
+
+            for (int i = 0; i < numberOfRewards; i++)
+            {
+                int x, y;
+                x = random.Next(centerX-radius,centerX+radius);
+                y = random.Next(centerY-radius,centerY+radius);
+                int index = x + y*width;
+                rewardCellIndices.Add(index);
             }
             return rewardCellIndices;
         }

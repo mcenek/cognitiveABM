@@ -41,7 +41,7 @@ public static class Program
             ABM abm = new ABM(modelDescription: GetModelDescription());
             //abm.Train(10, terrainFilePath, args);
 
-            numTrain = random.Next(100,105);
+            numTrain = random.Next(100,120);
             abm.Train(fcm, numTrain, 0, true, terrainFilePath, args);
 
             // QLearning.usePerfectQMap = 0;

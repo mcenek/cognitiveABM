@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.IO;
 using System.Collections.Concurrent;
+using Mars.Core.SimulationManager.Implementation;
 
 namespace CognitiveABM.agentInformationHolder
 {
@@ -59,12 +60,12 @@ namespace CognitiveABM.agentInformationHolder
           stored into temp[13] which is the difference between the two altitudes
         */
         temp[13] = temp[11] - temp[12];
-        // Avoid cliffs
-        if (temp[13] > 500 || temp[13] < 0) {
-          temp[13] = -999;
-        }
+        // Avoid walls
+        //if (temp[11] >= 2000) { // max elevation (wall)
+        //  temp[13] = -100;
+        //}
 
-        float[] avgMax = getAverageandTotal(tempList, temp[13]); //? If not avoiding cliffs, uncomment this
+        float[] avgMax = getAverageandTotal(tempList, temp[13]); 
         temp[14] = avgMax[0];
         temp[15] = avgMax[1];
         //fitness.Add(temp[13]);
@@ -91,14 +92,11 @@ namespace CognitiveABM.agentInformationHolder
         else{
           avgCurrentFit = 0.0f;
           counter = 0;
-        }
-
+        };
         foreach(float[] array in tempList){
-          if(array[13] > 0){
             avgCurrentFit += array[13];
             currentFit += array[13];
             counter++;
-          }
         }
 
         if(counter != 0){

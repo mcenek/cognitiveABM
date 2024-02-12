@@ -84,6 +84,9 @@ namespace TerrainGenerator
             for(int i = 0; i < this.numberOfPeaks; i++)
             {
                 elevation = random.Next(this.maximumElevation / 2) + this.maximumElevation / 2;
+                while (elevation == maximumElevation){
+                    elevation = random.Next(this.maximumElevation / 2) + this.maximumElevation / 2;
+                }
                 this.map[peakCells[i] / this.map.GetLength(1), peakCells[i] % this.map.GetLength(0)] = elevation;
             }
 

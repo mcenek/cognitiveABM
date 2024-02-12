@@ -35,7 +35,7 @@ namespace TerrainGenerator
                 }
             } while (true);
 
-            ElevationLandscape landscape = new ElevationLandscape(50, 50, 30, 1500, 9, userInput);
+            ElevationLandscape landscape = new ElevationLandscape(50, 50, 30, 2000, 9, userInput);
             landscape.Initialize();
             landscape.printMap();
 

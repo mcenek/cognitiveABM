@@ -264,6 +264,7 @@ namespace CognitiveABM.QLearning
          * @return: the average and total of all fitness gains of animal
          * @description: calculates the average and total fitness of an animal at current moment in time
          */
+         // !! NEVER USED FUNCTION (Similar function used in /CognitveABM/agentInfoHolder.cs)
         public float[] getAverageandTotal(List<float[]> tempList, float currentFit){
           int counter;
           float avgCurrentFit;
