@@ -4,6 +4,7 @@ using System.Linq;
 using System.IO;
 using System.Collections.Concurrent;
 using Mars.Core.SimulationManager.Implementation;
+using Fitness;
 
 namespace CognitiveABM.agentInformationHolder
 {
@@ -29,8 +30,7 @@ namespace CognitiveABM.agentInformationHolder
         if(!agentInfo.TryAdd(id,(exportVals,path))){
           editItem(id,exportVals,path);
         }
-
-
+        
       }
 
       /**
@@ -59,11 +59,7 @@ namespace CognitiveABM.agentInformationHolder
           from the path that the agent took: temp[11] (initial val) temp[12] compared value
           stored into temp[13] which is the difference between the two altitudes
         */
-        temp[13] = temp[11] - temp[12];
-        // Avoid walls
-        //if (temp[11] >= 2000) { // max elevation (wall)
-        //  temp[13] = -100;
-        //}
+        temp[13] = FitnessFunctions.getElevationDifference(temp[11], temp[12]);
 
         float[] avgMax = getAverageandTotal(tempList, temp[13]); 
         temp[14] = avgMax[0];

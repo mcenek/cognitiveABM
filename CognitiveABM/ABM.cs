@@ -22,7 +22,7 @@ public class ABM
     public static int QlearningTotalFittness = 0;
     public QLearningABMAdditional QLABMA = new QLearningABMAdditional();
     public agentInfoHolder agentHolder = new agentInfoHolder();
-    public static float GlobalTargetFitnes = 100.0f;
+    public static float GlobalTargetFitnes = 2000.0f;
     public static int[] pickUpStat = new int[] {0,0};
 
     public ABM(ModelDescription modelDescription)

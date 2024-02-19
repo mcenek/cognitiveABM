@@ -13,6 +13,8 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "TerrainGenerator", "Terrain
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "RewardGenerator", "RewardGenerator\RewardGenerator.csproj", "{560E8103-0EF7-4DFB-8A45-32CF49C57239}"
 EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Fitness", "Fitness\Fitness.csproj", "{6899263B-1DB9-455F-B71B-30B680697D17}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -35,6 +37,10 @@ Global
 		{560E8103-0EF7-4DFB-8A45-32CF49C57239}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{560E8103-0EF7-4DFB-8A45-32CF49C57239}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{560E8103-0EF7-4DFB-8A45-32CF49C57239}.Release|Any CPU.Build.0 = Release|Any CPU
+		{6899263B-1DB9-455F-B71B-30B680697D17}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{6899263B-1DB9-455F-B71B-30B680697D17}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{6899263B-1DB9-455F-B71B-30B680697D17}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{6899263B-1DB9-455F-B71B-30B680697D17}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
