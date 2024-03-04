@@ -55,12 +55,9 @@ namespace CognitiveABM.QLearningABMAdditional{
       var temp = scoreValue.OrderByDescending(x => x.Value).ToDictionary(x => x.Key, x => x.Value);
       scoreValue = temp;
 
-
-
       scoreValue = setScoreValue(scoreValue);
 
       maxSteps = getStepsToMax(agentHolder);
-
 
 
       scoreValue = calculateAgentScore(scoreValue, maxSteps, lambda, agentHolder);

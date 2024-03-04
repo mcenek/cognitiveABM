@@ -80,7 +80,9 @@ namespace CognitiveABM.agentInformationHolder
         int counter;
         float avgCurrentFit;
         float[] returnVals = {0.0f, 0.0f};
-
+        avgCurrentFit = currentFit;
+        counter = 1;
+/*
         if(currentFit > 0){
           avgCurrentFit = currentFit;
           counter = 1;
@@ -88,7 +90,7 @@ namespace CognitiveABM.agentInformationHolder
         else{
           avgCurrentFit = 0.0f;
           counter = 0;
-        };
+        };*/
         foreach(float[] array in tempList){
             avgCurrentFit += array[13];
             currentFit += array[13];
@@ -111,7 +113,7 @@ namespace CognitiveABM.agentInformationHolder
       public List<(int,int)> getNewPathWay(int id, List<(int,int)> path){
         List<(int,int)> tempList = agentInfo[id].Item2;
         foreach((int,int)tuple in path){
-          tempList.Add(tuple);
+          tempList.Add(tuple); 
         }
         return tempList;
       }
