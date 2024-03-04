@@ -28,14 +28,14 @@ namespace TerrainGenerator
                     if (userInput >= 1 && userInput <= 8){
                         break; // Valid input, exit the loop
                     } else {
-                        Console.WriteLine("Invalid input. Please enter a number between 1 and 5.");
+                        Console.WriteLine("Invalid input. Please enter a number between 1 and 8.");
                     }
                 } else {
                     Console.WriteLine("Invalid input. Please enter a valid number.");
                 }
             } while (true);
 
-            ElevationLandscape landscape = new ElevationLandscape(50, 50, 30, 2000, 9, userInput);
+            ElevationLandscape landscape = new ElevationLandscape(50, 50, 30, 1500, 9, userInput);
             landscape.Initialize();
             landscape.printMap();
 

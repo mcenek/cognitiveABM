@@ -42,28 +42,31 @@ namespace TerrainGenerator
             }
             switch (this.whichTerrain){
                 case 1:
-                    createPeaks1(peakCells, random);
+                    createPeaks1(peakCells, random); // 1. Normal peaks
                     break;
                 case 2:
-                    createPeaks2(peakCells, random);
+                    createPeaks2(peakCells, random); // 2. Inverted on Creation
                     break;
                 case 3:
-                    createPeaks3(peakCells, random);
+                    createPeaks3(peakCells, random); // 3. Inverted after Creation
                     break;
                 case 4:
-                    createPeaks4(peakCells, random);
+                    createPeaks4(peakCells, random); // 4. Only create Peaks around Perimeter
                     break;
                 case 5:
-                    createPeaks5(peakCells, random);
+                    this.maximumElevation += 500;
+                    createPeaks5(peakCells, random); // 5. Hill with blocker
                     break;
                 case 6:
-                    createPeaks6(peakCells, random);
+                    this.maximumElevation += 500;
+                    createPeaks6(peakCells, random); // 6. Canyon
                     break;
-                case 7:
-                    createPeaks7(peakCells, random);
+                case 7: 
+                    this.maximumElevation += 500;
+                    createPeaks7(peakCells, random); // 7. Hill with perimeter opening
                     break;
                 case 8:
-                    createPeaks8(peakCells, random);
+                    createPeaks8(peakCells, random); // 8. Terrain going top left to bottom right
                     break;
                 default:
                     Console.WriteLine("Invalid option selected. Defaulting to 1");

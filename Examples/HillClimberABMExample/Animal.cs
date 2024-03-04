@@ -214,7 +214,7 @@ namespace HillClimberExample
               //new elevation nand check its validity
               newLocation = adjacentTerrainLocations[direction];
 
-              if ((float)Terrain.GetRealValue(newLocation[0], newLocation[1]) >= 1500){ // if you do not want to use blockers, change to a number higher than maxElevation ie.:1501
+              if ((float)Terrain.GetRealValue(newLocation[0], newLocation[1]) >= 2000){ // if you do not want to use blockers, change to a number higher than maxElevation ie.:1501
                   hitWall = true;
               }
             }
