@@ -54,15 +54,15 @@ namespace TerrainGenerator
                     createPeaks4(peakCells, random); // 4. Only create Peaks around Perimeter
                     break;
                 case 5:
-                    this.maximumElevation += 500;
+                    this.maximumElevation = 2000;
                     createPeaks5(peakCells, random); // 5. Hill with blocker
                     break;
                 case 6:
-                    this.maximumElevation += 500;
+                    this.maximumElevation = 2000;
                     createPeaks6(peakCells, random); // 6. Canyon
                     break;
                 case 7: 
-                    this.maximumElevation += 500;
+                    this.maximumElevation = 2000;
                     createPeaks7(peakCells, random); // 7. Hill with perimeter opening
                     break;
                 case 8:

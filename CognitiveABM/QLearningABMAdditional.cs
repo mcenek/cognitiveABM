@@ -59,7 +59,6 @@ namespace CognitiveABM.QLearningABMAdditional{
 
       maxSteps = getStepsToMax(agentHolder);
 
-
       scoreValue = calculateAgentScore(scoreValue, maxSteps, lambda, agentHolder);
 
       return scoreValue;
@@ -77,8 +76,6 @@ namespace CognitiveABM.QLearningABMAdditional{
       Dictionary<int, float> score = new Dictionary<int,float>();
       float pathBonus = 0.0f;
       foreach(var item in scoreValue){
-
-
         int maxStep = maxSteps[item.Key];
         if(maxSteps[item.Key] == 0){
           score.Add(item.Key,(scoreValue[item.Key]/(lambda)));
@@ -108,9 +105,9 @@ namespace CognitiveABM.QLearningABMAdditional{
       //finds the max steps it took an agent to reach it's peak elevation
       foreach (KeyValuePair<int, (List<float[]>, List<(int,int)>)> entry in agentHolder.getInfo()){
         patchList = entry.Value.Item1;
-        AME = 0.0f;
+        //AME = 0.0f; // Not sure why this is resetting
         foreach (float[] array in patchList){
-         if(AME < array[11]){ //finds max elevation an agent reached
+         if(array[11] > AME){ //finds max elevation an agent reached
            AME = array[11];
            maxStep = (int)array[1];
          }
