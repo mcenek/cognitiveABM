@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Security.Cryptography.X509Certificates;
 
 namespace RewardGenerator
 {
@@ -32,30 +33,37 @@ namespace RewardGenerator
                 return;
             }
             Random random = new Random();
-            List<int> rewardCellIndices = null;
+            List<int> rewardCellIndices;
+            bool rand = true;
             switch (this.rewardMapType){
                 case 1:
                     rewardCellIndices = GenerateRandomRewards(Width, Height, NumberOfRewards, random);
                     break;
                 case 2:
-                    rewardCellIndices = GenerateRewardMiddle(Width, Height, NumberOfRewards, random, 3); // current radius 1/10th of width
+                    rewardCellIndices = GenerateRewardMiddle(Width, Height, NumberOfRewards, random, 5); // current radius 1/10th of width
+                    rand = false;
                     break;
                 default:
                     Console.WriteLine("Invalid option selected. Defaulting reward to 1");
                     rewardCellIndices = GenerateRandomRewards(Width, Height, NumberOfRewards, random);
                     break;
             }
-            // Just in case
-            if(rewardCellIndices == null){
-                rewardCellIndices = GenerateRandomRewards(Width, Height, NumberOfRewards, random);
-            }
 
             int[,] rewardMap = new int[Width, Height];
-
-            foreach (int index in rewardCellIndices){
-                int x = index % Width;
-                int y = index / Width;
-                rewardMap[x, y] = 1;
+            if(rand == true){
+                foreach (int index in rewardCellIndices){
+                    int x = index % Width;
+                    int y = index / Width;
+                    rewardMap[x, y] = 1;
+                }
+            } else {
+                for (int i = 0; i < rewardCellIndices.Count; i += 2)
+                {
+                    int x = rewardCellIndices[i];
+                    int y = rewardCellIndices[i + 1];
+                    Console.WriteLine("X:" +x+" Y:"+y);
+                    rewardMap[x, y] = 1;
+                }
             }
             // write to csv
             WriteRewardMapToCSV(rewardMap, this.RewardFilePath);
@@ -84,8 +92,8 @@ namespace RewardGenerator
                 int x, y;
                 x = random.Next(centerX-radius,centerX+radius);
                 y = random.Next(centerY-radius,centerY+radius);
-                int index = x + y*width;
-                rewardCellIndices.Add(index);
+                rewardCellIndices.Add(x);
+                rewardCellIndices.Add(y);
             }
             return rewardCellIndices;
         }

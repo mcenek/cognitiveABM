@@ -13,7 +13,7 @@ Data = ['./output/landscape_exportInfo.csv','./output/moatGauss_exportInfo.csv',
 Layer = ['./layers/landscape.csv', './layers/moatGauss.csv', './layers/grid.csv']
 rewardLayer = ['./layers/landscape_reward.csv', './layers/moatGauss_reward.csv', './layers/grid_reward.csv']
     
-terrain_num = 2
+terrain_num = 2 # ! TODO WHY ? <---------------------------
 AgentData = Data[terrain_num]
 LayerFile = Layer[terrain_num]
 rewardFile = rewardLayer[terrain_num]
@@ -93,12 +93,11 @@ data = list(csv.reader(open(rewardFile)))
 xVals = []
 yVals = []
 
-
 for height in range(50):
         for length in range(50):
             if data[height][length] == '1':
-                xVals.append(height)
-                yVals.append(length)
+                xVals.append(length)
+                yVals.append(49-height)
 
 # store previous steps
 prev_positions = {agent_id: {'x': [], 'y': []} for agent_id in range(numpoints)}
@@ -146,6 +145,8 @@ for i in range(NUM_STEPS):
     heatmap.imshow(terrain[::-1], origin = 'lower')
     reward_pos.get_xaxis().set_visible(False);
     reward_pos.get_yaxis().set_visible(False);
+    reward_pos.set_xlim(0, 50)
+    reward_pos.set_ylim(0, 50)
     reward_pos.scatter(xVals, yVals, marker='o', color = 'red', s=25)
     camera.snap()
 anim = camera.animate(blit=True, repeat=False)
