@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Text;
+using FitnessFeatures;
 
 namespace CognitiveABM.FCM
 {
@@ -69,15 +70,12 @@ namespace CognitiveABM.FCM
                     {
                         WriteGenomes("genomes.csv");
                     }
-                    ABM.GlobalTargetFitnes = avg;
+                    FitnessFeatures.FitnessFunctions.GlobalTargetFitnes = avg;
                 }
 
                 if (sum == 0)
                 {
-                    for (int i = 0; i < agentFitness.Count; i++)
-                    {
-                        agentFitness[i] = 1;
-                    }
+                    agentFitness = FitnessFeatures.FitnessFunctions.resetFitness(agentFitness);
                 }
 
                 List<float> agentReproductionPercentages = CalculateReproductionPercent(agentFitness.ToList());

@@ -13,7 +13,7 @@ using Mars.Core.SimulationManager.Entities;
 using Mars.Core.SimulationStarter;
 using System.Text.RegularExpressions;
 using CognitiveABM.agentInformationHolder;
-
+using FitnessFeatures;
 public class ABM
 {
 
@@ -22,7 +22,6 @@ public class ABM
     public static int QlearningTotalFittness = 0;
     public QLearningABMAdditional QLABMA = new QLearningABMAdditional();
     public agentInfoHolder agentHolder = new agentInfoHolder();
-    public static float GlobalTargetFitnes = 2000.0f;
     public static int[] pickUpStat = new int[] {0,0};
 
     public ABM(ModelDescription modelDescription)
@@ -63,7 +62,7 @@ public class ABM
                 // Console.WriteLine($"Simulation execution finished in {stopWatch.ElapsedMilliseconds / 1000:N2} seconds");
 
                 stopWatch.Restart();
-                var values = fcm.Run(false, GlobalTargetFitnes, true);
+                var values = fcm.Run(false, FitnessFeatures.FitnessFunctions.GlobalTargetFitnes, true);
                 stopWatch.Stop();
                 // Console.WriteLine($"FCM finished in {stopWatch.ElapsedMilliseconds / 100:N2} seconds");
 
@@ -87,7 +86,7 @@ public class ABM
 
     public void Train(FCM fcm, int generations, float targetFitness, Boolean saveGenomes, string terrianFilePath, string[] args)
     {
-        GlobalTargetFitnes = targetFitness;
+        FitnessFeatures.FitnessFunctions.GlobalTargetFitnes = targetFitness;
         var startTime = DateTime.Now;
         //make method to get lambda value i guess
         float[] lambdaArray = QLABMA.getLambda(generations);
@@ -121,8 +120,8 @@ public class ABM
 
                 //-----------------------------------------------------------------------------------------------//
                 stopWatch.Restart();
-                fcm.Run(true, GlobalTargetFitnes, saveGenomes);
-                Console.WriteLine("New Target Fitness: " + GlobalTargetFitnes);
+                fcm.Run(true, FitnessFeatures.FitnessFunctions.GlobalTargetFitnes, saveGenomes);
+                Console.WriteLine("New Target Fitness: " +  FitnessFeatures.FitnessFunctions.GlobalTargetFitnes);
                 stopWatch.Stop();
 
                 Console.WriteLine($"FCM finished in {stopWatch.ElapsedMilliseconds / 100:N2} seconds");
