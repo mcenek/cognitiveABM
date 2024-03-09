@@ -41,17 +41,19 @@ public static class Program
             ABM abm = new ABM(modelDescription: GetModelDescription());
             //abm.Train(10, terrainFilePath, args);
 
-            numTrain = random.Next(100,120);
+            numTrain = random.Next(100,105);
+            // Train
             abm.Train(fcm, numTrain, 0, true, terrainFilePath, args);
 
             // QLearning.usePerfectQMap = 0;
-
             //  var genomes = FileUtils.ReadGenomesFromFile(".\\output\\good.csv");
+
             fcm = new HillClimberFCM(population: 96, numberOfValues: 2020, STEPS, OUTPUT_FILENAME, FITNESS_COLUMNNAME, trainGenomes);
 
+            // Test
             fitnessVals.Add(abm.Test(fcm, 1, terrainFilePath, args));
 
-            // fitnessVals.Add(abm.Test(1, STEPS, FITNESS_COLUMNNAME,OUTPUT_FILENAME,terrainFilePath, args));
+            //fitnessVals.Add(abm.Test(1, STEPS, FITNESS_COLUMNNAME,OUTPUT_FILENAME,terrainFilePath, args));
             //abm.Train(fcm, 10, 200, true, args);
 
             //fitnessVals.Add(abm.Test(fcm, 1, args));
