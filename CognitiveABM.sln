@@ -1,7 +1,7 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio Version 16
-VisualStudioVersion = 16.0.30002.166
+# Visual Studio Version 17
+VisualStudioVersion = 17.6.33829.357
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "CognitiveABM", "CognitiveABM\CognitiveABM.csproj", "{0F177CEA-C5B2-4020-BE60-40C12AAC549B}"
 EndProject
@@ -9,7 +9,11 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution 
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "HillClimberABMExample", "Examples\HillClimberABMExample\HillClimberABMExample.csproj", "{104FBD29-6347-44B4-BF91-AC4042C64242}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TerrainGenerator", "TerrainGenerator\TerrainGenerator.csproj", "{3587319D-C150-4E09-9FF4-3CF60EBD0814}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "TerrainGenerator", "TerrainGenerator\TerrainGenerator.csproj", "{3587319D-C150-4E09-9FF4-3CF60EBD0814}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "RewardGenerator", "RewardGenerator\RewardGenerator.csproj", "{560E8103-0EF7-4DFB-8A45-32CF49C57239}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Fitness", "Fitness\Fitness.csproj", "{6899263B-1DB9-455F-B71B-30B680697D17}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -29,6 +33,14 @@ Global
 		{3587319D-C150-4E09-9FF4-3CF60EBD0814}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{3587319D-C150-4E09-9FF4-3CF60EBD0814}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{3587319D-C150-4E09-9FF4-3CF60EBD0814}.Release|Any CPU.Build.0 = Release|Any CPU
+		{560E8103-0EF7-4DFB-8A45-32CF49C57239}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{560E8103-0EF7-4DFB-8A45-32CF49C57239}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{560E8103-0EF7-4DFB-8A45-32CF49C57239}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{560E8103-0EF7-4DFB-8A45-32CF49C57239}.Release|Any CPU.Build.0 = Release|Any CPU
+		{6899263B-1DB9-455F-B71B-30B680697D17}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{6899263B-1DB9-455F-B71B-30B680697D17}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{6899263B-1DB9-455F-B71B-30B680697D17}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{6899263B-1DB9-455F-B71B-30B680697D17}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

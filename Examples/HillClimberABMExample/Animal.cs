@@ -201,22 +201,32 @@ namespace HillClimberExample
             min = tupleItem.Item2;
             max = tupleItem.Item3;
 
-
-
-            int direction;
-
+            int direction = 4;
+            int[] newLocation = null;
+            bool hitWall = false;
+            
             if(stayPut){//don't move cus we on reward
               direction = 4;
               this.qLearn.savePathandExportValues(this.AnimalId,-1,-1,landscapePatch,this.tickNum, Elevation + (25 * rewards[4]), xPos, yPos);
             }
             else{
-              direction = this.qLearn.getDirection(landscapePatch, min, max,this.AnimalId, this.tickNum, Elevation + (25 * rewards[4]), xPos, yPos); //Which dirction we should be moving
+              direction = this.qLearn.getDirection(landscapePatch, min, max, this.AnimalId, this.tickNum, Elevation + (25 * rewards[4]), xPos, yPos);                  
+              //new elevation nand check its validity
+              newLocation = adjacentTerrainLocations[direction];
+
+              if ((float)Terrain.GetRealValue(newLocation[0], newLocation[1]) >= 2000){ // if you do not want to use blockers, change to a number higher than maxElevation ie.:1501
+                  hitWall = true;
+              }
             }
 
-            int[] newLocation = null;
             newLocation = adjacentTerrainLocations[direction];
+            
+            if (hitWall){
+              Terrain._AnimalEnvironment.MoveTo(this, xPos, yPos, 1, predicate: null);  
+            } else {
+              Terrain._AnimalEnvironment.MoveTo(this, newLocation[0], newLocation[1], 1, predicate: null);
+            }
 
-            Terrain._AnimalEnvironment.MoveTo(this, newLocation[0], newLocation[1], 1, predicate: null);
             Elevation = Terrain.GetIntegerValue(this.Position.X, this.Position.Y);
 
             BioEnergy += calculateBioEnergy(stayPut, onActiveReward);
@@ -237,7 +247,7 @@ namespace HillClimberExample
                     if(elevationArr[index] < min){
                        min = elevationArr[index];
                       }
-                      if(elevationArr[index] > max){
+                    if(elevationArr[index] > max){
                       max = elevationArr[index];
                       }
                     landscapePatch[x, y] = elevationArr[index];

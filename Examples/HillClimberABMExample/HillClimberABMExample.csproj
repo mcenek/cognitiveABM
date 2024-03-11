@@ -2,7 +2,7 @@
 
   <PropertyGroup>
     <OutputType>Exe</OutputType>
-    <TargetFramework>netcoreapp2.1</TargetFramework>
+    <TargetFramework>net7.0</TargetFramework>
 	  <LangVersion>latest</LangVersion>
 	  <StartupObject>Program</StartupObject>
   </PropertyGroup>
@@ -13,6 +13,8 @@
 	</ItemGroup>
 	<ItemGroup>
 	  <ProjectReference Include="..\..\CognitiveABM\CognitiveABM.csproj" />
+	  <ProjectReference Include="..\..\TerrainGenerator\TerrainGenerator.csproj" />
+	  <ProjectReference Include="..\..\RewardGenerator\RewardGenerator.csproj" />
 	</ItemGroup>
 	<ProjectExtensions><VisualStudio><UserProperties /></VisualStudio></ProjectExtensions>
 </Project>
