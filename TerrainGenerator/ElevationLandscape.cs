@@ -65,6 +65,9 @@ namespace TerrainGenerator
                 case 8:
                     createPeaks8(peakCells, random);
                     break;
+                case 9:
+                    createPeaks9(peakCells, random);
+                    break;
                 default:
                     Console.WriteLine("Invalid option selected. Defaulting to 1");
                     createPeaks1(peakCells, random);
@@ -380,6 +383,59 @@ namespace TerrainGenerator
             this.map[i, j] = (int)(normalizedDistance * this.maximumElevation);
          }
             }
+        }
+
+        // ================== Fractal Terrain =====================================
+        private void createPeaks9(List<int> peakCells, Random random) {
+            int sideLength = this.map.GetLength(0); // get length of the array
+            
+            // call method to be able to get corner points to start the recursive method
+            CornerPoints(sideLength, 0.5, random); // changeVal can be adjusted to 0.3 - 1.2 (what I found best) lower is less crazy and smoother
+        }
+
+        private void CornerPoints(int size, double changeVal, Random random) {
+            // get the 4 corners points of the array and set random value for it
+            this.map[0, 0] = random.Next(this.maximumElevation); // top left
+            this.map[0, size - 1] = random.Next(this.maximumElevation); // top right
+            this.map[size - 1, 0] = random.Next(this.maximumElevation); // bottom left
+            this.map[size - 1, size - 1] = random.Next(this.maximumElevation); // bottom right
+
+            DiamondSquareRecursive(0, 0, size - 1, size - 1, changeVal, random); // call the recursive method using the whole 2d array
+        }
+
+        private void DiamondSquareRecursive(int x1, int y1, int x2, int y2, double changeVal, Random random) {
+            // stops if it's a 1x1 array
+            if (x2 - x1 < 2) {
+                return;
+            }
+
+            // get midpoints of whole 2d array for x and y
+            // this would indicate the very center points
+            int midX = (x1 + x2) / 2;
+            int midY = (y1 + y2) / 2;
+
+            // gets a random value to assign every pixel differently
+            double offset1 = random.NextDouble() * 2 * changeVal * this.maximumElevation - changeVal * this.maximumElevation;
+            
+            // diamond step, get four corners of the array and divide by 4 and added by random offset to set the value for center point
+            this.map[midX, midY] = (int)((this.map[x1, y1] + this.map[x1, y2] + this.map[x2, y1] + this.map[x2, y2]) / 4.0 + offset1);
+
+            // another offset to have variety that has a different random double then the center point
+            double offset2 = random.NextDouble() * 2 * changeVal * this.maximumElevation - changeVal * this.maximumElevation;
+
+            // add the 2 corner points with the center side and the middle point with an offset
+            // Square step, get the center point for the sides of each square
+            this.map[x1, midY] = (int) ((this.map[x1, y1] + this.map[x1, y2] + this.map[midX, midY]) / 3.0 + offset2); // middle left
+            this.map[x2, midY] = (int) ((this.map[x1, y2] + this.map[x2, y2] + this.map[midX, midY]) / 3.0 + offset2); // middle right
+            this.map[midX, y1] = (int) ((this.map[x1, y1] + this.map[x2, y1] + this.map[midX, midY]) / 3.0 + offset2); // top middle
+            this.map[midX, y2] = (int) ((this.map[x1, y2] + this.map[x2, y2] + this.map[midX, midY]) / 3.0 + offset2); // bottom middle
+
+
+            // recalls the method for the four regions all the way until it's a 1x1 grid
+            DiamondSquareRecursive(x1, y1, midX, midY, changeVal, random); // top left region
+            DiamondSquareRecursive(midX, y1, x2, midY, changeVal, random); // top right region
+            DiamondSquareRecursive(x1, midY, midX, y2, changeVal, random); // bottom left region
+            DiamondSquareRecursive(midX, midY, x2, y2, changeVal, random); // bottom right region
         }
         /**
          * ===================================================================================================================================== 
