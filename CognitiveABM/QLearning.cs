@@ -127,10 +127,6 @@ namespace CognitiveABM.QLearning
           int minIndex = Enumerable.Range(0, MSE.Length).Aggregate((a, b) => (MSE[a] < MSE[b]) ? a : b);
 
           int direction = biasedRouletteWheel(minIndex);
-          if(direction < 0 || direction > 7){
-            Console.WriteLine(direction);
-          } // ? TODO why is this here
-
 
           //recordPath(animalId, direction, minIndex);
 
@@ -190,7 +186,7 @@ namespace CognitiveABM.QLearning
                 return i;
               }
             }
-              return col; //return -1 so we know that it's this method that causes an error later down the road
+          return col; //return -1 so we know that it's this method that causes an error later down the road
         }//end rouletteWheel
                 /**
          * @description: creates a random float between -0.2 and 0.2

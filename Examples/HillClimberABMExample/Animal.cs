@@ -372,19 +372,18 @@ namespace HillClimberExample
           //   BioEnergy = 0;
           // }
           //if staying put on non-reward
-          if(stayPut && !onActiveReward){
+          else if(stayPut && !onActiveReward){
             BioEnergy = -5;
           }
           //if moving on reward
-          if(!stayPut && onActiveReward){
+          else if(!stayPut && onActiveReward){
             BioEnergy = -2;
             ABM.pickUpStat[1]++;
           }
           //if moving on non-reward
-          if(!stayPut && !onActiveReward){
+          else if(!stayPut && !onActiveReward){
             BioEnergy = 1;
           }
-
 
           return BioEnergy;
         }
@@ -590,31 +589,37 @@ namespace HillClimberExample
             return locations;
         }
 
-         private float[,] readRewards(){
+        private float[,] readRewards(){
             string path = Program.terrainFilePath;
-            string filePath = path.Replace(".csv", "_reward.csv");
-            int counter = 0;
+            string fileName = Path.GetFileNameWithoutExtension(path);
+            string filePath = Path.Combine(Path.GetDirectoryName(path), fileName + "_reward.csv");
+            
             int x = 0;
             int y = 0;
             height = 50;
             length = 50;
-            float[,] rewardMap = new float[50,50];
+            float[,] rewardMap = new float[50, 50];
             string line = "";
             string[] values = null;
-            if(File.Exists(filePath)){
-            using(var reader = new StreamReader(filePath)){//gets dimentions of reward map
-                while(!reader.EndOfStream){
-                  line = reader.ReadLine();
-                  values = line.Split(',');
-                  for(y = 0; y < 50; y++){
-                    rewardMap[x, y] = float.Parse(values[x]);
-                  }
-                  length = values.Length;
-                  height = length;
-                  x++;
-                }
+
+            if (File.Exists(filePath)){
+                using (var reader = new StreamReader(filePath)){
+                    while (!reader.EndOfStream){
+                        line = reader.ReadLine();
+                        values = line.Split(',');
+                        for (y = 0; y < 50; y++){
+                            rewardMap[x, y] = float.Parse(values[y]);
+                        } // for
+                        length = values.Length;
+                        height = length;
+                        x++;
+                    } // while 
+                } // using
+            } // if
+            else {
+                Console.WriteLine("Reward map file not found: " + filePath);
             }
-          }
+
             return rewardMap;
         }
         private float[] agentReward(float[] rewards, List<int[]> adjacentTerrainLocations){
