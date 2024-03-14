@@ -46,8 +46,6 @@ with open(AgentData, newline='') as csvfile:
             bestAgentID = int(float(row['AnimalID']))
             bestFit = int(float(row['Total Fitness']))
 
-print(f"BEST AGENT ID <<<< ------- : {bestAgentID}")
-
 with open(AgentData, newline='') as csvfile:
     reader = csv.DictReader(csvfile)
 
