@@ -5,6 +5,7 @@ using CognitiveABM.QLearning;
 using Mars.Core.ModelContainer.Entities;
 using TerrainGenerator;
 using RewardGenerator;
+using System.IO;
 
 public static class Program
 {
@@ -19,7 +20,8 @@ public static class Program
     {
         TerrainGenerator.TerrainGenerator.Main(args);
         RewardGenerator.RewardGenerator.Main(args);
-        
+        File.WriteAllText("./layers/qMapGenerated8x8.csv", string.Empty);
+
         // terrainFilePaths = new string[] { "./layers/moatGauss.csv" };
         terrainFilePaths = new string[] { "./layers/landscape.csv", "./layers/moatGauss.csv", "./layers/grid.csv" };
         var fitnessVals = new List<List<float>>();
@@ -41,7 +43,7 @@ public static class Program
             ABM abm = new ABM(modelDescription: GetModelDescription());
             //abm.Train(10, terrainFilePath, args);
 
-            numTrain = random.Next(100,105);
+            numTrain = random.Next(300,505);
             // Train
             abm.Train(fcm, numTrain, 0, true, terrainFilePath, args);
 

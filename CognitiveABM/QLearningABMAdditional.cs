@@ -51,16 +51,38 @@ namespace CognitiveABM.QLearningABMAdditional{
         float ElevationScore = entry.Value.Item1.Last()[15];
         scoreValue.Add(entry.Key,ElevationScore);
       }//end for each id
+      
+      /*Console.WriteLine("SCORE VALUE before Order By Descending-----------------------------\n");
+      foreach (KeyValuePair<int, float> pair in scoreValue)
+      {
+          Console.WriteLine($"Key: {pair.Key}, Value: {pair.Value}");
+      }*/
 
       var temp = scoreValue.OrderByDescending(x => x.Value).ToDictionary(x => x.Key, x => x.Value);
       scoreValue = temp;
+      
+      /*Console.WriteLine("SCORE VALUE after Order By Descending-----------------------------\n");
+      foreach (KeyValuePair<int, float> pair in scoreValue)
+      {
+          Console.WriteLine($"Key: {pair.Key}, Value: {pair.Value}");
+      }*/
 
       scoreValue = setScoreValue(scoreValue);
+
+      /*Console.WriteLine("SCORE VALUE after setscorevalue-----------------------------\n");
+      foreach (KeyValuePair<int, float> pair in scoreValue)
+      {
+          Console.WriteLine($"Key: {pair.Key}, Value: {pair.Value}");
+      }*/
 
       maxSteps = getStepsToMax(agentHolder);
 
       scoreValue = calculateAgentScore(scoreValue, maxSteps, lambda, agentHolder);
-
+      /*Console.WriteLine("SCORE VALUE after calc agent score-----------------------------\n");
+      foreach (KeyValuePair<int, float> pair in scoreValue)
+      {
+          Console.WriteLine($"Key: {pair.Key}, Value: {pair.Value}");
+      }*/
       return scoreValue;
     }//end getAgentScore
 
@@ -213,26 +235,81 @@ namespace CognitiveABM.QLearningABMAdditional{
      * @description: updates the current qmap and prints it
      */
     public void updateQMap(Dictionary<int, float> agentScore, agentInfoHolder agentHolder){
-      float[,] qmap = getQMap(); //8x8 qmap matrix hard coded
+      float[,] qmap = getQMap();
+      int mapRows = qmap.GetLength(0);
+      int mapCols = qmap.GetLength(1);
 
-     //4x4 qmap matrix hard coded
-      foreach(KeyValuePair<int, (List<float[]>, List<(int,int)>)> entry in agentHolder.getInfo()){
-        foreach((int,int)tuple in entry.Value.Item2){
-
-          //(-1,-1) indicated we did not move so the qmap does not change
-          if(tuple.Item1 != -1 && tuple.Item2 != -1){
-            qmap[tuple.Item1,tuple.Item2] += agentScore[entry.Key];
+      foreach (KeyValuePair<int, (List<float[]>, List<(int, int)>)> entry in agentHolder.getInfo()){
+          int agentId = entry.Key;
+          List<(int, int)> agentPath = entry.Value.Item2;
+          // ------------------------------------------------------------------------------------------------- //
+          /*Console.WriteLine($"Agent ID: {agentId}");
+          Console.WriteLine("Agent Path:");
+          Dictionary<(int, int), int> positionFrequency = new Dictionary<(int, int), int>();
+          foreach ((int row, int col) in agentPath) { 
+            var position = (row, col);
+                if (positionFrequency.ContainsKey(position)) {
+                    positionFrequency[position]++;
+                } else {
+                    positionFrequency[position] = 1;
+                }
+            //Console.Write($"({row}, {col})"); 
           }
-        }
-        qmap = normalliseQMap(qmap);
-        qmap = roundQMap(qmap);
-
+          //var sortedPositions = positionFrequency.OrderBy(kv => kv.Key.Item1 + kv.Key.Item2);
+          var sortedPositions = positionFrequency.OrderByDescending(kv => kv.Value);
+          foreach (var pair in sortedPositions) {
+            Console.Write($"Position: ({pair.Key.Item1}, {pair.Key.Item2}) - Frequency: {pair.Value} <> ");
+          }
+          Console.WriteLine();*/
+          // ------------------------------------------------------------------------------------------------- //
+          if (agentScore.ContainsKey(agentId)){
+              float agentReward = agentScore[agentId];
+              foreach ((int row, int col) in agentPath){
+                  if (row >= 0 && row < mapRows && col >= 0 && col < mapCols){
+                      qmap[row, col] += agentReward;
+                  }
+              }
+          }
       }
 
+      normalizeQMap(qmap);
       printNewQMap(qmap);
+    }
+    private void normalizeQMap(float[,] qmap){
+        int mapRows = qmap.GetLength(0);
+        int mapCols = qmap.GetLength(1);
 
-    }//end updateQMap
+        float maxRowSum = 0;
+        float maxColSum = 0;
 
+        // Find the max row sum
+        for (int row = 0; row < mapRows; row++){
+            float rowSum = 0;
+            for (int col = 0; col < mapCols; col++){
+                rowSum += qmap[row, col];
+            }
+            maxRowSum = Math.Max(maxRowSum, rowSum);
+        }
+
+        // Find the max col sum
+        for (int col = 0; col < mapCols; col++){
+            float colSum = 0;
+            for (int row = 0; row < mapRows; row++){
+                colSum += qmap[row, col];
+            }
+            maxColSum = Math.Max(maxColSum, colSum);
+        }
+
+        // normalize each element by dividing by the maximum of row and column sums
+        float maxSum = Math.Max(maxRowSum, maxColSum);
+        if(maxSum != 0){
+          for (int row = 0; row < mapRows; row++){
+              for (int col = 0; col < mapCols; col++){
+                  qmap[row, col] /= maxSum;
+              }
+          }
+        }
+    } // normalize Q map
 
     /**
      * @return: qmap from selected file
@@ -320,21 +397,8 @@ namespace CognitiveABM.QLearningABMAdditional{
 
       for (int col = 0; col < qmap.GetLength(1); col++){
         for (int row = 0; row < qmap.GetLength(0); row++){
-
-          // if(float.IsNaN(Math.Abs(qmap[row,col])) || float.IsInfinity(Math.Abs(qmap[row,col]))){
-          //   total += 0.0f;
-          //   rowVals[row] = 0.0f;
-          //   //Console.WriteLine("NANAANANANANA");
-          // }
-        //  else{
-            // if(float.IsInfinity(Math.Abs(qmap[row,col]))){
-            //   Console.WriteLine("FUCKYOU");
-            //   Console.WriteLine(qmap[row,col]);
-            // }
             rowVals[row] = Math.Abs(qmap[row,col]);
             total += rowVals[row];
-            //Console.WriteLine(total);
-        //  }
         }//end inner for
 
         for (int row = 0; row < qmap.GetLength(0); row++){
@@ -353,13 +417,6 @@ namespace CognitiveABM.QLearningABMAdditional{
           }
 
           normallizedQMap[row,col] = normNum;
-          // if(float.IsNaN(normallizedQMap[row,col])){
-          //   Console.WriteLine(normNum);
-          //   Console.WriteLine("TEST");
-          //   Console.WriteLine(total);
-          //   Console.WriteLine(rowVals[row]);
-          //   //System.Environment.Exit(0);
-          // }
         }
         total = 0.0f;
 
@@ -411,8 +468,6 @@ namespace CognitiveABM.QLearningABMAdditional{
       fileName = @"../HillClimberABMExample/layers/qMapGenerated8x8.csv";
       var w = new StreamWriter(path: fileName);
       float[] qMapRow = new float[qmap.GetLength(0)];
-
-
       for(int row = 0; row < qmap.GetLength(0); row++){
         for(int col = 0; col < qmap.GetLength(1); col++){
           qMapRow[col] = qmap[row,col];

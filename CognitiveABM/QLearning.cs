@@ -140,6 +140,7 @@ namespace CognitiveABM.QLearning
           return directionMap[direction];
         }//end getDirection
 
+
         /**
          * @param landScapePatch: 3x3 matrix of landscape agent is on
          * @param min: smallest elevation in landscapePatch
@@ -188,6 +189,7 @@ namespace CognitiveABM.QLearning
             }
           return col; //return -1 so we know that it's this method that causes an error later down the road
         }//end rouletteWheel
+        
                 /**
          * @description: creates a random float between -0.2 and 0.2
          * @return: random noise value
