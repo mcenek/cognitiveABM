@@ -23,9 +23,12 @@ data = list(csv.reader(open(rewardFile)))
 xVals = []
 yVals = []
 zVals = []
-
+yValsBestAgent =[]
+xValsBestAgent =[]
 for height in range(50):
     for length in range(50):
+        yValsBestAgent.append(height)
+        xValsBestAgent.append(length)
         if data[height][length] == '1':
             xVals.append(length)
             yVals.append(49-height)
@@ -43,22 +46,31 @@ with open(AgentData, newline='') as csvfile:
         if int(float(row['TickNum'])) == 249 and int(float(row['Total Fitness'])) > bestFit:
             bestAgentID = int(float(row['AnimalID']))
             bestFit = int(float(row['Total Fitness']))
-            
 
+num_rows = len(terrain)
+num_cols = len(terrain[0])
 with open(AgentData, newline='') as csvfile:
     reader = csv.DictReader(csvfile)
     for row in reader:
         if int(float(row['AnimalID'])) == bestAgentID:
             x_pos = int(float(row['X Pos']))
             y_pos = int(float(row['Y Pos']))
+            tick = int(float(row["TickNum"]))
             bestAgentXPos.append(x_pos)
             bestAgentZPos.append(y_pos)
             if y_pos == 50:
                 y_pos =- 1
             if x_pos == 50:
                 x_pos =- 1    
-            bestAgentYPos.append(terrain[x_pos][y_pos])
-
+            if(terrain[x_pos][y_pos] >= 2000): # sometimes it's not on wall but still jumps in height
+                if not bestAgentYPos:
+                    bestAgentYPos.append(0)
+                else:   
+                    bestAgentYPos.append(bestAgentYPos[-1])
+            else:
+                AgentHeight = terrain[yValsBestAgent[tick]][xValsBestAgent[tick]]
+                #AgentHeight = terrain[x_pos][y_pos]
+                bestAgentYPos.append(AgentHeight+50)
 
 fig = plt.figure(figsize=(8, 6))
 terrain_3d = fig.add_subplot(111, projection='3d')
@@ -66,7 +78,7 @@ terrain_3d = fig.add_subplot(111, projection='3d')
 X = np.arange(0, len(terrain[0]))
 Y = np.arange(0, len(terrain))
 X, Y = np.meshgrid(X, Y)
-Z = np.flipud(np.array(terrain).T)
+Z = np.flipud(np.array(terrain))
 
 # terrain surface
 terrain_3d.plot_surface(X, Y, Z, cmap='viridis', alpha=0.8)
@@ -95,5 +107,6 @@ terrain_3d.set_ylabel('Y')
 terrain_3d.set_zlabel('Height')
 terrain_3d.set_title('Terrain')
 terrain_3d.legend()
+plt.title(" ")
 plt.tight_layout()
 plt.show()
