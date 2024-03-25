@@ -12,6 +12,7 @@ namespace TerrainGenerator
         int maximumElevation;
         int smoothingLevel;
         int whichTerrain;
+        int blocker;
 
         public ElevationLandscape(int width, int height, int numberOfPeaks, int maximumElevation, int smothingLevel, int whichTerrain) : base(width, height)
         {
@@ -19,6 +20,7 @@ namespace TerrainGenerator
             this.maximumElevation = maximumElevation;
             this.smoothingLevel = smothingLevel;
             this.whichTerrain = whichTerrain;
+            blocker = -31;
         }
 
         public override void Initialize()
@@ -201,7 +203,7 @@ namespace TerrainGenerator
 
             int arrowTipX = middleX + random.Next(-this.map.GetLength(0) / 4, this.map.GetLength(0) / 4);
             int arrowTipY = middleY + random.Next(-this.map.GetLength(1) / 4, this.map.GetLength(1) / 4);
-            this.map[arrowTipX, arrowTipY] = this.maximumElevation;
+            this.map[arrowTipX, arrowTipY] = this.blocker;
             // direction vector from the arrow tip to the center.
             int directionX = middleX - arrowTipX;
             int directionY = middleY - arrowTipY;
@@ -212,13 +214,13 @@ namespace TerrainGenerator
             directionY = (int)Math.Round(directionY / magnitude);
 
             //arrow values on the map.
-            this.map[arrowTipX + directionX, arrowTipY + directionY] = this.maximumElevation;
-            this.map[arrowTipX + 2 * directionX, arrowTipY + 2 * directionY] = this.maximumElevation;
-            this.map[arrowTipX + 3 * directionX, arrowTipY + 3 * directionY] = this.maximumElevation;
+            this.map[arrowTipX + directionX, arrowTipY + directionY] = this.blocker;
+            this.map[arrowTipX + 2 * directionX, arrowTipY + 2 * directionY] = this.blocker;
+            this.map[arrowTipX + 3 * directionX, arrowTipY + 3 * directionY] = this.blocker;
 
-            this.map[arrowTipX - directionY, arrowTipY + directionX] = this.maximumElevation;
-            this.map[arrowTipX - 2 * directionY, arrowTipY + 2 * directionX] = this.maximumElevation;
-            this.map[arrowTipX - 3 * directionY, arrowTipY + 3 * directionX] = this.maximumElevation;
+            this.map[arrowTipX - directionY, arrowTipY + directionX] = this.blocker;
+            this.map[arrowTipX - 2 * directionY, arrowTipY + 2 * directionX] = this.blocker;
+            this.map[arrowTipX - 3 * directionY, arrowTipY + 3 * directionX] = this.blocker;
         }
         // ===================================================== canyon v1 ==================================================
         private void createPeaks6(List<int> peakCells, Random random)
@@ -228,7 +230,7 @@ namespace TerrainGenerator
             {
                 for (int col = 0; col < this.map.GetLength(1); col++)
                 {
-                    this.map[row, col] = this.maximumElevation;
+                    this.map[row, col] = this.blocker;
                 }
             }
 
@@ -366,7 +368,7 @@ namespace TerrainGenerator
                         double angleDegrees = angle * (180 / Math.PI);
                         if (angleDegrees < 45 - gapWidth || angleDegrees > 75 + gapWidth)
                         {
-                            this.map[i, j] = this.maximumElevation; // Set the elevation to maximum for the ring
+                            this.map[i, j] = this.blocker; // Set the elevation to maximum for the ring
                         }
                     }
                 }

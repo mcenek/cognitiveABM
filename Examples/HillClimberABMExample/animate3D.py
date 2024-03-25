@@ -14,6 +14,10 @@ rewardFile = rewardLayer[terrain_num]
 
 
 terrain = list(csv.reader(open(LayerFile), quoting=csv.QUOTE_NONNUMERIC))
+for i in range(len(terrain)):
+    for j in range(len(terrain[i])):
+        if terrain[i][j] < 0:
+            terrain[i][j] = 2000
 
 data = list(csv.reader(open(rewardFile)))
 xVals = []
