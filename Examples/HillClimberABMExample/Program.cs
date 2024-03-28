@@ -3,9 +3,8 @@ using System.Collections.Generic;
 using HillClimberExample;
 using CognitiveABM.QLearning;
 using Mars.Core.ModelContainer.Entities;
-using TerrainGenerator;
-using RewardGenerator;
 using System.IO;
+using System.Runtime.CompilerServices;
 
 public static class Program
 {
@@ -22,7 +21,6 @@ public static class Program
         RewardGenerator.RewardGenerator.Main(args);
         File.WriteAllText("./layers/qMapGenerated8x8.csv", string.Empty);
 
-        // terrainFilePaths = new string[] { "./layers/moatGauss.csv" };
         terrainFilePaths = new string[] { "./layers/landscape.csv", "./layers/moatGauss.csv", "./layers/grid.csv" };
         var fitnessVals = new List<List<float>>();
         var random = new Random();
@@ -43,7 +41,7 @@ public static class Program
             ABM abm = new ABM(modelDescription: GetModelDescription());
             //abm.Train(10, terrainFilePath, args);
 
-            numTrain = random.Next(100,105);
+            numTrain = random.Next(100,205);
             // Train
             abm.Train(fcm, numTrain, 0, true, terrainFilePath, args);
 
@@ -54,12 +52,10 @@ public static class Program
 
             // Test
             fitnessVals.Add(abm.Test(fcm, 1, terrainFilePath, args));
-
-            //fitnessVals.Add(abm.Test(1, STEPS, FITNESS_COLUMNNAME,OUTPUT_FILENAME,terrainFilePath, args));
-            //abm.Train(fcm, 10, 200, true, args);
-
-            //fitnessVals.Add(abm.Test(fcm, 1, args));
         }
+
+        // Upload data to HDFS
+        HDFS.HDFS.UploadToHDFS();
     }
 
     private static ModelDescription GetModelDescription()

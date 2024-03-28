@@ -68,9 +68,10 @@ with open(AgentData, newline='') as csvfile:
                 else:   
                     bestAgentYPos.append(bestAgentYPos[-1])
             else:
-                AgentHeight = terrain[yValsBestAgent[tick]][xValsBestAgent[tick]]
+                bestAgentYPos.append(terrain[x_pos][y_pos] )
+                #AgentHeight = terrain[yValsBestAgent[tick]][xValsBestAgent[tick]]
                 #AgentHeight = terrain[x_pos][y_pos]
-                bestAgentYPos.append(AgentHeight+50)
+                #bestAgentYPos.append(AgentHeight+50)
 
 fig = plt.figure(figsize=(8, 6))
 terrain_3d = fig.add_subplot(111, projection='3d')
