@@ -41,7 +41,7 @@ public static class Program
             ABM abm = new ABM(modelDescription: GetModelDescription());
             //abm.Train(10, terrainFilePath, args);
 
-            numTrain = random.Next(100,205);
+            numTrain = random.Next(100,105);
             // Train
             abm.Train(fcm, numTrain, 0, true, terrainFilePath, args);
 
@@ -55,7 +55,7 @@ public static class Program
         }
 
         // Upload data to HDFS
-        HDFS.HDFS.UploadToHDFS();
+        HDFS.upload.UploadToHDFS();
     }
 
     private static ModelDescription GetModelDescription()
