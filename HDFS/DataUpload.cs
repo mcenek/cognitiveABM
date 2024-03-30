@@ -6,7 +6,7 @@ using Newtonsoft.Json.Linq;
 
 namespace HDFS{
 
-    public class upload {
+    public class Upload {
 
         public static void UploadToHDFS()
         {
@@ -22,7 +22,7 @@ namespace HDFS{
 
             // upload =========================================
             // AGENT DATA ------------------------------------
-            string hdfsDir = "/user/hadoop/agent_data";
+            string hdfsDir = "/agent_data";
             string agentData = "Agent_data";
             int Agent_data = (int)jsonData[agentData];
             Agent_data++;
@@ -40,7 +40,7 @@ namespace HDFS{
             csvFile = Path.Combine(baseDirectory, "..", "..", "..", "output", "grid_exportInfo.csv");
             uploader.UploadCsvToHdfs(csvFile, hdfsDir, hdfsFileName, Agent_data);
             // TERRAIN DATA -----------------------------------
-            string hdfsDir = "/user/hadoop/terrains";
+            hdfsDir = "/terrains";
             string terrainData = "terrain";
             int terrain_data = (int)jsonData[terrainData];
             terrain_data++;
@@ -48,10 +48,15 @@ namespace HDFS{
 
             hdfsFileName = "terrain";
             csvFile = Path.Combine(baseDirectory, "..", "..", "..", "layers", "landscape.csv");
+            string[] lines = File.ReadAllLines(csvFile);
+            foreach (string line in lines)
+            {
+                Console.WriteLine(line);
+            }
             uploader.UploadCsvToHdfs(csvFile, hdfsDir, hdfsFileName, terrain_data);
 
             // REWARD DATA --------------------------------------
-            string hdfsDir = "/user/hadoop/rewards";
+            hdfsDir = "/rewards";
             string rewardData = "reward";
             int reward_data = (int)jsonData[rewardData];
             reward_data++;
@@ -66,7 +71,7 @@ namespace HDFS{
             File.WriteAllText(jsonFilePath, updatedJsonString);
             }
         } // class HDFS
-p
+
     public class HdfsUploader
     {
         private readonly string _hdfsBaseUrl;
