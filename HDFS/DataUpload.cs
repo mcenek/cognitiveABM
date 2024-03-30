@@ -11,42 +11,62 @@ namespace HDFS{
         public static void UploadToHDFS()
         {
             string baseDirectory = AppDomain.CurrentDomain.BaseDirectory;
-            string hdfsDir = "/user/hadoop/agent_data";
 
             // JSON ID Data ==================================
             string jsonFilePath = Path.Combine(baseDirectory, "..", "..","..","..","..", "HDFS", "ids.json");
             string jsonString = File.ReadAllText(jsonFilePath);
             JObject jsonData = JObject.Parse(jsonString);
-            string fileType = "Agent_data";
-            int Agent_data = (int)jsonData[fileType];
-            Agent_data++;
-            jsonData[fileType] = Agent_data;
 
             // connect to hdfs ================================
             HdfsUploader uploader = new HdfsUploader(); 
 
             // upload =========================================
+            // AGENT DATA ------------------------------------
+            string hdfsDir = "/user/hadoop/agent_data";
+            string agentData = "Agent_data";
+            int Agent_data = (int)jsonData[agentData];
+            Agent_data++;
+            jsonData[agentData] = Agent_data;
+            
             string hdfsFileName = "Generation_1_data";
             string csvFile = Path.Combine(baseDirectory, "..", "..", "..", "output", "landscape_exportInfo.csv");
-            Console.WriteLine("CSV FILE1 >>>>>>> "+csvFile);
-            //uploader.UploadCsvToHdfs(csvFile, hdfsDir, hdfsFileName, Agent_data);
+            uploader.UploadCsvToHdfs(csvFile, hdfsDir, hdfsFileName, Agent_data);
 
             hdfsFileName = "Generation_2_data";
             csvFile = Path.Combine(baseDirectory, "..", "..", "..", "output", "moatGauss_exportInfo.csv");
-            Console.WriteLine("CSV FILE2 >>>>>>> "+csvFile);
-            //uploader.UploadCsvToHdfs(csvFile, hdfsDir, hdfsFileName, Agent_data);
+            uploader.UploadCsvToHdfs(csvFile, hdfsDir, hdfsFileName, Agent_data);
 
             hdfsFileName = "Generation_3_data";
-            Console.WriteLine("CSV FILE3 >>>>>>> "+csvFile);
             csvFile = Path.Combine(baseDirectory, "..", "..", "..", "output", "grid_exportInfo.csv");
-            //uploader.UploadCsvToHdfs(csvFile, hdfsDir, hdfsFileName, Agent_data);
+            uploader.UploadCsvToHdfs(csvFile, hdfsDir, hdfsFileName, Agent_data);
+            // TERRAIN DATA -----------------------------------
+            string hdfsDir = "/user/hadoop/terrains";
+            string terrainData = "terrain";
+            int terrain_data = (int)jsonData[terrainData];
+            terrain_data++;
+            jsonData[terrainData] = terrain_data;
 
+            hdfsFileName = "terrain";
+            csvFile = Path.Combine(baseDirectory, "..", "..", "..", "layers", "landscape.csv");
+            uploader.UploadCsvToHdfs(csvFile, hdfsDir, hdfsFileName, terrain_data);
+
+            // REWARD DATA --------------------------------------
+            string hdfsDir = "/user/hadoop/rewards";
+            string rewardData = "reward";
+            int reward_data = (int)jsonData[rewardData];
+            reward_data++;
+            jsonData[rewardData] = reward_data;
+            
+            hdfsFileName = "reward";
+            csvFile = Path.Combine(baseDirectory, "..", "..", "..", "layers", "landscape_reward.csv");
+            uploader.UploadCsvToHdfs(csvFile, hdfsDir, hdfsFileName, terrain_data);
+            
             // write back to json ===============================
             string updatedJsonString = jsonData.ToString();
             File.WriteAllText(jsonFilePath, updatedJsonString);
             }
         } // class HDFS
-
+p
     public class HdfsUploader
     {
         private readonly string _hdfsBaseUrl;
@@ -60,7 +80,7 @@ namespace HDFS{
             try {
                 using (var client = new HttpClient()) {
 
-                    var url = $"{this._hdfsBaseUrl}/webhdfs/v1{hdfsDirectory}/{hdfsFileName}_{fileId}?op=CREATE&overwrite=true";
+                    var url = $"{this._hdfsBaseUrl}/webhdfs/v1{hdfsDirectory}/{hdfsFileName}_ID{fileId}?op=CREATE&overwrite=true";
                     var request = new HttpRequestMessage(HttpMethod.Put, url);
 
                     using (var fileStream = File.OpenRead(csvFilePath))
