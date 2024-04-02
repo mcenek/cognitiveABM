@@ -12,8 +12,9 @@ TRESHOLD = 47
 Data = ['./output/landscape_exportInfo.csv','./output/moatGauss_exportInfo.csv', './output/grid_exportInfo.csv']
 Layer = ['./layers/landscape.csv', './layers/moatGauss.csv', './layers/grid.csv']
 rewardLayer = ['./layers/landscape_reward.csv', './layers/moatGauss_reward.csv', './layers/grid_reward.csv']
-    
-terrain_num = 2 
+
+# Number represents each generation <---
+terrain_num = 0
 AgentData = Data[terrain_num]
 LayerFile = Layer[terrain_num]
 rewardFile = rewardLayer[terrain_num]
@@ -45,7 +46,6 @@ with open(AgentData, newline='') as csvfile:
         if int(float(row['TickNum'])) == 249 and int(float(row['Total Fitness'])) > bestFit:
             bestAgentID = int(float(row['AnimalID']))
             bestFit = int(float(row['Total Fitness']))
-
 
 with open(AgentData, newline='') as csvfile:
     reader = csv.DictReader(csvfile)
@@ -92,6 +92,16 @@ maxIndex = 0
 data = list(csv.reader(open(rewardFile)))
 xVals = []
 yVals = []
+
+# MAKE ALL NEGATIVE TERRAIN HEIGHTS WEIGHT =================
+terrain2 = np.array(terrain)
+mask = terrain2 < 0
+overlay = np.zeros_like(terrain2, dtype=np.float32)
+overlay = np.zeros((*terrain2.shape, 4), dtype=np.float32)
+overlay[mask] = [1.0, 1.0, 1.0, 1.0]  # white
+overlay[~mask] = [0.0, 0.0, 0.0, 0.0]  # transparent
+cmap = plt.cm.colors.ListedColormap(['white'])
+# ==========================================================
 
 for height in range(50):
         for length in range(50):
@@ -143,6 +153,7 @@ for i in range(NUM_STEPS):
     #bestAgent_pos.scatter(bestAgentXPos[i], bestAgentYPos[i], c='red', s=100)
     bestAgent_pos.scatter(best_agent_x, best_agent_y, c='blue', s=100)
     heatmap.imshow(terrain[::-1], origin = 'lower')
+    heatmap.imshow(overlay[::-1], cmap=cmap, origin='lower', alpha=1.0)
     reward_pos.get_xaxis().set_visible(False);
     reward_pos.get_yaxis().set_visible(False);
     reward_pos.set_xlim(0, 50) # Make sure to keep in line with terrain length
