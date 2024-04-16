@@ -27,7 +27,7 @@ public static class Program
         int numTrain;
 
 
-        foreach (string filePath in terrainFilePaths)
+        /*foreach (string filePath in terrainFilePaths)
         {
             terrainFilePath = filePath;
             FileUtils.ChangeTerrainFilePath(terrainFilePath);
@@ -52,7 +52,7 @@ public static class Program
 
             // Test
             fitnessVals.Add(abm.Test(fcm, 1, terrainFilePath, args));
-        }
+        }*/
 
         // Upload data to HDFS
         HDFS.Upload.UploadToHDFS();
