@@ -4,12 +4,14 @@ using System.Net.Http;
 using System.Diagnostics;
 using Microsoft.VisualBasic;
 using Newtonsoft.Json.Linq;
+using System.Text;
+using System.Threading.Tasks;
 
 namespace HDFS{
 
     public class Upload {
 
-        public static void UploadToHDFS()
+        public static async void UploadToHDFS()
         {
             string baseDirectory = AppDomain.CurrentDomain.BaseDirectory;
 
@@ -33,15 +35,15 @@ namespace HDFS{
 
             string hdfsFileName = "Generation_1_data";
             string csvFile = Path.Combine(baseDirectory, "..", "..", "..", "output", "landscape_exportInfo.csv");
-            uploader.UploadFileToHDFS(csvFileABS + "/output/landscape_exportInfo.csv", hdfsDir, hdfsFileName, Agent_data);
+            await uploader.UploadCsvToHdfs(csvFile, hdfsDir, hdfsFileName, Agent_data);
 
             hdfsFileName = "Generation_2_data";
             csvFile = Path.Combine(baseDirectory, "..", "..", "..", "output", "moatGauss_exportInfo.csv");
-            uploader.UploadFileToHDFS(csvFileABS + "/output/moatGauss_exportInfo.csv", hdfsDir, hdfsFileName, Agent_data);
+            await uploader.UploadCsvToHdfs(csvFile, hdfsDir, hdfsFileName, Agent_data);
 
             hdfsFileName = "Generation_3_data";
             csvFile = Path.Combine(baseDirectory, "..", "..", "..", "output", "grid_exportInfo.csv");
-            uploader.UploadFileToHDFS(csvFileABS + "/output/grid_exportInfo.csv", hdfsDir, hdfsFileName, Agent_data);
+            await uploader.UploadCsvToHdfs(csvFile, hdfsDir, hdfsFileName, Agent_data);
             // TERRAIN DATA -----------------------------------
             hdfsDir = "/terrains";
             string terrainData = "terrain";
@@ -51,7 +53,7 @@ namespace HDFS{
 
             hdfsFileName = "terrain";
             csvFile = Path.Combine(baseDirectory, "..", "..", "..", "layers", "landscape.csv");
-            uploader.UploadFileToHDFS(csvFileABS + "/layers/landscape.csv" , hdfsDir, hdfsFileName, terrain_data);
+            await uploader.UploadCsvToHdfs(csvFile, hdfsDir, hdfsFileName, terrain_data);
 
             // REWARD DATA --------------------------------------
             hdfsDir = "/rewards";
@@ -62,7 +64,7 @@ namespace HDFS{
             
             hdfsFileName = "reward";
             csvFile = Path.Combine(baseDirectory, "..", "..", "..", "layers", "landscape_reward.csv");
-            uploader.UploadFileToHDFS(csvFileABS + "/layers/landscape_reward.csv" , hdfsDir, hdfsFileName, reward_data);
+            await uploader.UploadCsvToHdfs(csvFile, hdfsDir, hdfsFileName, reward_data);
             
             // write back to json ===============================
             string updatedJsonString = jsonData.ToString();
@@ -76,38 +78,40 @@ namespace HDFS{
 
         public HdfsUploader()
         {
-               _hdfsBaseUrl = "http://localhost:9000";
+               _hdfsBaseUrl = "http://-----";
             }
-        public async void UploadCsvToHdfs(string csvFilePath, string hdfsDirectory, string hdfsFileName, int fileId){
-            try{
-                using (var client = new HttpClient()) {
-                    client.Timeout = TimeSpan.FromMinutes(5);
-                    var url = $"{_hdfsBaseUrl}/webhdfs/v1{hdfsDirectory}/{hdfsFileName}_{fileId}?op=CREATE&overwrite=true";
-                    Console.WriteLine("ONE");
-                    var request = new HttpRequestMessage(HttpMethod.Put, url);
-                    Console.WriteLine("TWO");
-                    client.DefaultRequestHeaders.Add("Expect", "100-continue");
-                    using (var fileStream = File.OpenRead(csvFilePath))
+        public async Task UploadCsvToHdfs(string csvFilePath, string hdfsDirectory, string hdfsFileName, int fileId){
+            string hdfsUrl = "http://-----/webhdfs/v1";
+            string fileUrl = $"{hdfsUrl}{hdfsDirectory}/{hdfsFileName}_{fileId}?op=CREATE&overwrite=true";
+            Console.WriteLine(fileUrl);
+
+            try
+            {
+                // read CSV content
+                string csvContent = File.ReadAllText(csvFilePath);
+
+                // Upload content
+                using (HttpClient client = new HttpClient())
+                {
+                    StringContent content = new StringContent(csvContent, Encoding.UTF8, "application/octet-stream");
+                    // ! Keep in mind, if you make "response = await client" w/out .Result (Simple: dont use await), it will skip over
+                    HttpResponseMessage response = client.PutAsync(fileUrl, content).Result;
+                    Console.WriteLine($"Response Status Code: {response.StatusCode}");
+
+                    if (!response.IsSuccessStatusCode)
                     {
-                        Console.WriteLine("THREE");
-                        request.Content = new StreamContent(fileStream);
-                        Console.WriteLine("FOUR");
-                        try {
-                        var response = await client.SendAsync(request);
-                        Console.WriteLine("FIVE");
-                        Console.WriteLine($"Response status code: {response.StatusCode}");
-                        response.EnsureSuccessStatusCode();
-                        Console.WriteLine($"Successfully uploaded {csvFilePath} to {hdfsDirectory}/{hdfsFileName}_{fileId} in HDFS.");
-                        } catch (Exception ex)
-                        {
-                            Console.WriteLine($"Error sending request: {ex.ToString()}");
-                        }
+                        string responseContent = await response.Content.ReadAsStringAsync();
+                        Console.WriteLine($"Response Content: {responseContent}");
+                        throw new Exception($"Failed to upload file to HDFS. Status code: {response.StatusCode}, Response: {responseContent}");
                     }
                 }
+                Console.WriteLine("CSV file added successfully to HDFS.");
             }
-            catch (Exception ex)
-            {
-                Console.WriteLine($"Error uploading {csvFilePath} to HDFS: {ex.ToString()}");
+            catch (HttpRequestException ex){
+                Console.WriteLine($"An HTTP request error occurred: {ex.Message}");
+            }
+            catch (Exception ex){
+                Console.WriteLine($"An error occurred: {ex.ToString()}");
             }
         }
 //=============================================================================================//
