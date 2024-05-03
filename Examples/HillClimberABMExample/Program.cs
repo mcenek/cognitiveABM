@@ -39,7 +39,6 @@ public static class Program
             }
             HillClimberFCM fcm = new HillClimberFCM(population: 96, numberOfValues: 2020, STEPS, OUTPUT_FILENAME, FITNESS_COLUMNNAME, trainGenomes);
             ABM abm = new ABM(modelDescription: GetModelDescription());
-            //abm.Train(10, terrainFilePath, args);
 
             numTrain = random.Next(100,105);
             // Train
@@ -47,7 +46,6 @@ public static class Program
 
             // QLearning.usePerfectQMap = 0;
             //  var genomes = FileUtils.ReadGenomesFromFile(".\\output\\good.csv");
-
             fcm = new HillClimberFCM(population: 96, numberOfValues: 2020, STEPS, OUTPUT_FILENAME, FITNESS_COLUMNNAME, trainGenomes);
 
             // Test

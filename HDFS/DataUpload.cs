@@ -30,8 +30,6 @@ namespace HDFS{
             int Agent_data = (int)jsonData[agentData];
             Agent_data++;
             jsonData[agentData] = Agent_data;
-            
-            string csvFileABS = "/home/matttran7/Documents/cognitiveABM/Examples/HillClimberABMExample";
 
             string hdfsFileName = "Generation_1_data";
             string csvFile = Path.Combine(baseDirectory, "..", "..", "..", "output", "landscape_exportInfo.csv");
@@ -44,6 +42,7 @@ namespace HDFS{
             hdfsFileName = "Generation_3_data";
             csvFile = Path.Combine(baseDirectory, "..", "..", "..", "output", "grid_exportInfo.csv");
             await uploader.UploadCsvToHdfs(csvFile, hdfsDir, hdfsFileName, Agent_data);
+            
             // TERRAIN DATA -----------------------------------
             hdfsDir = "/terrains";
             string terrainData = "terrain";
@@ -114,10 +113,13 @@ namespace HDFS{
                 Console.WriteLine($"An error occurred: {ex.ToString()}");
             }
         }
-//=============================================================================================//
-//                                          Write directly from cmd
-//=============================================================================================//
 
+
+
+//=============================================================================================//
+//                                        Write directly from cmd
+//=============================================================================================//
+// ? might not work unless you give absolute path to csv
 public void UploadFileToHDFS(string csvFilePath, string hdfsDirectory, string hdfsFileName, int fileId){
     try
     {

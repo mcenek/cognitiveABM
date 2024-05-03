@@ -1,0 +1,6 @@
+In order to upload the generation files to a HDFS:
+
+1. Program must be run on master node machine
+2. Change "uplaodtoHadoop" variable to true in Program.cs
+3. Must change "_hdfsBaseUrl" and "hdfsUrl" in DataUpload.cs to include the masternode's IP address
+ 
