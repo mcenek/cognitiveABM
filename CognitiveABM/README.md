@@ -17,7 +17,7 @@ There are 3 root folders to the project, but the core of the code is in `Cogniti
 
 `Examples/HillClimberABMExample` example showing usage of the CognitiveABM library and approach.
 
-`TerrainGenerator` tool for generating CSV files for use in the HillClimberABMExample.
+`TerrainGenerator` and `RewardGenerator` tool for generating CSV files for use in the HillClimberABMExample.
 
 ### CognitiveABM architecture
 
@@ -114,3 +114,6 @@ In progress ABM run where the agents are not all perfect, but most are doing wel
 
 ![Example execution](images/animationProgress.png)
 
+#### Simple Run guide:
+The program executes by running "dotnet run -sm config.json" in the `Examples/HillClimberABMExample` directory, the program will then allow you to select from a variety of terrain and reward generalizations.
+<span style="color: gray;">If running on a Hadoop Distributed File System master, you can set Program.cs's uplaodtoHadoop variable to true to upload the generation data to the HDFS</span>

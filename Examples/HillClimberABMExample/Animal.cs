@@ -223,8 +223,6 @@ namespace HillClimberExample
             
             if (hitWall){
               Terrain._AnimalEnvironment.MoveTo(this, xPos, yPos, 1, predicate: null);  
-            } else {
-              Terrain._AnimalEnvironment.MoveTo(this, newLocation[0], newLocation[1], 1, predicate: null);
             }
 
             Elevation = Terrain.GetIntegerValue(this.Position.X, this.Position.Y);
