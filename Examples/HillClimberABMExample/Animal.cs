@@ -224,6 +224,9 @@ namespace HillClimberExample
             if (hitWall){
               Terrain._AnimalEnvironment.MoveTo(this, xPos, yPos, 1, predicate: null);  
             }
+             else {
+              Terrain._AnimalEnvironment.MoveTo(this, newLocation[0], newLocation[1], 1, predicate: null);
+            }
 
             Elevation = Terrain.GetIntegerValue(this.Position.X, this.Position.Y);
 
@@ -232,7 +235,7 @@ namespace HillClimberExample
               BioEnergy = 0;
             }
             this.tickNum++;
-        }
+          }
 
 
         public Tuple<float[,],float,float> setLandscapeMinMax(float[,] landscapePatch, float min, float max, float[] elevationArr){
