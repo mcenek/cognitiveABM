@@ -170,12 +170,12 @@ namespace CognitiveABM.Perceptron
             // ouput vector length
             int outputLength = weights.GetLength(0); // should be 9
             float[] result = new float[outputLength];
-            if(onOutPut){
+            if (onOutPut) {
               // // System.Environment.Exit(0);
               float first = 0.0f;
               float second = 0.0f;
-              for(int i = 0; i < inputs.Length; i++){
-                if( i < 9){
+              for (int i = 0; i < inputs.Length; i++) {
+                if (i < 9) {
                   first += inputs[i];
                 }
                 else{
@@ -199,16 +199,10 @@ namespace CognitiveABM.Perceptron
 
                   sum += weights[weightRow, i] * inputs[weightRow];
 
-                  // }
-                  // else{
-                    if(weightRow >= 9){
+                    if (weightRow >= 9) {
                     sum += weights[weightRow, i] * inputs[weightRow] * (float)3.5;
                     }
-                    else{
-                      sum += weights[weightRow, i] * inputs[weightRow];
-                    }
 
-                  // }
                 }
                 result[weightRow] = sum;
             });
@@ -216,8 +210,6 @@ namespace CognitiveABM.Perceptron
             // Console.WriteLine("Matrix Muliplication Result");
             return result;
         }
-
-
 
     }
 }
