@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Numerics;
 using System.Threading.Tasks;
 
 namespace CognitiveABM.Perceptron
@@ -199,18 +200,21 @@ namespace CognitiveABM.Perceptron
 
                   sum += weights[weightRow, i] * inputs[weightRow];
 
-                  // }
-                  // else{
-                    if(weightRow >= 9){
-                    sum += weights[weightRow, i] * inputs[weightRow] * (float)3.5;
+                    if(weightRow >= weights.GetLength(0) * 1 / 4){
+                    sum += weights[weightRow, i] * inputs[weightRow] * (float)4.0;
                     }
-                    else{
+                    else if (weightRow >= weights.GetLength(0) * 2 / 4) {
+                    sum += weights[weightRow, i] * inputs[weightRow] * (float)3.0;
+                    }
+                    else if (weightRow >= weights.GetLength(0) * 3 / 4) {
+                    sum += weights[weightRow, i] * inputs[weightRow] * (float)2.0;
+                    }
+                    else {
                       sum += weights[weightRow, i] * inputs[weightRow];
                     }
-
-                  // }
                 }
                 result[weightRow] = sum;
+
             });
 
             // Console.WriteLine("Matrix Muliplication Result");

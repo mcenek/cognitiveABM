@@ -40,7 +40,7 @@ public static class Program
             HillClimberFCM fcm = new HillClimberFCM(population: 96, numberOfValues: 2020, STEPS, OUTPUT_FILENAME, FITNESS_COLUMNNAME, trainGenomes);
             ABM abm = new ABM(modelDescription: GetModelDescription());
 
-            numTrain = random.Next(100,105);
+            numTrain = random.Next(0, 25);
             // Train
             abm.Train(fcm, numTrain, 0, true, terrainFilePath, args);
 
