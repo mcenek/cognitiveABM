@@ -200,13 +200,13 @@ namespace CognitiveABM.Perceptron
 
                   sum += weights[weightRow, i] * inputs[weightRow];
 
-                    if(weightRow >= weights.GetLength(0) * 1 / 4){
+                    if(weightRow >= weights.GetLength(0) * 3 / 4){
                     sum += weights[weightRow, i] * inputs[weightRow] * (float)4.0;
                     }
                     else if (weightRow >= weights.GetLength(0) * 2 / 4) {
                     sum += weights[weightRow, i] * inputs[weightRow] * (float)3.0;
                     }
-                    else if (weightRow >= weights.GetLength(0) * 3 / 4) {
+                    else if (weightRow >= weights.GetLength(0) * 1 / 4) {
                     sum += weights[weightRow, i] * inputs[weightRow] * (float)2.0;
                     }
                     else {
