@@ -4,6 +4,7 @@ using System.Linq;
 using System.IO;
 using System.Collections.Concurrent;
 using Mars.Core.SimulationManager.Implementation;
+using NetTopologySuite.Algorithm;
 
 namespace CognitiveABM.agentInformationHolder
 {
@@ -80,30 +81,102 @@ namespace CognitiveABM.agentInformationHolder
        * @description: calculates the average and total fitness an agent has accumulated
        * @returns: an array containing the average and total fitness
        */
-      public float[] getAverageandTotal(List<float[]> tempList, float currentFit){
-        int counter;
-        float avgCurrentFit;
-        float[] returnVals = {0.0f, 0.0f};
+      public float[] getAverageandTotal(List<float[]> tempList, float currentFit) {
+        // int counter;
+        // float avgCurrentFit;
+        // float[] returnVals = {0.0f, 0.0f};
 
-        if(currentFit > 0){
-          avgCurrentFit = currentFit;
-          counter = 1;
-        }
-        else{
-          avgCurrentFit = 0.0f;
-          counter = 0;
-        };
-        foreach(float[] array in tempList){
-            avgCurrentFit += array[13];
-            currentFit += array[13];
-            counter++;
-        }
+        // if(currentFit > 0){
+        //   avgCurrentFit = currentFit;
+        //   counter = 1;
+        // }
+        // else{
+        //   avgCurrentFit = 0.0f;
+        //   counter = 0;
+        // };
 
-        if(counter != 0){
-          returnVals[0] = avgCurrentFit/counter;
-          returnVals[1] = currentFit;
+        // int N = 10; 
+        // if(N >= tempList.Count) {
+        //   N = tempList.Count - 1;
+        // }
+        // float momentum = 0;
+        // for(int i = 0; i < N; i++) { // Array [11] is previous elevation, Array [12] is at current elevation  
+        //   momentum += tempList[i][11] - tempList[i][12];  
+        // }
+        // if(momentum > 0) {  
+        //   foreach(float[] array in tempList) {
+        //     if(array[13] >= momentum) {
+        //       currentFit += (int) 1.5 * Math.Abs(array[13]);  
+        //     }
+        //     else if(array[13] > 0) {
+        //       currentFit += Math.Abs(array[13]); 
+        //     }
+        //     else {
+        //       currentFit -= Math.Abs(array[13]);  
+        //     }
+        //   }
+        // }
+        // else if(momentum < 0) {
+        //   foreach(float[] array in tempList) {
+        //     if(array[13] <= momentum) {
+        //       currentFit += (int) 1.5 * Math.Abs(array[13]);  
+        //     }
+        //     else if(array[13] < 0) {
+        //       currentFit += Math.Abs(array[13]);
+        //     }
+        //     else {
+        //       currentFit -= Math.Abs(array[13]);
+        //     }
+        //   }
+        // }
+        // else {
+        //   foreach(float[] array in tempList) {  
+        //     currentFit += array[13];
+        //   }
+        // }
+        
+      // Check if tempList is empty
+      if(tempList.Count == 0) 
+      {
+        // If tempList is empty, return default value
+        return new float[] { 0.0f, currentFit};
+      }
+      // Store the sum of altitude differences
+      float altitudeDiff = 0.0f;
+      float momentum = 0.0f; // Variable to track momentum
+
+      foreach (float[] array in tempList)
+      {
+        // Calculate the altitude difference between previous and current elevation
+        float elevationChange = array[11] - array[12]; 
+        altitudeDiff += elevationChange;
+
+        momentum += elevationChange;
+      }
+      float averageAltitudeDiff = altitudeDiff / tempList.Count;
+      
+        if (momentum >= 0)
+        {
+          // Going up more than down, prioritize going up
+          currentFit += 1.5f * Math.Abs(altitudeDiff);
         }
-        return returnVals;
+        else if (momentum < 0)
+        {
+          // Going down more than up, prioritize going down
+          currentFit -= 2.5f * Math.Abs(altitudeDiff);
+        }
+        else
+        {
+          currentFit += altitudeDiff;
+        }
+        return new float[] {averageAltitudeDiff, currentFit};
+
+      // if(counter != 0){
+      //     returnVals[0] = avgCurrentFit/counter;
+      //     returnVals[1] = currentFit;
+      //   }
+      //   return returnVals;
+      
       }//end getAverage
 
       /**
