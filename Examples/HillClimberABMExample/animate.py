@@ -5,13 +5,23 @@ import matplotlib.pyplot as plt
 import csv
 from celluloid import Camera
 import pandas as pandasForSortingCSV
+import os
 
 NUM_STEPS = 250
 TRESHOLD = 47
 
-Data = ['./output/landscape_exportInfo.csv','./output/moatGauss_exportInfo.csv', './output/grid_exportInfo.csv']
-Layer = ['./layers/landscape.csv', './layers/moatGauss.csv', './layers/grid.csv']
-rewardLayer = ['./layers/landscape_reward.csv', './layers/moatGauss_reward.csv', './layers/grid_reward.csv']
+current_dir = os.path.dirname(os.path.abspath(__file__))
+Data = [os.path.join(current_dir, 'output', 'landscape_exportInfo.csv'),
+        os.path.join(current_dir, 'output', 'moatGauss_exportInfo.csv'),
+        os.path.join(current_dir, 'output', 'grid_exportInfo.csv')]
+
+Layer = [os.path.join(current_dir, 'layers', 'landscape.csv'),
+         os.path.join(current_dir, 'layers', 'moatGauss.csv'),
+         os.path.join(current_dir, 'layers', 'grid.csv')]
+
+rewardLayer = [os.path.join(current_dir, 'layers', 'landscape_reward.csv'),
+               os.path.join(current_dir, 'layers', 'moatGauss_reward.csv'),
+               os.path.join(current_dir, 'layers', 'grid_reward.csv')]
 
 # Number represents each generation <---
 terrain_num = 0
