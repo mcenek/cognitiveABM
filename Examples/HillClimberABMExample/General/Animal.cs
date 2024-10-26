@@ -25,36 +25,22 @@ namespace HillClimberABMExample.General
 
     public class Animal : Mars.Interfaces.Agent.IMarsDslAgent
     {
-        private static readonly ILogger _Logger = LoggerFactory.GetLogger(typeof(Animal));
+    private static readonly ILogger _Logger = LoggerFactory.GetLogger(typeof(Animal));
+    private readonly float[] AgentMemory;
+    private bool useDistantView = false;
+    private readonly int startingElevation;
+
+    private int height;
+    private int length;
 
 
-        private readonly float[] AgentMemory;
-
-        private bool useDistantView = false;
-
-        private readonly int startingElevation;
-        //values for size of reward map
-        private int height;
-        private int length;
-
-
-        public Guid ID { get; }
-
-        public Mars.Interfaces.Environment.Position Position { get; set; }
-
-        public bool Equals(Animal other) => Equals(ID, other.ID);
-
-        public override int GetHashCode() => ID.GetHashCode();
-
-        public QLearning qLearn = new QLearning();
-
-        public float[,] rewardMap;
-
-        public static ConcurrentDictionary<int, List<(int, int)>> rewardMemory = new ConcurrentDictionary<int, List<(int, int)>>();
-
-        public bool containsReward = true;
-
-        public int tickNum = 0;
+    public Guid ID { get; }
+    public Mars.Interfaces.Environment.Position Position { get; set; }
+    public QLearning qLearn = new QLearning();
+    public float[,] rewardMap;
+    public static ConcurrentDictionary<int, List<(int, int)>> rewardMemory = new ConcurrentDictionary<int, List<(int, int)>>();
+    public bool containsReward = true;
+    public int tickNum = 0;
 
         private string rule = default;
 
@@ -131,126 +117,113 @@ namespace HillClimberABMExample.General
         }
 
         // Tick function is called on each step of the simulation
-        public void Tick()
-        {
+        public void Tick() {
+        var (terrainLocations, terrainInfo) = GatherTerrainData();
+        var (inputs, rewards) = ProcessInputsAndRewards(terrainInfo, terrainLocations);
+         var (stayPut, onActiveReward) = ProcessPerceptronOutput(inputs, rewards);
+        var landscapePatch =CreateLandscapePatch(terrainInfo);
+        
+        UpdateAgentPosition(stayPut, onActiveReward, landscapePatch, rewards);
+        UpdateAgentState(stayPut, onActiveReward);
+    }
 
-            List<int[]> distantTerrainLocations = GetDistantTerrainPositions();
-            List<int[]> adjacentTerrainLocations = GetAdjacentTerrainPositions();
+    private (List<int[]> locations, Tuple<List<float>, List<float>> info) GatherTerrainData(){
+        if (useDistantView) {
+            return (GetDistantTerrainPositions(), GetDistantTerrainInfo());
+        }
+        return (GetAdjacentTerrainPositions(), GetAdjacentTerrainInfo());
+    }
 
-            Tuple<List<float>, List<float>> adjacentTerrainTuple = GetAdjacentTerrainInfo();
-            Tuple<List<float>, List<float>> distantTerrainTuple = GetDistantTerrainInfo();
+    private (float[] inputs, float[] rewards) ProcessInputsAndRewards(
+        Tuple<List<float>, List<float>> terrainInfo,
+        List<int[]> terrainLocations) {
+        float[] elevations = terrainInfo.Item1.ToArray();
+        float[] rewards = terrainInfo.Item2.ToArray();
+        rewards = agentReward(rewards, terrainLocations);
 
-            bool onActiveReward = false;
-            bool stayPut = false;
+        float[] inputs = new float[elevations.Length + rewards.Length];
+        NormInput(elevations).CopyTo(inputs, 0);
+        NormInput(rewards).CopyTo(inputs, elevations.Length);
 
-            float[] distantTerrainElevations = distantTerrainTuple.Item1.ToArray();
-            float[] adjacentTerrainElevations = adjacentTerrainTuple.Item1.ToArray();
-            float[] rewards = new float[9];
+        return (inputs, rewards);
+    }
 
-            int xPos = (int)Position.X;
-            int yPos = (int)Position.Y;
-            float[] inputs = null;
+    private (bool stayPut, bool onActiveReward) ProcessPerceptronOutput(float[] inputs, float[] rewards) {
+        PerceptronFactory perceptron = new PerceptronFactory(18, 2, 1, 18);
+        float[] outputs = perceptron.CalculatePerceptronFromId(AnimalId, inputs, AgentMemory);
 
-            if (useDistantView)
-            {
-                rewards = distantTerrainTuple.Item2.ToArray();
-                rewards = agentReward(rewards, distantTerrainLocations);
-                inputs = new float[distantTerrainElevations.Length + rewards.Length];
-                NormInput(distantTerrainElevations).CopyTo(inputs, 0);
-                NormInput(rewards).CopyTo(inputs, distantTerrainElevations.Length);
+        bool stayPut = outputs[1] > outputs[0];
+        bool onActiveReward = false;
+
+        int xPos = (int)Position.X;
+        int yPos = (int)Position.Y;
+
+        if (rewards[4] != 0.0f) {
+            onActiveReward = isOnActiveReward(xPos, yPos);
+        }
+
+        if (stayPut && onActiveReward) {
+            pickUpReward(xPos, yPos);
+        }
+        return (stayPut, onActiveReward);
+    }
+
+    private float[,] CreateLandscapePatch(Tuple<List<float>, List<float>> terrainInfo) {
+        float[] elevations = terrainInfo.Item1.ToArray();
+        float[,] landscapePatch = new float[3, 3];
+        float min = elevations[0];
+        float max = elevations[0];
+
+
+        var tupleItem = setLandscapeMinMax(landscapePatch, min, max, elevations);
+        return tupleItem.Item1;
+    }
+
+    private void UpdateAgentPosition(bool stayPut, bool onActiveReward, float[,] landscapePatch, float[] rewards) {
+        int xPos = (int)Position.X;
+        int yPos = (int)Position.Y;
+        int direction;
+        bool hitWall = false;
+
+        var adjacentLocations = GetAdjacentTerrainPositions();
+
+        if (stayPut) {
+            direction = 4; // center position
+            qLearn.savePathandExportValues(AnimalId, -1, -1, landscapePatch, tickNum, 
+                Elevation + 25 * rewards[4], xPos, yPos);
+        }
+        else {
+            // get direction from qLearn
+            direction = qLearn.getDirection(landscapePatch, 
+                landscapePatch[0,0], // min
+                landscapePatch[0,0], // max
+                AnimalId, tickNum, Elevation + 25 * rewards[4], xPos, yPos);
+            // get new location
+            var newLocation = adjacentLocations[direction];
+            // check if the new location hits a wall
+            if ((float)Terrain.GetRealValue(newLocation[0], newLocation[1]) < 0) {
+                hitWall = true;
             }
-            else
-            {
-                rewards = adjacentTerrainTuple.Item2.ToArray();
-                rewards = agentReward(rewards, adjacentTerrainLocations);
-                inputs = new float[adjacentTerrainElevations.Length + rewards.Length];
-                NormInput(adjacentTerrainElevations).CopyTo(inputs, 0);
-                NormInput(rewards).CopyTo(inputs, adjacentTerrainElevations.Length);
-            }
+        }
 
+        // if wall hit move
+        if (hitWall) {
+            Terrain._AnimalEnvironment.MoveTo(this, xPos, yPos, 1, predicate: null);
+        }
+        else {
+            var newLocation = adjacentLocations[direction];
+            Terrain._AnimalEnvironment.MoveTo(this, newLocation[0], newLocation[1], 1, predicate: null);
+        }
+    }
 
-
-            //try one hidden layer 18 inputs
-            PerceptronFactory perceptron = new PerceptronFactory(18, 2, 1, 18);
-            float[] outputs = perceptron.CalculatePerceptronFromId(AnimalId, inputs, AgentMemory);
-
-            if (outputs[1] > outputs[0])
-            {
-                stayPut = true;
-            }
-            if (rewards[4] != 0.0f)
-            {
-                onActiveReward = isOnActiveReward(xPos, yPos);
-            }
-            if (stayPut && onActiveReward)
-            {
-                pickUpReward(xPos, yPos);
-            }
-
-            //change terrainElevations into a matrix
-            //adjacentTerrainElevations contains 9 elements, so we need 3x3 matrix
-            float[,] landscapePatch = new float[3, 3];
-            float min = adjacentTerrainElevations[0];
-            float max = adjacentTerrainElevations[0];
-            Tuple<float[,], float, float> tupleItem = null;
-
-            if (useDistantView)
-            { //agent uses distant view
-                min = distantTerrainElevations[0];
-                max = distantTerrainElevations[0];
-                tupleItem = setLandscapeMinMax(landscapePatch, min, max, distantTerrainElevations);
-            }
-            else
-            {
-                tupleItem = setLandscapeMinMax(landscapePatch, min, max, adjacentTerrainElevations);
-            }
-
-            landscapePatch = tupleItem.Item1;
-            min = tupleItem.Item2;
-            max = tupleItem.Item3;
-
-            int direction = 4;
-            int[] newLocation = null;
-            bool hitWall = false;
-
-            if (stayPut)
-            {//don't move cus we on reward
-                direction = 4;
-                qLearn.savePathandExportValues(AnimalId, -1, -1, landscapePatch, tickNum, Elevation + 25 * rewards[4], xPos, yPos);
-            }
-            else
-            {
-                direction = qLearn.getDirection(landscapePatch, min, max, AnimalId, tickNum, Elevation + 25 * rewards[4], xPos, yPos);
-                //new elevation nand check its validity
-                newLocation = adjacentTerrainLocations[direction];
-
-                if ((float)Terrain.GetRealValue(newLocation[0], newLocation[1]) < 0)
-                { // if you do not want to use blockers, change to a number higher than maxElevation ie.:1501
-                    hitWall = true;
-                }
-            }
-
-            newLocation = adjacentTerrainLocations[direction];
-
-            if (hitWall)
-            {
-                Terrain._AnimalEnvironment.MoveTo(this, xPos, yPos, 1, predicate: null);
-            }
-            else
-            {
-                Terrain._AnimalEnvironment.MoveTo(this, newLocation[0], newLocation[1], 1, predicate: null);
-            }
-
+        private void UpdateAgentState(bool stayPut, bool onActiveReward){
             Elevation = Terrain.GetIntegerValue(Position.X, Position.Y);
-
             BioEnergy += calculateBioEnergy(stayPut, onActiveReward);
-            if (BioEnergy < 0)
-            {
+            if (BioEnergy < 0) {
                 BioEnergy = 0;
             }
             tickNum++;
         }
-
 
         public Tuple<float[,], float, float> setLandscapeMinMax(float[,] landscapePatch, float min, float max, float[] elevationArr)
         {
