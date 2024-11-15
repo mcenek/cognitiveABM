@@ -62,7 +62,7 @@ public class ABM
                 // Console.WriteLine($"Simulation execution finished in {stopWatch.ElapsedMilliseconds / 1000:N2} seconds");
 
                 stopWatch.Restart();
-                var values = fcm.Run(false, FitnessFeatures.FitnessFunctions.GlobalTargetFitnes, true);
+                var values = fcm.Run(false, FitnessFunctions.GlobalTargetFitnes, true);
                 stopWatch.Stop();
                 // Console.WriteLine($"FCM finished in {stopWatch.ElapsedMilliseconds / 100:N2} seconds");
 
@@ -86,7 +86,7 @@ public class ABM
 
     public void Train(FCM fcm, int generations, float targetFitness, Boolean saveGenomes, string terrianFilePath, string[] args)
     {
-        FitnessFeatures.FitnessFunctions.GlobalTargetFitnes = targetFitness;
+        FitnessFunctions.GlobalTargetFitnes = targetFitness;
         var startTime = DateTime.Now;
         //make method to get lambda value i guess
         float[] lambdaArray = QLABMA.getLambda(generations);
@@ -120,8 +120,8 @@ public class ABM
 
                 //-----------------------------------------------------------------------------------------------//
                 stopWatch.Restart();
-                fcm.Run(true, FitnessFeatures.FitnessFunctions.GlobalTargetFitnes, saveGenomes);
-                Console.WriteLine("New Target Fitness: " +  FitnessFeatures.FitnessFunctions.GlobalTargetFitnes);
+                fcm.Run(true, FitnessFunctions.GlobalTargetFitnes, saveGenomes);
+                Console.WriteLine("New Target Fitness: " +  FitnessFunctions.GlobalTargetFitnes);
                 stopWatch.Stop();
 
                 Console.WriteLine($"FCM finished in {stopWatch.ElapsedMilliseconds / 100:N2} seconds");

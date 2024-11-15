@@ -59,9 +59,9 @@ namespace CognitiveABM.agentInformationHolder
           from the path that the agent took: temp[11] (initial val) temp[12] compared value
           stored into temp[13] which is the difference between the two altitudes
         */
-        temp[13] = FitnessFeatures.FitnessFunctions.getElevationDifference(temp[11], temp[12]);
+        temp[13] = FitnessFunctions.getElevationDifference(temp[11], temp[12]);
 
-        float[] avgMax = FitnessFeatures.FitnessFunctions.getAverageandTotal(tempList, temp[13]); 
+        float[] avgMax = FitnessFunctions.getAverageandTotal(tempList, temp[13]); 
         temp[14] = avgMax[0];
         temp[15] = avgMax[1];
         fitness.Add(temp[13]); // ? TODO can comment depending on impact
