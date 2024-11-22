@@ -21,11 +21,12 @@ namespace TerrainGenerator
                 Console.WriteLine("6. Canyon");
                 Console.WriteLine("7. Hill with perimeter opening");
                 Console.WriteLine("8. Terrain going top left to bottom right");
+                Console.WriteLine("9. Fractal Terrain");
                 Console.WriteLine("--------------------------------------------------------------------");
                 // int?
                 if (int.TryParse(Console.ReadLine(), out userInput)){
                     // in range
-                    if (userInput >= 1 && userInput <= 8){
+                    if (userInput >= 1 && userInput <= 9){
                         break; // Valid input, exit the loop
                     } else {
                         Console.WriteLine("Invalid input. Please enter a number between 1 and 8.");

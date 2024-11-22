@@ -70,6 +70,9 @@ namespace TerrainGenerator
                 case 8:
                     createPeaks8(peakCells, random); // 8. Terrain going top left to bottom right
                     break;
+                case 9:
+                    createPeaks9(peakCells, random); // 9. Fractal    
+                    break;
                 default:
                     Console.WriteLine("Invalid option selected. Defaulting to 1");
                     createPeaks1(peakCells, random);
@@ -388,6 +391,64 @@ namespace TerrainGenerator
             this.map[i, j] = (int)(normalizedDistance * this.maximumElevation);
          }
             }
+        }
+
+        private void createPeaks9(List<int> peakCells, Random random) {
+            int sideLength = this.map.GetLength(0);
+            
+            // call method to be able to get corner points to start the recursive method
+            CornerPoints(sideLength, 0.5, random);
+        }
+
+        private void CornerPoints(int size, double changeVal, Random random) {
+            // get the 4 corners points of the array and set random value for it
+            this.map[0, 0] = random.Next(this.maximumElevation);
+            this.map[0, size - 1] = random.Next(this.maximumElevation);
+            this.map[size - 1, 0] = random.Next(this.maximumElevation);
+            this.map[size - 1, size - 1] = random.Next(this.maximumElevation);
+
+            DiamondSquareRecursive(0, 0, size - 1, size - 1, changeVal, random); // call the recursive method using the whole 2d array
+        }
+
+        private void DiamondSquareRecursive(int x1, int y1, int x2, int y2, double changeVal, Random random) {
+            // base case
+            if (x2 - x1 < 2 || y2 - y1 < 2) return;
+
+            // get midponts of x y
+            int midX = (x1 + x2) / 2;
+            int midY = (y1 + y2) / 2;
+
+
+            // Ensure the center point is within the map boundaries
+            if (midX < 0 || midX >= this.map.GetLength(0) || midY < 0 || midY >= this.map.GetLength(1)) return;
+
+            // gete random offset
+            double offset1 = (random.NextDouble() - 0.5) * changeVal * this.maximumElevation;
+            double offset2 =(random.NextDouble() - 0.5) * changeVal * this.maximumElevation;
+
+            // Get corner values
+            double centerValue = (this.map[x1, y1] + this.map[x1, y2] + this.map[x2, y1] + this.map[x2, y2]) / 4.0 + offset1;
+            this.map[midX, midY] = (int)(centerValue < 0 ? 0 : centerValue);
+
+            // Square step: calculate the side point values if < then 0 return 0
+            double sideValue1 = (this.map[x1, y1] + this.map[x1, y2] + this.map[midX, midY])/ 3.0 + offset2;
+            this.map[x1, midY] = (int)(sideValue1 < 0 ? 0 : sideValue1);
+
+            double sideValue2 = (this.map[x1, y2] + this.map[x2, y2] + this.map[midX, midY]) / 3.0 + offset2;
+             this.map[x2, midY] = (int)(sideValue2 < 0 ? 0 : sideValue2);
+
+            double sideValue3 = (this.map[x1, y1] + this.map[x2, y1] + this.map[midX, midY]) / 3.0 + offset2;
+            this.map[midX, y1] = (int)(sideValue3 < 0 ? 0 : sideValue3);
+
+    
+             double sideValue4 = (this.map[x1, y2] + this.map[x2, y2] + this.map[midX, midY]) / 3.0 + offset2;
+             this.map[midX, y2] = (int)(sideValue4 < 0 ? 0 : sideValue4);
+
+            // recall on 4 regions
+            DiamondSquareRecursive(x1, y1, midX, midY, changeVal, random);
+            DiamondSquareRecursive(midX, y1, x2, midY, changeVal, random);
+            DiamondSquareRecursive(x1, midY, midX, y2, changeVal, random);
+            DiamondSquareRecursive(midX, midY, x2, y2, changeVal, random);
         }
         /**
          * ===================================================================================================================================== 
