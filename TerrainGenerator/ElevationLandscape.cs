@@ -73,6 +73,12 @@ namespace TerrainGenerator
                 case 9:
                     createPeaks9(peakCells, random); // 9. Fractal    
                     break;
+                case 10:
+                    createPeaks10(peakCells, random); // 10. Inverted Perimeter Opening
+                    break;
+                case 11:
+                    createPeaks11(peakCells, random); // 11. Gradient like mountain
+                    break;
                 default:
                     Console.WriteLine("Invalid option selected. Defaulting to 1");
                     createPeaks1(peakCells, random);
@@ -355,7 +361,7 @@ namespace TerrainGenerator
 
             // Decrease the ring radius and set the gap width
             ringInnerRadius = (int) (hillRadius / 1.8); // Smaller inner radius of the ring
-            ringOuterRadius = ringInnerRadius + 2; // Outer radius of the ring (inner radius + width of the ring)
+            ringOuterRadius = ringInnerRadius + 2; // Outer radius of the ring
             gapWidth = 1; // Smaller gap width
 
             // Create the circular ring on top of the hill with a smaller gap
@@ -393,6 +399,8 @@ namespace TerrainGenerator
             }
         }
 
+        // ===================================================== Fractal Terrain ====================================================== 
+        //TODO: need to edit this   
         private void createPeaks9(List<int> peakCells, Random random) {
             int sideLength = this.map.GetLength(0);
             
@@ -450,6 +458,79 @@ namespace TerrainGenerator
             DiamondSquareRecursive(x1, midY, midX, y2, changeVal, random);
             DiamondSquareRecursive(midX, midY, x2, y2, changeVal, random);
         }
+
+    // ===================================================== Inverted Perimeter Opening ===================================================== 
+        private void createPeaks10(List<int> peakCells, Random random) {
+            int middleX = this.map.GetLength(0) / 2;
+            int middleY = this.map.GetLength(1) / 2;
+            int lowestPoint = 0; // lowest point in center
+            int maxRadius = Math.Min(this.map.GetLength(0), this.map.GetLength(1)) / 2;
+            
+            // Ring parameters
+            int ringInnerRadius = (int)(maxRadius / 1.8); // smaller inner radius of the ring
+            int ringOuterRadius = ringInnerRadius + 2; //outer radius of the ring
+            int gapWidth = 1;
+            int wallHeight = 100;
+
+            // create the gradient elevation pattern
+            for (int i = 0; i < this.map.GetLength(0); i++){
+                for (int j = 0; j < this.map.GetLength(1); j++) {
+                    double distance = Math.Sqrt((i - middleX) * (i - middleX) + (j - middleY) * (j - middleY));
+                    if (distance <= maxRadius) {
+                        // calculate elevation based on distance from center
+                        // distance increase and elevation increase
+                        double normalizedDistance = distance / maxRadius; // between 0 and 1
+                        int elevation = (int)Math.Round(this.maximumElevation * normalizedDistance);
+                        this.map[i, j] = elevation;
+                    }
+                    else{
+                        // assign points for points beyond radius
+                        this.map[i, j] = this.maximumElevation;
+                    }
+            }
+            }
+
+            // add the ring with a gap
+            for (int i = 0; i < this.map.GetLength(0); i++) {
+                for (int j = 0; j < this.map.GetLength(1); j++) {
+                    double distance = Math.Sqrt((i - middleX) * (i - middleX) + (j - middleY) * (j - middleY));
+                    if (distance > ringInnerRadius && distance <= ringOuterRadius) {
+                        // Calculate angle for the gap
+                        double angle = Math.Atan2(j - middleY, i - middleX);
+                        double angleDegrees = angle * (180 / Math.PI);
+                        if (angleDegrees < 45 - gapWidth || angleDegrees > 75 + gapWidth) {
+                            this.map[i, j] = wallHeight; // set the elevation to a low height for the ring
+                        }
+                }
+                }
+            }
+        }
+
+    // ===================================================== Gradient like mountain ===================================================== 
+    private void createPeaks11(List<int> peakCells, Random random) {
+            int middleX = this.map.GetLength(0) / 2;
+            int middleY = this.map.GetLength(1) / 2;
+            int hillPeak = this.maximumElevation; // peak height at center
+            int hillRadius = this.map.GetLength(0) / 2; // hill radius
+
+            // create the mountain with gradient elevation
+            for (int i = 0; i < this.map.GetLength(0); i++) {
+                for (int j = 0; j < this.map.GetLength(1); j++) {
+                    double distance = Math.Sqrt((i - middleX) * (i - middleX) + (j - middleY) * (j - middleY));
+                    if (distance <= hillRadius){
+                        //highest at center
+                        double normalizedDistance = distance / hillRadius;
+                        int elevation = (int)Math.Round(hillPeak * (1.0 - normalizedDistance));
+                        this.map[i, j] = elevation;
+                    }
+                    else {
+                        // set minimum elevation for points beyond the radius
+                        this.map[i, j] = 0;
+                    }
+                }
+            }
+    }
+        
         /**
          * ===================================================================================================================================== 
          * ===================================================================================================================================== 

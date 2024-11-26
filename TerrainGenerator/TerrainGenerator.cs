@@ -22,14 +22,16 @@ namespace TerrainGenerator
                 Console.WriteLine("7. Hill with perimeter opening");
                 Console.WriteLine("8. Terrain going top left to bottom right");
                 Console.WriteLine("9. Fractal Terrain");
+                Console.WriteLine("10. Inverted Perimeter Opening");
+                Console.WriteLine("11. Mountain");
                 Console.WriteLine("--------------------------------------------------------------------");
                 // int?
                 if (int.TryParse(Console.ReadLine(), out userInput)){
                     // in range
-                    if (userInput >= 1 && userInput <= 9){
+                    if (userInput >= 1 && userInput <= 11){
                         break; // Valid input, exit the loop
                     } else {
-                        Console.WriteLine("Invalid input. Please enter a number between 1 and 8.");
+                        Console.WriteLine("Invalid input. Please enter a number between 1 and 11.");
                     }
                 } else {
                     Console.WriteLine("Invalid input. Please enter a valid number.");
