@@ -28,8 +28,10 @@ namespace RewardGenerator
                     Console.WriteLine("Invalid input. Please enter a valid number.");
                 }
             } while (true);
+        }
 
-
+        public static void GenerateReward(int rewardType)
+        {
             // to run from Program.cs
             string baseDirectory = AppDomain.CurrentDomain.BaseDirectory;
             string csvFile = Path.Combine(baseDirectory, "..", "..", "..", "layers", "grid_reward.csv");
@@ -37,7 +39,7 @@ namespace RewardGenerator
             string landscape_rewardFile = Path.Combine(baseDirectory, "..", "..", "..", "layers", "landscape_reward.csv");
             string rewardTest = Path.Combine(baseDirectory, "..", "..", "..", "layers", "rewardTest.csv");
 
-            RewardMap rewardmap = new RewardMap(50 /*width*/, 50/*height*/, 25/*num rewards*/,csvFile/*csv file path*/,guassFile,landscape_rewardFile, rewardTest, userInput);
+            RewardMap rewardmap = new RewardMap(50 /*width*/, 50/*height*/, 25/*num rewards*/,csvFile/*csv file path*/,guassFile,landscape_rewardFile, rewardTest, rewardType);
             rewardmap.Initialize();
             rewardmap.PrintRewardMap();
 

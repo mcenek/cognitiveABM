@@ -5,6 +5,8 @@ using Mars.Core.ModelContainer.Entities;
 using System.IO;
 using System.Runtime.CompilerServices;
 using HillClimberABMExample.General;
+using GUI;
+using System.Windows.Forms;
 
 public static class Program
 {
@@ -14,49 +16,61 @@ public static class Program
     public static string terrainFilePath;
     public const int STEPS = 250;
 
-
+    [STAThread]
     public static void Main(string[] args)
     {
-        TerrainGenerator.TerrainGenerator.Main(args);
-        RewardGenerator.RewardGenerator.Main(args);
-        File.WriteAllText("./layers/qMapGenerated8x8.csv", string.Empty);
+        Application.SetHighDpiMode(HighDpiMode.SystemAware);
+        Application.EnableVisualStyles();
+        Application.SetCompatibleTextRenderingDefault(false);
 
-        terrainFilePaths = new string[] { "./layers/landscape.csv", "./layers/moatGauss.csv", "./layers/grid.csv" };
-        var fitnessVals = new List<List<float>>();
-        var random = new Random();
-        int numTrain;
-
-
-        foreach (string filePath in terrainFilePaths)
+        // show selection form
+        using (var form = new SelectionForm())
         {
-            terrainFilePath = filePath;
-            FileUtils.ChangeTerrainFilePath(terrainFilePath);
+            if (form.ShowDialog() == DialogResult.OK)
+            {
+                //get selections from GUI
+                int terrainType = form.SelectedTerrainType;
+                int rewardType = form.SelectedRewardType;
 
-            QLearning.usePerfectQMap = 0;
-            List<List<float>> trainGenomes = null;
-            if (terrainFilePath != terrainFilePaths[0]) {
-                trainGenomes = FileUtils.ReadGenomesFromFile("./output/genomes.csv");
+               // call terrain generator with type selected
+               var terrainArgs = new string[] { terrainType.ToString() };
+               TerrainGenerator.TerrainGenerator.GenerateTerrain(terrainType);
+
+                // call rewrad generator with type
+                var rewardArgs = new string[] { rewardType.ToString() };
+                RewardGenerator.RewardGenerator.GenerateReward(rewardType);
+
+                File.WriteAllText("./layers/qMapGenerated8x8.csv", string.Empty);
+
+                terrainFilePaths = new string[] { "./layers/landscape.csv", "./layers/moatGauss.csv", "./layers/grid.csv" };
+                var fitnessVals = new List<List<float>>();
+                var random = new Random();
+                int numTrain;
+
+                foreach (string filePath in terrainFilePaths)
+                {
+                    terrainFilePath = filePath;
+                    FileUtils.ChangeTerrainFilePath(terrainFilePath);
+
+                    QLearning.usePerfectQMap = 0;
+                    List<List<float>> trainGenomes = null;
+                    if (terrainFilePath != terrainFilePaths[0])
+                    {
+                        trainGenomes = FileUtils.ReadGenomesFromFile("./output/genomes.csv");
+                    }
+                    HillClimberFCM fcm = new HillClimberFCM(population: 96, numberOfValues: 2020, STEPS, OUTPUT_FILENAME, FITNESS_COLUMNNAME, trainGenomes);
+                    ABM abm = new ABM(modelDescription: GetModelDescription());
+
+                    numTrain = random.Next(3, 5);
+                    // train
+                    abm.Train(fcm, numTrain, 0, true, terrainFilePath, args);
+                }
             }
-            HillClimberFCM fcm = new HillClimberFCM(population: 96, numberOfValues: 2020, STEPS, OUTPUT_FILENAME, FITNESS_COLUMNNAME, trainGenomes);
-            ABM abm = new ABM(modelDescription: GetModelDescription());
-
-            numTrain = random.Next(5,10);
-            // Train
-            abm.Train(fcm, numTrain, 0, true, terrainFilePath, args);
-
-            // QLearning.usePerfectQMap = 0;
-            //  var genomes = FileUtils.ReadGenomesFromFile(".\\output\\good.csv");
-            fcm = new HillClimberFCM(population: 96, numberOfValues: 2020, STEPS, OUTPUT_FILENAME, FITNESS_COLUMNNAME, trainGenomes);
-
-            // Test
-            fitnessVals.Add(abm.Test(fcm, 1, terrainFilePath, args));
-        }
-
-        // Upload data to HDFS
-        bool uplaodtoHadoop = false;
-        if (uplaodtoHadoop){
-            HDFS.Upload.UploadToHDFS();
-            Console.WriteLine("\nProgram finish.");
+            else
+            {
+                // terminate program
+                return;
+            }
         }
     }
 
