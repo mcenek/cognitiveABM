@@ -23,7 +23,7 @@ namespace TerrainGenerator
                 Console.WriteLine("8. Terrain going top left to bottom right");
                 Console.WriteLine("9. Fractal Terrain");
                 Console.WriteLine("10. Inverted Perimeter Opening");
-                Console.WriteLine("11. Mountain");
+                Console.WriteLine("11. Gradient Terrain");
                 Console.WriteLine("--------------------------------------------------------------------");
                 // int?
                 if (int.TryParse(Console.ReadLine(), out userInput)){
@@ -37,34 +37,6 @@ namespace TerrainGenerator
                     Console.WriteLine("Invalid input. Please enter a valid number.");
                 }
             } while (true);
-
-            ElevationLandscape landscape = new ElevationLandscape(50, 50, 30, 1500, 9, userInput);
-            landscape.Initialize();
-            landscape.printMap();
-
-            // Made specifically to run from Examples/HillClimberABMExample/Program.cs
-            string baseDirectory = AppDomain.CurrentDomain.BaseDirectory;
-            string txtFile = Path.Combine(baseDirectory, "..", "..", "..", "layers", "landscapeInvert.txt");
-            string csvFile = Path.Combine(baseDirectory, "..", "..", "..", "layers", "grid.csv");
-            string guassFile = Path.Combine(baseDirectory, "..", "..", "..", "layers", "moatGauss.csv");
-            string landscapeFile = Path.Combine(baseDirectory, "..", "..", "..", "layers", "landscape.csv");
-
-            StreamWriter writer = new StreamWriter(txtFile);
-            
-            writer.WriteLine(landscape.Width);
-            writer.WriteLine(landscape.Height);
-
-            for (int i = 0; i < landscape.map.GetLength(0); i++)
-            {
-                for (int j = 0; j < landscape.map.GetLength(1); j++)
-                    writer.Write(landscape.map[i,j] + " ");
-            }
-            // Change from txt format to csv format (bandage)
-            writer.Close();
-            landscape.TxtToCsv(txtFile,csvFile);
-            landscape.TxtToCsv(txtFile,guassFile);
-            landscape.TxtToCsv(txtFile,landscapeFile);
-            Console.WriteLine("Wrote to terrain file.");
         }
 
         public static void GenerateTerrain(int terrainType)

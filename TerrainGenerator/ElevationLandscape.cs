@@ -463,72 +463,117 @@ namespace TerrainGenerator
         private void createPeaks10(List<int> peakCells, Random random) {
             int middleX = this.map.GetLength(0) / 2;
             int middleY = this.map.GetLength(1) / 2;
-            int lowestPoint = 0; // lowest point in center
-            int maxRadius = Math.Min(this.map.GetLength(0), this.map.GetLength(1)) / 2;
             
-            // Ring parameters
-            int ringInnerRadius = (int)(maxRadius / 1.8); // smaller inner radius of the ring
-            int ringOuterRadius = ringInnerRadius + 2; //outer radius of the ring
-            int gapWidth = 1;
-            int wallHeight = 100;
-
-            // create the gradient elevation pattern
-            for (int i = 0; i < this.map.GetLength(0); i++){
+            // height values
+            int baseHeight = 500;  // max height
+            int vertexBottom = 100;  // vertex y point
+            double slopeRadius = this.map.GetLength(0) / 2.0;  // terrain radius
+            int wallBaseHeight = 100;  // height base
+            int wallHeight = 400;  // height of wall
+            
+            // Create base inverted hill
+            for (int i = 0; i < this.map.GetLength(0); i++) {
                 for (int j = 0; j < this.map.GetLength(1); j++) {
                     double distance = Math.Sqrt((i - middleX) * (i - middleX) + (j - middleY) * (j - middleY));
-                    if (distance <= maxRadius) {
-                        // calculate elevation based on distance from center
-                        // distance increase and elevation increase
-                        double normalizedDistance = distance / maxRadius; // between 0 and 1
-                        int elevation = (int)Math.Round(this.maximumElevation * normalizedDistance);
+                    
+                    if (distance <= slopeRadius) {
+                        //linear slope to vertex
+                        double normalizedDist = distance / slopeRadius;
+                        int elevation = (int)(baseHeight - (baseHeight - vertexBottom) * (1 - normalizedDist));
                         this.map[i, j] = elevation;
                     }
-                    else{
-                        // assign points for points beyond radius
-                        this.map[i, j] = this.maximumElevation;
+                    else {
+                        this.map[i, j] = baseHeight;
                     }
-            }
+                }
             }
 
-            // add the ring with a gap
+            int hillRadius = this.map.GetLength(0) / 2;
+            int ringInnerRadius = (int)(hillRadius / 1.8); // inner radius of ring
+            int ringOuterRadius = ringInnerRadius + 2; //outer radius of ring
+            int gapWidth = 1; // Smaller gap width
+
+            // Create the circular ring with a smaller gap
             for (int i = 0; i < this.map.GetLength(0); i++) {
                 for (int j = 0; j < this.map.GetLength(1); j++) {
                     double distance = Math.Sqrt((i - middleX) * (i - middleX) + (j - middleY) * (j - middleY));
                     if (distance > ringInnerRadius && distance <= ringOuterRadius) {
-                        // Calculate angle for the gap
                         double angle = Math.Atan2(j - middleY, i - middleX);
                         double angleDegrees = angle * (180 / Math.PI);
                         if (angleDegrees < 45 - gapWidth || angleDegrees > 75 + gapWidth) {
-                            this.map[i, j] = wallHeight; // set the elevation to a low height for the ring
+                            this.map[i, j] = wallBaseHeight + wallHeight; // start at base and add wall height
                         }
-                }
+                    }
                 }
             }
         }
 
     // ===================================================== Gradient like mountain ===================================================== 
     private void createPeaks11(List<int> peakCells, Random random) {
-            int middleX = this.map.GetLength(0) / 2;
-            int middleY = this.map.GetLength(1) / 2;
-            int hillPeak = this.maximumElevation; // peak height at center
-            int hillRadius = this.map.GetLength(0) / 2; // hill radius
-
-            // create the mountain with gradient elevation
-            for (int i = 0; i < this.map.GetLength(0); i++) {
-                for (int j = 0; j < this.map.GetLength(1); j++) {
-                    double distance = Math.Sqrt((i - middleX) * (i - middleX) + (j - middleY) * (j - middleY));
-                    if (distance <= hillRadius){
-                        //highest at center
-                        double normalizedDistance = distance / hillRadius;
-                        int elevation = (int)Math.Round(hillPeak * (1.0 - normalizedDistance));
-                        this.map[i, j] = elevation;
-                    }
-                    else {
-                        // set minimum elevation for points beyond the radius
-                        this.map[i, j] = 0;
-                    }
+        int middleX = this.map.GetLength(0) / 2;
+        int middleY = this.map.GetLength(1) / 2;
+        
+        // create multiple gradient waves
+         for (int i = 0; i < this.map.GetLength(0); i++) {
+             for (int j = 0; j < this.map.GetLength(1); j++) {
+                // Base elevation use multiple sin waves
+                double elevation = 0;
+                
+                 //main mountain shape
+                 double dist = Math.Sqrt(Math.Pow(i - middleX, 2) + Math.Pow(j - middleY, 2));
+                 elevation += (this.maximumElevation * 0.8) * Math.Exp(-dist / (this.map.GetLength(0)* 0.3));
+                
+                // add randomness
+                double wave1 = Math.Sin(i * 0.2) * Math.Cos(j * 0.2) * (this.maximumElevation * 0.2);
+                 elevation += wave1;
+                
+                // add little details
+                double wave2 = Math.Sin(i * 0.1 + j * 0.1) * (this.maximumElevation * 0.1);
+                elevation += wave2;
+                
+                // add texture
+                double noise = random.NextDouble() * (this.maximumElevation * 0.05);
+                elevation += noise;
+                
+                 // make sure elevation is in bounds
+                 elevation = Math.Max(0, Math.Min(this.maximumElevation, elevation));
+                
+                // smooth edges
+                double edgeFade = 1.0;
+                if (i < 5 || i > this.map.GetLength(0) - 5 || j < 5 || j > this.map.GetLength(1) - 5) {
+                    int distFromEdge = Math.Min(
+                        Math.Min(i, this.map.GetLength(0) - i),
+                        Math.Min(j, this.map.GetLength(1) - j)
+                    );
+                    edgeFade = distFromEdge / 5.0;
+                    elevation *= edgeFade;
+                }
+                
+                this.map[i, j] = (int)elevation;
+          }
+        }
+        
+        // apply smoothing to have small changes
+        for (int smooth = 0; smooth < 2; smooth++) {
+            int[,] tempMap = new int[this.map.GetLength(0), this.map.GetLength(1)];
+            for (int i = 1; i < this.map.GetLength(0) - 1; i++) {
+                for (int j = 1; j < this.map.GetLength(1) - 1; j++) {
+                    // average with neighboring cells
+                    double avgElevation = (
+                        this.map[i-1, j] + this.map[i+1, j] +
+                        this.map[i, j-1] + this.map[i, j+1] +
+                        this.map[i, j]
+                    ) / 5.0;
+                    tempMap[i, j] = (int)avgElevation;
                 }
             }
+            //copy values back to the main map
+            for (int i = 1; i < this.map.GetLength(0) - 1; i++) {
+                for (int j = 1; j < this.map.GetLength(1) - 1; j++) {
+                    this.map[i, j] = tempMap[i, j];
+                }
+            }
+        }
     }
         
         /**
