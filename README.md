@@ -87,7 +87,7 @@ Output into the console should look like:
 
 `Examples/HillClimberABMExample/config.json` is where you can configure MARS specific parameters like number of agents, number of steps, layers, and terrains.
 
-If you're not using VS Code you can run the example from the command line with `.NET Core 2.1` like so:
+If you're not using VS Code you can run the example from the command line with `.NET Core 6.0` like so:
 
 From within the `Examples\HillClimberABMExample` directory run `dotnet run -sm config.json`
 
