@@ -37,6 +37,9 @@ namespace TerrainGenerator
                     Console.WriteLine("Invalid input. Please enter a valid number.");
                 }
             } while (true);
+            
+            // call GenerateTerrain with the user's selection
+            GenerateTerrain(userInput);
         }
 
         public static void GenerateTerrain(int terrainType)

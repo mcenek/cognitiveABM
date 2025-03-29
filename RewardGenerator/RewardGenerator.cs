@@ -28,6 +28,9 @@ namespace RewardGenerator
                     Console.WriteLine("Invalid input. Please enter a valid number.");
                 }
             } while (true);
+            
+            // call GenerateReward with the user's selection
+            GenerateReward(userInput);
         }
 
         public static void GenerateReward(int rewardType)

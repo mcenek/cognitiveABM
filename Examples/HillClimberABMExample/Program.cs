@@ -60,6 +60,7 @@ public static class Program
     #if !WINDOWS
     private static void RunTerminalMode(string[] args)
     {
+        // Call terrain generator and reward generator
         TerrainGenerator.TerrainGenerator.Main(args);
         RewardGenerator.RewardGenerator.Main(args);
         RunSimulation(args);
