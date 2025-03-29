@@ -2,8 +2,9 @@
 
   <PropertyGroup>
     <OutputType>Library</OutputType>
-    <TargetFramework>net7.0-windows</TargetFramework>
-    <UseWindowsForms>true</UseWindowsForms>
+    <TargetFramework Condition="'$(OS)' == 'Windows_NT'">net7.0-windows</TargetFramework>
+    <TargetFramework Condition="'$(OS)' != 'Windows_NT'">net7.0</TargetFramework>
+    <UseWindowsForms Condition="'$(OS)' == 'Windows_NT'">true</UseWindowsForms>
     <ImplicitUsings>enable</ImplicitUsings>
     <Nullable>enable</Nullable>
   </PropertyGroup>
