@@ -32,7 +32,10 @@ namespace TerrainGenerator
         }
 
 
+        // Getter and Setter methods for Landscape Width
         public int Width { get=> width; set=> width = value;  }
+
+        // Getter and Setter methods for Landscape Height
         public int Height { get=> height; set => height = value; }
 
 

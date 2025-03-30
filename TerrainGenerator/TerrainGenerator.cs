@@ -23,6 +23,7 @@ namespace TerrainGenerator
                 Console.WriteLine("8. Terrain going top left to bottom right");
                 Console.WriteLine("--------------------------------------------------------------------");
                 // int?
+                // Checks if user input is an INT and is between 1-8
                 if (int.TryParse(Console.ReadLine(), out userInput)){
                     // in range
                     if (userInput >= 1 && userInput <= 8){
@@ -46,6 +47,7 @@ namespace TerrainGenerator
             string guassFile = Path.Combine(baseDirectory, "..", "..", "..", "layers", "moatGauss.csv");
             string landscapeFile = Path.Combine(baseDirectory, "..", "..", "..", "layers", "landscape.csv");
 
+            // new TextWriter for writing characters to a stream 
             StreamWriter writer = new StreamWriter(txtFile);
             
             writer.WriteLine(landscape.Width);
