@@ -55,9 +55,9 @@ namespace CognitiveABM.FCM
         {
             List<float> agentFitness = Fitness(Agents);
 
-            var avg = agentFitness.Average();
+            var avg = FitnessFunctions.AverageFitness(agentFitness);
             var sum = agentFitness.Sum();
-            var max = agentFitness.Max();
+            var max = FitnessFunctions.MaxFitness(agentFitness);
 
             Console.WriteLine("Average fitness: {0:F2}, Max fitness: {1:F2}", avg, max);
 
@@ -70,12 +70,12 @@ namespace CognitiveABM.FCM
                     {
                         WriteGenomes("genomes.csv");
                     }
-                    FitnessFeatures.FitnessFunctions.GlobalTargetFitnes = avg;
+                    FitnessFunctions.GlobalTargetFitnes = avg;
                 }
 
                 if (sum == 0)
                 {
-                    agentFitness = FitnessFeatures.FitnessFunctions.resetFitness(agentFitness);
+                    agentFitness = FitnessFunctions.resetFitness(agentFitness);
                 }
 
                 List<float> agentReproductionPercentages = CalculateReproductionPercent(agentFitness.ToList());
@@ -158,7 +158,7 @@ namespace CognitiveABM.FCM
         {
             List<float> reproductionPercent = new List<float>();
             float sumOfFitnessValues = agentFitness.Sum();
-            float averageFitness = AverageFitness();
+            float averageFitness = FitnessFunctions.AverageFitness(agentFitness);
 
             foreach (float fitnessValue in agentFitness)
             {
@@ -216,17 +216,17 @@ namespace CognitiveABM.FCM
         /**
          * @return: the max fitness of the agents
          */
-        public float AverageFitness()
-        {
-            return Fitness(Agents).Sum() / Agents.Count;
-        }
+        // public float AverageFitness()
+        // {
+        //     return Fitness(Agents).Sum() / Agents.Count;
+        // }
 
-        /**
-         * @return: the max fitness of the agents
-         */
-        public float MaxFitness()
-        {
-            return Fitness(Agents).Max();
-        }
+        // /**
+        //  * @return: the max fitness of the agents
+        //  */
+        // public float MaxFitness()
+        // {
+        //     return Fitness(Agents).Max();
+        // }
     }
 }

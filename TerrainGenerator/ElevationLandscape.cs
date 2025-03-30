@@ -70,6 +70,15 @@ namespace TerrainGenerator
                 case 8:
                     createPeaks8(peakCells, random); // 8. Terrain going top left to bottom right
                     break;
+                case 9:
+                    createPeaks9(peakCells, random); // 9. Fractal    
+                    break;
+                case 10:
+                    createPeaks10(peakCells, random); // 10. Inverted Perimeter Opening
+                    break;
+                case 11:
+                    createPeaks11(peakCells, random); // 11. Gradient like mountain
+                    break;
                 default:
                     Console.WriteLine("Invalid option selected. Defaulting to 1");
                     createPeaks1(peakCells, random);
@@ -352,7 +361,7 @@ namespace TerrainGenerator
 
             // Decrease the ring radius and set the gap width
             ringInnerRadius = (int) (hillRadius / 1.8); // Smaller inner radius of the ring
-            ringOuterRadius = ringInnerRadius + 2; // Outer radius of the ring (inner radius + width of the ring)
+            ringOuterRadius = ringInnerRadius + 2; // Outer radius of the ring
             gapWidth = 1; // Smaller gap width
 
             // Create the circular ring on top of the hill with a smaller gap
@@ -389,6 +398,184 @@ namespace TerrainGenerator
          }
             }
         }
+
+        // ===================================================== Fractal Terrain ====================================================== 
+        //TODO: need to edit this   
+        private void createPeaks9(List<int> peakCells, Random random) {
+            int sideLength = this.map.GetLength(0);
+            
+            // call method to be able to get corner points to start the recursive method
+            CornerPoints(sideLength, 0.5, random);
+        }
+
+        private void CornerPoints(int size, double changeVal, Random random) {
+            // get the 4 corners points of the array and set random value for it
+            this.map[0, 0] = random.Next(this.maximumElevation);
+            this.map[0, size - 1] = random.Next(this.maximumElevation);
+            this.map[size - 1, 0] = random.Next(this.maximumElevation);
+            this.map[size - 1, size - 1] = random.Next(this.maximumElevation);
+
+            DiamondSquareRecursive(0, 0, size - 1, size - 1, changeVal, random); // call the recursive method using the whole 2d array
+        }
+
+        private void DiamondSquareRecursive(int x1, int y1, int x2, int y2, double changeVal, Random random) {
+            // base case
+            if (x2 - x1 < 2 || y2 - y1 < 2) return;
+
+            // get midponts of x y
+            int midX = (x1 + x2) / 2;
+            int midY = (y1 + y2) / 2;
+
+
+            // Ensure the center point is within the map boundaries
+            if (midX < 0 || midX >= this.map.GetLength(0) || midY < 0 || midY >= this.map.GetLength(1)) return;
+
+            // gete random offset
+            double offset1 = (random.NextDouble() - 0.5) * changeVal * this.maximumElevation;
+            double offset2 =(random.NextDouble() - 0.5) * changeVal * this.maximumElevation;
+
+            // Get corner values
+            double centerValue = (this.map[x1, y1] + this.map[x1, y2] + this.map[x2, y1] + this.map[x2, y2]) / 4.0 + offset1;
+            this.map[midX, midY] = (int)(centerValue < 0 ? 0 : centerValue);
+
+            // Square step: calculate the side point values if < then 0 return 0
+            double sideValue1 = (this.map[x1, y1] + this.map[x1, y2] + this.map[midX, midY])/ 3.0 + offset2;
+            this.map[x1, midY] = (int)(sideValue1 < 0 ? 0 : sideValue1);
+
+            double sideValue2 = (this.map[x1, y2] + this.map[x2, y2] + this.map[midX, midY]) / 3.0 + offset2;
+             this.map[x2, midY] = (int)(sideValue2 < 0 ? 0 : sideValue2);
+
+            double sideValue3 = (this.map[x1, y1] + this.map[x2, y1] + this.map[midX, midY]) / 3.0 + offset2;
+            this.map[midX, y1] = (int)(sideValue3 < 0 ? 0 : sideValue3);
+
+    
+             double sideValue4 = (this.map[x1, y2] + this.map[x2, y2] + this.map[midX, midY]) / 3.0 + offset2;
+             this.map[midX, y2] = (int)(sideValue4 < 0 ? 0 : sideValue4);
+
+            // recall on 4 regions
+            DiamondSquareRecursive(x1, y1, midX, midY, changeVal, random);
+            DiamondSquareRecursive(midX, y1, x2, midY, changeVal, random);
+            DiamondSquareRecursive(x1, midY, midX, y2, changeVal, random);
+            DiamondSquareRecursive(midX, midY, x2, y2, changeVal, random);
+        }
+
+    // ===================================================== Inverted Perimeter Opening ===================================================== 
+        private void createPeaks10(List<int> peakCells, Random random) {
+            int middleX = this.map.GetLength(0) / 2;
+            int middleY = this.map.GetLength(1) / 2;
+            
+            // height values
+            int baseHeight = 500;  // max height
+            int vertexBottom = 100;  // vertex y point
+            double slopeRadius = this.map.GetLength(0) / 2.0;  // terrain radius
+            int wallBaseHeight = 100;  // height base
+            int wallHeight = 400;  // height of wall
+            
+            // Create base inverted hill
+            for (int i = 0; i < this.map.GetLength(0); i++) {
+                for (int j = 0; j < this.map.GetLength(1); j++) {
+                    double distance = Math.Sqrt((i - middleX) * (i - middleX) + (j - middleY) * (j - middleY));
+                    
+                    if (distance <= slopeRadius) {
+                        //linear slope to vertex
+                        double normalizedDist = distance / slopeRadius;
+                        int elevation = (int)(baseHeight - (baseHeight - vertexBottom) * (1 - normalizedDist));
+                        this.map[i, j] = elevation;
+                    }
+                    else {
+                        this.map[i, j] = baseHeight;
+                    }
+                }
+            }
+
+            int hillRadius = this.map.GetLength(0) / 2;
+            int ringInnerRadius = (int)(hillRadius / 1.8); // inner radius of ring
+            int ringOuterRadius = ringInnerRadius + 2; //outer radius of ring
+            int gapWidth = 1; // Smaller gap width
+
+            // Create the circular ring with a smaller gap
+            for (int i = 0; i < this.map.GetLength(0); i++) {
+                for (int j = 0; j < this.map.GetLength(1); j++) {
+                    double distance = Math.Sqrt((i - middleX) * (i - middleX) + (j - middleY) * (j - middleY));
+                    if (distance > ringInnerRadius && distance <= ringOuterRadius) {
+                        double angle = Math.Atan2(j - middleY, i - middleX);
+                        double angleDegrees = angle * (180 / Math.PI);
+                        if (angleDegrees < 45 - gapWidth || angleDegrees > 75 + gapWidth) {
+                            this.map[i, j] = wallBaseHeight + wallHeight; // start at base and add wall height
+                        }
+                    }
+                }
+            }
+        }
+
+    // ===================================================== Gradient like mountain ===================================================== 
+    private void createPeaks11(List<int> peakCells, Random random) {
+        int middleX = this.map.GetLength(0) / 2;
+        int middleY = this.map.GetLength(1) / 2;
+        
+        // create multiple gradient waves
+         for (int i = 0; i < this.map.GetLength(0); i++) {
+             for (int j = 0; j < this.map.GetLength(1); j++) {
+                // Base elevation use multiple sin waves
+                double elevation = 0;
+                
+                 //main mountain shape
+                 double dist = Math.Sqrt(Math.Pow(i - middleX, 2) + Math.Pow(j - middleY, 2));
+                 elevation += (this.maximumElevation * 0.8) * Math.Exp(-dist / (this.map.GetLength(0)* 0.3));
+                
+                // add randomness
+                double wave1 = Math.Sin(i * 0.2) * Math.Cos(j * 0.2) * (this.maximumElevation * 0.2);
+                 elevation += wave1;
+                
+                // add little details
+                double wave2 = Math.Sin(i * 0.1 + j * 0.1) * (this.maximumElevation * 0.1);
+                elevation += wave2;
+                
+                // add texture
+                double noise = random.NextDouble() * (this.maximumElevation * 0.05);
+                elevation += noise;
+                
+                 // make sure elevation is in bounds
+                 elevation = Math.Max(0, Math.Min(this.maximumElevation, elevation));
+                
+                // smooth edges
+                double edgeFade = 1.0;
+                if (i < 5 || i > this.map.GetLength(0) - 5 || j < 5 || j > this.map.GetLength(1) - 5) {
+                    int distFromEdge = Math.Min(
+                        Math.Min(i, this.map.GetLength(0) - i),
+                        Math.Min(j, this.map.GetLength(1) - j)
+                    );
+                    edgeFade = distFromEdge / 5.0;
+                    elevation *= edgeFade;
+                }
+                
+                this.map[i, j] = (int)elevation;
+          }
+        }
+        
+        // apply smoothing to have small changes
+        for (int smooth = 0; smooth < 2; smooth++) {
+            int[,] tempMap = new int[this.map.GetLength(0), this.map.GetLength(1)];
+            for (int i = 1; i < this.map.GetLength(0) - 1; i++) {
+                for (int j = 1; j < this.map.GetLength(1) - 1; j++) {
+                    // average with neighboring cells
+                    double avgElevation = (
+                        this.map[i-1, j] + this.map[i+1, j] +
+                        this.map[i, j-1] + this.map[i, j+1] +
+                        this.map[i, j]
+                    ) / 5.0;
+                    tempMap[i, j] = (int)avgElevation;
+                }
+            }
+            //copy values back to the main map
+            for (int i = 1; i < this.map.GetLength(0) - 1; i++) {
+                for (int j = 1; j < this.map.GetLength(1) - 1; j++) {
+                    this.map[i, j] = tempMap[i, j];
+                }
+            }
+        }
+    }
+        
         /**
          * ===================================================================================================================================== 
          * ===================================================================================================================================== 

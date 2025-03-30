@@ -21,22 +21,31 @@ namespace TerrainGenerator
                 Console.WriteLine("6. Canyon");
                 Console.WriteLine("7. Hill with perimeter opening");
                 Console.WriteLine("8. Terrain going top left to bottom right");
+                Console.WriteLine("9. Fractal Terrain");
+                Console.WriteLine("10. Inverted Perimeter Opening");
+                Console.WriteLine("11. Gradient Terrain");
                 Console.WriteLine("--------------------------------------------------------------------");
                 // int?
                 // Checks if user input is an INT and is between 1-8
                 if (int.TryParse(Console.ReadLine(), out userInput)){
                     // in range
-                    if (userInput >= 1 && userInput <= 8){
+                    if (userInput >= 1 && userInput <= 11){
                         break; // Valid input, exit the loop
                     } else {
-                        Console.WriteLine("Invalid input. Please enter a number between 1 and 8.");
+                        Console.WriteLine("Invalid input. Please enter a number between 1 and 11.");
                     }
                 } else {
                     Console.WriteLine("Invalid input. Please enter a valid number.");
                 }
             } while (true);
+            
+            // call GenerateTerrain with the user's selection
+            GenerateTerrain(userInput);
+        }
 
-            ElevationLandscape landscape = new ElevationLandscape(50, 50, 30, 1500, 9, userInput);
+        public static void GenerateTerrain(int terrainType)
+        {
+            ElevationLandscape landscape = new ElevationLandscape(50, 50, 30, 1500, 9, terrainType);
             landscape.Initialize();
             landscape.printMap();
 
