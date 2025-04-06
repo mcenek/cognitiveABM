@@ -64,7 +64,8 @@ namespace GUI
                 "8. Terrain going top left to bottom right",
                 "9. Fractal Terrain",
                 "10. Inverted Perimeter Opening",
-                "11. Gradient Terrain"
+                "11. Gradient Terrain",
+                "12. Binomal"
             };
 
             // loop to create a radio button for each terrain option
