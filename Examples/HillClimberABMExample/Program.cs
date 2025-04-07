@@ -6,6 +6,10 @@ using System.IO;
 using System.Runtime.CompilerServices;
 using HillClimberABMExample.General;
 using System.Runtime.InteropServices;
+using System.Diagnostics;
+using System.CodeDom.Compiler;
+
+
 
 #if WINDOWS
 using GUI;
@@ -31,25 +35,36 @@ public static class Program
         Application.SetCompatibleTextRenderingDefault(false);
 
         // show selection form
-        using (var form = new SelectionForm())
+        try 
         {
-            if (form.ShowDialog() == DialogResult.OK)
+            var start = new ProcessStartInfo
             {
-                //get selections from GUI
-                int terrainType = form.SelectedTerrainType;
-                int rewardType = form.SelectedRewardType;
+                FileName = "python",
+                Arguments = @"..\..\GUI\SelectionForm.py",
+                UseShellExecute = false,
+                RedirectStandardOutput = true,
+                CreateNoWindow = true 
+            };
 
-                // call terrain generator with type selected
-                var terrainArgs = new string[] { terrainType.ToString() };
+            using (var process = Process.Start(start)) 
+            {
+                string result = process.StandardOutput.ReadToEnd();
+                process.WaitForExit();
+
+                var parts = result.Trim().Split(';');
+                int terrainType = int.Parse(parts[0].Split('=')[1]);
+                int rewardType = int.Parse(parts[1].Split('=')[1]);
+
                 TerrainGenerator.TerrainGenerator.GenerateTerrain(terrainType);
-
-                // call reward generator with type
-                var rewardArgs = new string[] { rewardType.ToString() };
                 RewardGenerator.RewardGenerator.GenerateReward(rewardType);
-
                 RunSimulation(args);
             }
         }
+        catch (Exception ex)
+        {
+            Console.WriteLine("Error launching Python GUI: " + ex.Message);
+        }
+
         #else
         // Terminal approach for Mac and other platforms
         Console.WriteLine("Running in terminal mode for non-Windows platform");
