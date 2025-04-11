@@ -16,7 +16,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using CognitiveABM.FCM;
 
-namespace HillClimberExample
+namespace HillClimberABMExample.General
 {
     public class HillClimberFCM : FCM
     {
@@ -96,14 +96,16 @@ namespace HillClimberExample
             });
             return newAgents.ToList();
         }
-        public float noiseGen(){
-          var random = new Random();
-          float noise = (float)random.NextDouble()/50; //noise between 0 and 0.005
-          int sign = random.Next(1, 3);
-          if(sign == 2){ //noise becomes negative;
-            noise = noise * -1;
-          } //end for
-          return noise;
-        } 
+        public float noiseGen()
+        {
+            var random = new Random();
+            float noise = (float)random.NextDouble() / 50; //noise between 0 and 0.005
+            int sign = random.Next(1, 3);
+            if (sign == 2)
+            { //noise becomes negative;
+                noise = noise * -1;
+            } //end for
+            return noise;
+        }
     }
 }

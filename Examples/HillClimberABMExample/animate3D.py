@@ -2,10 +2,20 @@ import numpy as np
 import matplotlib.pyplot as plt
 from mpl_toolkits.mplot3d import Axes3D
 import csv
+import os
 
-Data = ['./output/landscape_exportInfo.csv','./output/moatGauss_exportInfo.csv', './output/grid_exportInfo.csv']
-Layer = ['./layers/landscape.csv', './layers/moatGauss.csv', './layers/grid.csv']
-rewardLayer = ['./layers/landscape_reward.csv', './layers/moatGauss_reward.csv', './layers/grid_reward.csv']
+current_dir = os.path.dirname(os.path.abspath(__file__))
+Data = [os.path.join(current_dir, 'output', 'landscape_exportInfo.csv'),
+        os.path.join(current_dir, 'output', 'moatGauss_exportInfo.csv'),
+        os.path.join(current_dir, 'output', 'grid_exportInfo.csv')]
+
+Layer = [os.path.join(current_dir, 'layers', 'landscape.csv'),
+         os.path.join(current_dir, 'layers', 'moatGauss.csv'),
+         os.path.join(current_dir, 'layers', 'grid.csv')]
+
+rewardLayer = [os.path.join(current_dir, 'layers', 'landscape_reward.csv'),
+               os.path.join(current_dir, 'layers', 'moatGauss_reward.csv'),
+               os.path.join(current_dir, 'layers', 'grid_reward.csv')]
     
 terrain_num = 2 
 AgentData = Data[terrain_num]
