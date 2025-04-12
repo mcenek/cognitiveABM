@@ -13,6 +13,8 @@ namespace GUI
         private GroupBox rewardGroup = null!;
         private Button submitButton = null!;
 
+        private PictureBox terrainImage = null!;
+
         public SelectionForm()
         {
             InitializeComponent();
@@ -30,6 +32,17 @@ namespace GUI
         // create and configure the terrain and reward groups and submit button
         private void InitializeGUI()
         {
+            terrainImage = new PictureBox
+            {
+                Location = new Point(290, 160),
+                Size = new Size(250, 200),
+                SizeMode = PictureBoxSizeMode.StretchImage,
+                BorderStyle = BorderStyle.FixedSingle,
+                Image = null // Initally blank
+            };
+            this.Controls.Add(terrainImage);
+            
+
             // setting up the terrain selection group box
             terrainGroup = new GroupBox
             {
@@ -51,7 +64,8 @@ namespace GUI
                 "8. Terrain going top left to bottom right",
                 "9. Fractal Terrain",
                 "10. Inverted Perimeter Opening",
-                "11. Gradient Terrain"
+                "11. Gradient Terrain",
+                "12. Binomal"
             };
 
             // loop to create a radio button for each terrain option
@@ -65,8 +79,12 @@ namespace GUI
                     AutoSize = true,  // adjust size based on text
                     Name = $"terrainOption{i + 1}"  // unique name for each radio button
                 };
+                rb.CheckedChanged += TerrainOption_CheckedChanged;
+
                 terrainGroup.Controls.Add(rb);  // add the radio button to the terrain group box
             }
+
+            this.Controls.Add(terrainGroup);
 
             // setting up the reward selection group box
             rewardGroup = new GroupBox
@@ -100,7 +118,7 @@ namespace GUI
             submitButton = new Button
             {
                 Text = "Submit",
-                Location = new Point(240, 410),  // position of button
+                Location = new Point(440, 380),  // position of button
                 Size = new Size(100, 30)  // size of the button
             };
             submitButton.Click += SubmitButton_Click;  // attach the click event handler to the button
@@ -137,5 +155,25 @@ namespace GUI
             this.DialogResult = DialogResult.OK;
             this.Close();
         }
+
+        private void TerrainOption_CheckedChanged(object? sender, EventArgs e) 
+        {
+            if (sender is RadioButton rb && rb.Checked)
+            {
+                string imagePath = @$"C:\Users\Chengen Li\Documents\GitHub\cognitiveABM\GUI\Images\Terrain{rb.Tag}.png";  
+
+
+                if (File.Exists(imagePath))
+                {
+                    terrainImage.Image = Image.FromFile(imagePath);
+                }
+                else
+                {
+                    MessageBox.Show($"Image not found: {imagePath}");
+                    terrainImage.Image = null;  // Clear image if not found
+                }
+            }
+        }
+        
     }
 }

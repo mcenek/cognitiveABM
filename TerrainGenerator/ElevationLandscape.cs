@@ -31,17 +31,18 @@ namespace TerrainGenerator
                 return;
             }
 
-            Random random = new Random();
+            Random random = new Random(); 
 
-            List<int> peakCells = new List<int>();
+            List<int> peakCells = new List<int>(); // What does this even mean?
 
             while(peakCells.Count != this.numberOfPeaks)
             {
-                int randomValue = random.Next(Width * Height);
+                int randomValue = random.Next(Width * Height);  
 
                 if (!peakCells.Contains(randomValue))
                     peakCells.Add(randomValue);
             }
+
             switch (this.whichTerrain){
                 case 1:
                     createPeaks1(peakCells, random); // 1. Normal peaks
@@ -78,6 +79,10 @@ namespace TerrainGenerator
                     break;
                 case 11:
                     createPeaks11(peakCells, random); // 11. Gradient like mountain
+                    break;
+                case 12:
+                    this.
+                    createPeaks12(); // 12. Binomial mountain and crater
                     break;
                 default:
                     Console.WriteLine("Invalid option selected. Defaulting to 1");
@@ -390,12 +395,12 @@ namespace TerrainGenerator
 
                 for (int j = 0; j < this.map.GetLength(1); j++) {
                     
-            // Calculate the normalized distance based on the column index
-            double normalizedDistance = (double) j / (this.map.GetLength(1) - 1);
+                    // Calculate the normalized distance based on the column index
+                    double normalizedDistance = (double) j / (this.map.GetLength(1) - 1);
 
-            // Set the elevation based on the normalized distance
-            this.map[i, j] = (int)(normalizedDistance * this.maximumElevation);
-         }
+                    // Set the elevation based on the normalized distance
+                    this.map[i, j] = (int)(normalizedDistance * this.maximumElevation);
+                }
             }
         }
 
@@ -574,6 +579,52 @@ namespace TerrainGenerator
                 }
             }
         }
+    }
+
+    // ===================================================== Binomial ===================================================== 
+
+    private void createPeaks12() {
+    
+        int width = this.map.GetLength(0);
+        int height = this.map.GetLength(1);
+
+        double hillHeight = this.maximumElevation - 600;
+        double craterDepth = this.maximumElevation - 600;
+
+        // Centers
+        int hillX = width / 3;
+        int hillY = height / 2;
+        int craterX = 2 * width / 3;
+        int craterY = height / 2;
+
+        double sigmaX = width / 8.0;
+        double sigmaY = height / 8.0;
+
+        for (int i = 0; i < width; i++)
+        {
+            for (int j = 0; j < height; j++)
+            {
+                // Hill
+                double dxH = i - hillX;
+                double dyH = j - hillY;
+                double hillExponent = -((dxH * dxH) / (2 * sigmaX * sigmaX) + (dyH * dyH) / (2 * sigmaY * sigmaY));
+                double hill = hillHeight * Math.Exp(hillExponent);
+
+                // Crater
+                double dxC = i - craterX;
+                double dyC = j - craterY;
+                double craterExponent = -((dxC * dxC) / (2 * sigmaX * sigmaX) + (dyC * dyC) / (2 * sigmaY * sigmaY));
+                double crater = -(craterDepth * Math.Exp(craterExponent));
+
+                // Combine
+                double elevation = hill + crater;
+
+                this.map[i, j] = (int)Math.Round(elevation);
+            }
+        }
+
+
+
     }
         
         /**
