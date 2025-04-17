@@ -19,6 +19,7 @@ namespace HillClimberABMExample.General
     using CognitiveABM.Perceptron;
     using CognitiveABM.QLearning;
     using System.IO;
+    using System.Linq;
 
     //using CognitiveABM.Program;
 
@@ -104,6 +105,10 @@ namespace HillClimberABMExample.General
 
         public Terrain Terrain { get; set; }
 
+        private int previousRewardCount = 0;
+        private List<(int, int)> visitedPositions = new List<(int, int)>();
+        private float pathEfficiency = 1.0f;
+
         [Mars.Interfaces.LIFECapabilities.PublishForMappingInMars]
         public Animal(Guid _id, Terrain _layer, RegisterAgent _register, UnregisterAgent _unregister, SpatialHashEnvironment<Animal> _AnimalEnvironment, int AnimalId, double xcor = 0, double ycor = 0, int freq = 1)
         {
@@ -133,6 +138,14 @@ namespace HillClimberABMExample.General
         // Tick function is called on each step of the simulation
         public void Tick()
         {
+            // Record current position
+            visitedPositions.Add(((int)Position.X, (int)Position.Y));
+            
+            // Calculate path efficiency
+            if (visitedPositions.Count > 1) {
+                int uniquePositions = visitedPositions.Distinct().Count();
+                pathEfficiency = (float) uniquePositions / visitedPositions.Count;
+            }
 
             List<int[]> distantTerrainLocations = GetDistantTerrainPositions();
             List<int[]> adjacentTerrainLocations = GetAdjacentTerrainPositions();
@@ -405,16 +418,11 @@ namespace HillClimberABMExample.General
         {
             int BioEnergy = 0;
 
-            //if staying put on reward
             if (stayPut && onActiveReward)
             {
                 BioEnergy = 10;
                 ABM.pickUpStat[0]++;
             }
-            // else{
-            //   BioEnergy = 0;
-            // }
-            //if staying put on non-reward
             else if (stayPut && !onActiveReward)
             {
                 BioEnergy = -5;
@@ -422,16 +430,81 @@ namespace HillClimberABMExample.General
             //if moving on reward
             else if (!stayPut && onActiveReward)
             {
-                BioEnergy = -2;
+                //penalize for leaving reward
+                BioEnergy = -5;
                 ABM.pickUpStat[1]++;
             }
             //if moving on non-reward
             else if (!stayPut && !onActiveReward)
             {
-                BioEnergy = 1;
+                //reward for exploring
+                BioEnergy = 2;
             }
-
+            
+            // Add elevation-based component to fitness
+            int elevationComponent = Elevation - startingElevation;
+            if (elevationComponent > 0){
+                //reward for climbing
+                BioEnergy += Math.Min(5, elevationComponent / 10);
+            }
+            
+            // Add time penalty to encourage faster solutions
+            BioEnergy -= (int)(tickNum * 0.01);
+            
+            //Memory based component to reward agents that remember past rewards
+            if (rewardMemory.ContainsKey(AnimalId)) {
+                int currentRewardCount = rewardMemory[AnimalId].Count;
+                
+                // Bonus for each reward found
+                BioEnergy += rewardMemory[AnimalId].Count / 5;
+                
+                // Rewrad for finding new rewards
+                if (currentRewardCount > previousRewardCount) {
+                    BioEnergy += 7 * (currentRewardCount - previousRewardCount);
+                }
+                
+                previousRewardCount = currentRewardCount;
+            }
+            
+             // Proximity reward for being near undiscovered rewards
+             BioEnergy += CalculateProximityReward();
+            
+             // Avoid revisiting same locations
+             BioEnergy += (int)(pathEfficiency * 5);
+            
             return BioEnergy;
+        }
+
+        // Calculate closest undiscovered reward
+        private int CalculateProximityReward()
+        {
+            int xPos = (int)Position.X;
+            int yPos = (int)Position.Y;
+            int proximityReward = 0;
+            int searchRadius = 5;
+            
+            // Check for rewards in proximity
+            for (int dx = -searchRadius; dx <= searchRadius; dx++) {
+                for (int dy = -searchRadius; dy <= searchRadius; dy++){
+                    int checkX = xPos + dx;
+                    int checkY = yPos + dy;
+                
+                    if (checkX < 0 || checkX >= length || checkY < 0 || checkY >= height)
+                        continue;
+                        
+                    // Get distance to point
+                    double distance = Math.Sqrt(dx*dx + dy*dy);
+                    
+                    //if reward at location and not collected
+                    if (rewardMap[checkX, checkY] > 0 && isOnActiveReward(checkX, checkY))
+                    {
+                        // reward for being close to undiscovered rewards
+                        proximityReward += (int)(3 / (1 + distance));
+                    }
+                }
+            }
+            
+            return proximityReward;
         }
 
         private Tuple<int, int> InitialPosition()
