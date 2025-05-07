@@ -13,7 +13,7 @@ using Mars.Core.SimulationManager.Entities;
 using Mars.Core.SimulationStarter;
 using System.Text.RegularExpressions;
 using CognitiveABM.agentInformationHolder;
-using FitnessFeatures;
+using FitnessLegacy;
 public class ABM
 {
 

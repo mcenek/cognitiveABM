@@ -2,7 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 
-namespace FitnessFeatures
+namespace CognitiveABM.FitnessFeatures
 {
     public class FitnessFunctions
     {
@@ -22,39 +22,57 @@ namespace FitnessFeatures
         */
         private static float CalculateMomentum(List<float[]> tempList, float currentChange)
         {
-            // List to store the current and recent elevation changes.
-            List<float> recentChanges = new List<float>();
+            // Base reward for elevation change
+            float baseReward = 0.0f;
             
-            // Add the current change to the list.
-            recentChanges.Add(currentChange);
-            
-            // Retrieve up to MomentumSteps - 1 recent changes from tempList (index 13).
-            int count = 0;
-            for (int i = tempList.Count - 1; i >= 0 && count < MomentumSteps - 1; i--)
+            // +1 for every 5 units of elevation gain
+            // -0.2 for every 5 units of elevation loss
+            if (currentChange > 0)
             {
-                recentChanges.Add(tempList[i][13]); // Assuming index 13 contains elevation changes.
-                count++;
+                baseReward = (currentChange / 5.0f); // Rewards going up
             }
-
-            // Calculate the sum of recent changes to determine momentum.
-            float momentum = recentChanges.Sum();
-            
-            // If the momentum is near zero (no clear trend), return the absolute current change.
-            if (Math.Abs(momentum) < 0.1f)
-            {
-                return Math.Abs(currentChange);
-            }
-            
-            // If momentum is positive (upward trend), reward positive changes and penalize negative changes.
-            if (momentum > 0)
-            {
-                return currentChange > 0 ? currentChange * 1.5f : currentChange * 0.5f;
-            }
-            // If momentum is negative (downward trend), reward negative changes and penalize positive changes.
             else
             {
-                return currentChange < 0 ? Math.Abs(currentChange) * 1.5f : Math.Abs(currentChange) * 0.5f;
+                baseReward = (currentChange / 5.0f) * 0.2f; // Penalizes going down
             }
+
+            // Calculate momentum off changes
+            float momentum = 0.0f;
+            int consecutiveCount = 0;
+            float momentumMultiplier = 1.0f;
+        
+             // check chagnes for movement in same direction
+            for (int i = tempList.Count - 1; i >= 0 && consecutiveCount < MomentumSteps; i--)
+            {
+                float previousChange = tempList[i][13];
+                
+                //Increase momentum if moving in same direction
+                if ((currentChange > 0 && previousChange > 0) || 
+                    (currentChange < 0 && previousChange < 0))
+                {
+                    consecutiveCount++;
+                    momentumMultiplier += 0.1f;
+                }
+                else
+                {
+                    // Reset momentum if direction changes
+                    break;
+                }
+            }
+
+            // Calculate final momentum
+            if (currentChange > 0)
+            {
+                // Positive momentum for going up
+                momentum = baseReward * momentumMultiplier;
+            }
+            else
+            {
+                // Negative momentum for going down
+                momentum = baseReward * (1.0f / (momentumMultiplier * 0.3f));
+            }
+
+            return momentum;
         }
 
         /**

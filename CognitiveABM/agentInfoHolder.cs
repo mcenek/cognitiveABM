@@ -4,7 +4,7 @@ using System.Linq;
 using System.IO;
 using System.Collections.Concurrent;
 using Mars.Core.SimulationManager.Implementation;
-using FitnessFeatures;
+using CognitiveABM.FitnessFeatures;
 
 namespace CognitiveABM.agentInformationHolder
 {

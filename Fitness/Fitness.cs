@@ -1,9 +1,10 @@
 using System;
 using System.IO;
 using System.Collections.Generic;
+using System.Linq;
 using System.Text;
 
-namespace FitnessFeatures
+namespace FitnessLegacy
 {
   public class FitnessFunctions{
     public static float GlobalTargetFitnes = 2000.0f;
