@@ -152,10 +152,10 @@ for i in range(NUM_STEPS):
                 agent_type_colors.append('blue')
             else:
                 collector_count += 1
-                agent_type_colors.append('green')
+                agent_type_colors.append('black')
         else:
             collector_count += 1
-            agent_type_colors.append('green')
+            agent_type_colors.append('black')
     climbers.append(climber_count)
     descenders.append(descender_count)
     collectors.append(collector_count)
@@ -170,7 +170,7 @@ for i in range(NUM_STEPS):
         population_breakdown.bar(x_gen, climbers[:i+1], color='red', label='Climbers', width=1.0)
         population_breakdown.bar(x_gen, descenders[:i+1], bottom=climbers[:i+1], color='blue', label='Descenders', width=1.0)
         bottom_sum = np.array(climbers[:i+1]) + np.array(descenders[:i+1])
-        population_breakdown.bar(x_gen, collectors[:i+1], bottom=bottom_sum, color='green', label='Collectors', width=1.0)
+        population_breakdown.bar(x_gen, collectors[:i+1], bottom=bottom_sum, color='black', label='Collectors', width=1.0)
         population_breakdown.set_xlim(0, NUM_STEPS)
         population_breakdown.set_ylim(0, numpoints)
         if i == 1:
